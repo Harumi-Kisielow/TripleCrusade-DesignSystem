@@ -6,7 +6,7 @@
   <!-- NÃO INDEXÁVEL: impede aparecer em buscadores -->
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <meta name="googlebot" content="noindex, nofollow">
-  <title>Design System - Nome do Projeto</title>
+  <title>Design System - Triple Crusade</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,8 +14,8 @@
   <!-- ===== CABEÇALHO / NAVEGAÇÃO ===== -->
   <header class="topbar">
     <a href="#home" class="brand" data-nav="home" aria-label="Início">
-      <span class="brand-icon">◆</span>
-      <span class="brand-text">Nome do Projeto</span>
+      <span class="brand-icon">✦</span>
+      <span class="brand-text">Triple Crusade</span>
     </a>
     <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false">☰</button>
     <nav class="nav" id="nav">
@@ -32,128 +32,134 @@
     <!-- ===== HOME ===== -->
     <section class="page" id="home">
       <div class="hero">
-        <div class="logo-placeholder">LOGO TEXTO</div>
-        <p class="lead">Este é o guia de referência para a identidade visual e a experiência de usuário de <strong>Nome do Projeto</strong>. Use os cartões abaixo para navegar pelas seções.</p>
+        <!-- Troque pelo logo: <img src="imgs/logo.png" alt="Triple Crusade"> -->
+        <div class="logo-placeholder">TRIPLE CRUSADE<br><small>(coloque aqui o logo)</small></div>
+        <p class="lead">Guia de referência para a identidade visual e a interface de <strong>Triple Crusade</strong>, RPG de turno com exploração 3D em primeira pessoa. Use os cartões para navegar pelas seções.</p>
+        <p class="byline">Studio &gt;:3</p>
       </div>
       <div class="cards">
-        <button class="card" data-go="fundamentos"><h3>Fundamentos</h3><p>Vibe, linguagem e princípios que guiam todo o projeto.</p><strong>Saiba mais</strong></button>
-        <button class="card" data-go="identidade"><h3>Identidade</h3><p>Logo, tipografia e cores para manter a marca coesa.</p><strong>Saiba mais</strong></button>
-        <button class="card" data-go="ilustracao"><h3>Ilustração</h3><p>Estilo visual de personagens, cenas e elementos.</p><strong>Saiba mais</strong></button>
-        <button class="card" data-go="componentes"><h3>Componentes</h3><p>Botões, documentos e itens interativos.</p><strong>Saiba mais</strong></button>
-        <button class="card" data-go="interacoes"><h3>Interações</h3><p>Feedbacks, mouse e padrões de entrada.</p><strong>Saiba mais</strong></button>
+        <button class="card" data-go="fundamentos"><h3>Fundamentos</h3><p>Conceito, tom, pilares de design e referências.</p><strong>Saiba mais</strong></button>
+        <button class="card" data-go="identidade"><h3>Identidade</h3><p>Logo, cores e tipografia do projeto.</p><strong>Saiba mais</strong></button>
+        <button class="card" data-go="ilustracao"><h3>Ilustração</h3><p>Estilo de arte, personagens e cenários.</p><strong>Saiba mais</strong></button>
+        <button class="card" data-go="componentes"><h3>Componentes</h3><p>Botões, painéis, barras e telas do jogo.</p><strong>Saiba mais</strong></button>
+        <button class="card" data-go="interacoes"><h3>Interações</h3><p>Movimentação, combate, cliques e sons.</p><strong>Saiba mais</strong></button>
       </div>
     </section>
 
     <!-- ===== FUNDAMENTOS ===== -->
     <section class="page" id="fundamentos">
       <h1>Fundamentos</h1>
-      <p class="lead">Defina aqui as ideias principais do projeto. Um guia rápido para que tudo tenha a mesma vibe.</p>
+      <p class="lead">As ideias principais do jogo, para garantir que tudo o que for criado tenha a mesma vibe.</p>
 
-      <h2>A vibe</h2>
-      <p>Descreva em 2–3 parágrafos o clima geral, o público e o que o projeto quer transmitir. [EDITE ESTE TEXTO]</p>
+      <h2>High concept</h2>
+      <div class="callout">Em uma Terra pós-apocalíptica presa em um ciclo eterno, você deve gerenciar uma party de sobreviventes em um sistema de exploração 3D e combate por turnos. Descubra os segredos do rei demônio e quebre o loop temporal antes que a escassez de recursos dite o fim da sua jornada.</div>
 
-      <h2>Como "falamos" com o usuário</h2>
-      <h3>Tom de voz</h3>
-      <p>Defina o jeito de falar: formal, descontraído, gírias, etc. [EDITE ESTE TEXTO]</p>
-      <h3>O que a gente não faz</h3>
-      <p>Liste o que evitar na comunicação. [EDITE ESTE TEXTO]</p>
+      <h2>Gênero e público</h2>
+      <ul>
+        <li><strong>Gênero:</strong> RPG de turno estilo dungeon crawler.</li>
+        <li><strong>Plataforma:</strong> PC (Unity).</li>
+        <li><strong>Público-alvo:</strong> jogadores de 30 a 40 anos, fãs de RPG de turno com foco em gameplay, atraídos pela estética de anime dos anos 2000 e pelo tema pós-apocalíptico.</li>
+      </ul>
 
-      <h2>Princípio central</h2>
-      <p>Descreva a regra principal do projeto e dê 1–2 exemplos práticos. [EDITE ESTE TEXTO]</p>
-      <div class="callout"><strong>Exemplo 1:</strong> descreva um caso de aplicação do princípio.</div>
-      <div class="callout"><strong>Exemplo 2:</strong> descreva outro caso.</div>
+      <h2>Três modos visuais</h2>
+      <p>O jogo alterna entre três linguagens de tela. A interface precisa parecer da mesma família nas três.</p>
+      <div class="doc-grid">
+        <article class="doc"><h4>Exploração</h4><p>Dungeons em 3D, primeira pessoa, movimentação em grid.</p></article>
+        <article class="doc"><h4>Combate</h4><p>Arte 2D, turnos com barra de ação (ATB).</p></article>
+        <article class="doc"><h4>Visual novel</h4><p>Diálogos com retratos e sprites de corpo.</p></article>
+      </div>
+      <h3>Fluxo de telas</h3>
+      <ol>
+        <li><strong>Menu principal:</strong> novo jogo, continuar, configurações, sair.</li>
+        <li><strong>Seleção de personagem:</strong> a escolha do protagonista define a rota narrativa.</li>
+        <li><strong>Dungeon (exploração):</strong> navegação 3D em busca de batalhas e itens.</li>
+        <li><strong>Combate:</strong> informações da party e dos inimigos.</li>
+        <li><strong>Intermissão (hub):</strong> compras, gestão de party e eventos narrativos.</li>
+      </ol>
+
+      <h2>Pilares de design</h2>
+      <div class="callout"><strong>Escolhas com consequências.</strong> O protagonista define a rota e o elenco recrutável. Personagens recrutáveis (exceto os essenciais) podem morrer de forma permanente.</div>
+      <div class="callout"><strong>Gestão de recursos.</strong> Armas têm durabilidade, a ressurreição depende de Esferas da Vida e o desempenho em cada dungeon rende nota e recompensas.</div>
+      <div class="callout"><strong>Alta rejogabilidade.</strong> Não dá para ver todo o conteúdo em uma única jogada. As fases têm rotas alternativas, sem backtracking nem grind.</div>
+
+      <h2>Tom</h2>
+      <p>Pós-apocalíptico, melancólico e com camadas de mistério. A história trata de ciclos, sofrimento e livre-arbítrio. O texto de interface deve ser curto e direto. <em>[Confirme ou ajuste este tom]</em></p>
+
+      <h2>Referências</h2>
+      <ul>
+        <li><strong>Shin Megami Tensei:</strong> estrutura de jogabilidade, sistema de batalha e movimentação.</li>
+        <li><strong>Etrian Odyssey:</strong> principal referência de jogabilidade e de movimentação dos inimigos no mapa.</li>
+        <li><strong>Fire Emblem:</strong> durabilidade de armas, crescimento de atributos e morte permanente.</li>
+        <li><strong>Gold Gold Adventure Gold:</strong> referência visual.</li>
+      </ul>
     </section>
 
     <!-- ===== IDENTIDADE ===== -->
     <section class="page" id="identidade">
       <h1>Identidade</h1>
-      <p class="lead">A identidade visual reflete a atmosfera do projeto.</p>
+      <p class="lead">A identidade visual reflete um mundo em ruínas, com ornamentos de pedra e um toque de anime dos anos 2000.</p>
 
       <h2>Logo</h2>
+      <p class="hint">Estes quadros são provisórios. Coloque os arquivos do logo na pasta <code>imgs/</code> e troque os textos por <code>&lt;img&gt;</code>.</p>
       <h3>Versão principal</h3>
       <div class="logo-grid">
-        <figure><div class="logo-box light"><span>LOGO</span></div><figcaption><strong>Colorida (preferencial)</strong> Use sempre que possível.</figcaption></figure>
+        <figure><div class="logo-box dark"><span>LOGO</span></div><figcaption><strong>Colorida (preferencial)</strong> Para fundos escuros.</figcaption></figure>
         <figure><div class="logo-box light mono-black"><span>LOGO</span></div><figcaption><strong>Preta</strong> Para fundos claros.</figcaption></figure>
         <figure><div class="logo-box dark mono-white"><span>LOGO</span></div><figcaption><strong>Branca</strong> Para fundos escuros.</figcaption></figure>
       </div>
-
       <h3>Versão ícone</h3>
-      <div class="logo-grid">
-        <figure><div class="logo-box light"><span class="icon">◆</span></div><figcaption>Colorida</figcaption></figure>
-        <figure><div class="logo-box light mono-black"><span class="icon">◆</span></div><figcaption>Preta</figcaption></figure>
-        <figure><div class="logo-box dark mono-white"><span class="icon">◆</span></div><figcaption>Branca</figcaption></figure>
-      </div>
-
+      <p>Defina se existe um ícone separado (por exemplo, para favicon e avatar).</p>
       <h3>Tamanho mínimo</h3>
-      <ul>
-        <li><strong>Impresso:</strong> largura mínima de 2cm.</li>
-        <li><strong>Digital:</strong> largura mínima de 50px.</li>
-      </ul>
-
-      <h3>Rotação</h3>
-      <p>Permitidos: 0° (padrão) e 90°. Nenhum outro ângulo.</p>
-      <div class="logo-grid">
-        <figure><div class="logo-box light"><span>LOGO</span></div><figcaption>0°</figcaption></figure>
-        <figure><div class="logo-box light"><span style="display:inline-block;transform:rotate(90deg)">LOGO</span></div><figcaption>90°</figcaption></figure>
-      </div>
+      <ul><li><strong>Digital:</strong> [defina] px de largura.</li><li><strong>Impresso:</strong> [defina] cm de largura.</li></ul>
 
       <h2>Cores</h2>
-      <p class="hint">Dica: clique em uma cor para copiar o código HEX. Para trocar as cores, edite o bloco <code>:root</code> em <code>style.css</code> — os cartões abaixo se atualizam sozinhos.</p>
+      <p class="hint">Clique em uma cor para copiar o HEX. Para trocar, edite o bloco <code>:root</code> do <code>style.css</code>.</p>
 
-      <h3>Cor principal</h3>
+      <h3>Paleta do mundo (Ruínas, 1ª fase)</h3>
+      <p>Coloração monocromática com alguns pontos de contraste. HEX do GDD.</p>
       <div class="swatches">
-        <div class="swatch" data-var="--primary-light" data-label="Clara"></div>
-        <div class="swatch" data-var="--primary" data-label="Base"></div>
-        <div class="swatch" data-var="--primary-dark" data-label="Escura"></div>
+        <div class="swatch" data-var="--world-green" data-label="Verde musgo"></div>
+        <div class="swatch" data-var="--world-olive" data-label="Oliva"></div>
+        <div class="swatch" data-var="--world-taupe" data-label="Cinza-bege"></div>
+        <div class="swatch" data-var="--world-umber" data-label="Cinza-terra"></div>
+        <div class="swatch" data-var="--world-black" data-label="Preto"></div>
+      </div>
+      <p class="hint">Faltam as paletas de Cassinus e da Torre do Rei Demônio.</p>
+
+      <h3>Paleta de interface (estimada)</h3>
+      <p>Estes valores foram estimados a partir dos prints do GDD. Substitua pelos HEX oficiais.</p>
+      <div class="swatches">
+        <div class="swatch" data-var="--primary" data-label="Azul do logo"></div>
+        <div class="swatch" data-var="--gold" data-label="Dourado"></div>
+        <div class="swatch" data-var="--stone-900" data-label="Pedra 900"></div>
+        <div class="swatch" data-var="--stone-700" data-label="Pedra 700"></div>
+        <div class="swatch" data-var="--stone-500" data-label="Pedra 500"></div>
+        <div class="swatch" data-var="--parchment" data-label="Pergaminho"></div>
+        <div class="swatch" data-var="--wood" data-label="Madeira"></div>
       </div>
 
-      <h3>Neutras</h3>
+      <h3>Cores de ação e status</h3>
       <div class="swatches">
-        <div class="swatch" data-var="--n-900" data-label="900"></div>
-        <div class="swatch" data-var="--n-800" data-label="800"></div>
-        <div class="swatch" data-var="--n-700" data-label="700"></div>
-        <div class="swatch" data-var="--n-200" data-label="200"></div>
-        <div class="swatch" data-var="--n-100" data-label="100"></div>
-        <div class="swatch" data-var="--n-000" data-label="000"></div>
-      </div>
-
-      <h3>Secundárias</h3>
-      <h4>Azul</h4>
-      <div class="swatches">
-        <div class="swatch" data-var="--blue-light" data-label="Clara"></div>
-        <div class="swatch" data-var="--blue" data-label="Base"></div>
-        <div class="swatch" data-var="--blue-dark" data-label="Escura"></div>
-      </div>
-      <h4>Verde</h4>
-      <div class="swatches">
-        <div class="swatch" data-var="--green-light" data-label="Clara"></div>
-        <div class="swatch" data-var="--green" data-label="Base"></div>
-        <div class="swatch" data-var="--green-dark" data-label="Escura"></div>
-      </div>
-      <h4>Roxo</h4>
-      <div class="swatches">
-        <div class="swatch" data-var="--purple-light" data-label="Clara"></div>
-        <div class="swatch" data-var="--purple" data-label="Base"></div>
-        <div class="swatch" data-var="--purple-dark" data-label="Escura"></div>
-      </div>
-      <h4>Vermelho</h4>
-      <div class="swatches">
-        <div class="swatch" data-var="--red-light" data-label="Clara"></div>
-        <div class="swatch" data-var="--red" data-label="Base"></div>
-        <div class="swatch" data-var="--red-dark" data-label="Escura"></div>
+        <div class="swatch" data-var="--skill-a" data-label="Skill A"></div>
+        <div class="swatch" data-var="--skill-b" data-label="Skill B"></div>
+        <div class="swatch" data-var="--skill-c" data-label="Skill C"></div>
+        <div class="swatch" data-var="--hp" data-label="HP"></div>
+        <div class="swatch" data-var="--durability" data-label="Durabilidade"></div>
       </div>
 
       <h2>Tipografia</h2>
-      <p>Defina a família tipográfica do projeto (troque <code>--font-main</code> em <code>style.css</code>).</p>
+      <p>Defina as fontes do jogo. Troque as variáveis <code>--font-ui</code> e <code>--font-display</code> em <code>style.css</code>.</p>
       <div class="specimen">
         <p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
         <p>abcdefghijklmnopqrstuvwxyz</p>
         <p>0123456789</p>
         <p>-«+»!?.*\/()£€$¥¢+−±×÷=≠≈&lt;&gt;≤</p>
       </div>
-      <h3>Tipografia de apoio</h3>
-      <p>Use esta área para fontes manuscritas, de destaque ou decorativas e onde aplicá-las.</p>
-      <ul><li>Onde usar: [EDITE]</li></ul>
+      <ul>
+        <li><strong>Interface (botões, HUD):</strong> [fonte]</li>
+        <li><strong>Diálogos (visual novel):</strong> [fonte]</li>
+        <li><strong>Logo / títulos:</strong> [fonte]</li>
+      </ul>
     </section>
 
     <!-- ===== ILUSTRAÇÃO ===== -->
@@ -161,101 +167,216 @@
       <h1>Ilustração</h1>
       <p class="lead">Diretrizes para estilo de arte, personagens e cenários.</p>
 
-      <h2>Estilo de ilustração</h2>
+      <h2>Estilo</h2>
+      <p>Estética de anime dos anos 2000. Os personagens aparecem em retratos 2D (busto) nas telas de batalha e de diálogo, e em arte de corpo inteiro na visual novel.</p>
       <div class="img-grid">
-        <div class="img-slot">Imagem de exemplo 1</div>
-        <div class="img-slot">Imagem de exemplo 2</div>
-        <div class="img-slot">Imagem de exemplo 3</div>
+        <div class="img-slot">Exemplo de estilo 1</div>
+        <div class="img-slot">Exemplo de estilo 2</div>
+        <div class="img-slot">Exemplo de estilo 3</div>
       </div>
-      <h3>Por que foi escolhido?</h3>
-      <p>Explique a decisão de estilo. [EDITE ESTE TEXTO]</p>
+
+      <h2>Concept art e cenários</h2>
+      <p>Os conceitos iniciais usam coloração monocromática, com luz forte e pontos de contraste, para definir atmosfera e ambientação (cidade, castelo, ruínas).</p>
+      <div class="img-grid">
+        <div class="img-slot">Concept: ruínas</div>
+        <div class="img-slot">Concept: cidade</div>
+        <div class="img-slot">Concept: castelo</div>
+      </div>
+      <h3>Áreas do jogo</h3>
+      <div class="doc-grid">
+        <article class="doc"><h4>Ruínas</h4><p>Ruínas do mundo antigo tomadas por plantas e criaturas.</p></article>
+        <article class="doc"><h4>Cassinus</h4><p>Reino rico, estética baseada em cassinos do mundo antigo.</p></article>
+        <article class="doc"><h4>Torre do Rei Demônio</h4><p>Torre na Cidade Perdida, últimas ruínas da civilização pré-cataclismo.</p></article>
+      </div>
 
       <h2>Diretrizes para personagens</h2>
       <div class="img-grid">
-        <div class="img-slot">Personagem 01</div>
-        <div class="img-slot">Personagem 02</div>
-        <div class="img-slot">Personagem 03</div>
+        <div class="img-slot">Protagonista 1</div>
+        <div class="img-slot">Protagonista 2</div>
+        <div class="img-slot">Protagonista 3</div>
       </div>
-      <h3>Cores</h3><p>Paleta usada nos personagens. [EDITE]</p>
-      <h3>Traçado</h3><p>Cor e espessura do contorno. [EDITE]</p>
-      <h3>Tipos / variações</h3>
-      <ul><li>Variação A</li><li>Variação B</li><li>Variação C</li></ul>
-      <h3>Ângulo e pose</h3><p>Padronização de ângulo e pose. [EDITE]</p>
-      <h3>Iluminação</h3><p>Camadas de luz e sombra. [EDITE]</p>
-      <h3>Trajes e acessórios</h3><p>Como combinar acessórios. [EDITE]</p>
+      <p class="hint">Preciso de você para preencher esta parte: processo, técnica, traço, sombreamento, proporções e tamanhos.</p>
+      <h3>Elenco</h3>
+      <ul>
+        <li><strong>Protagonistas (rotas):</strong> Chizuru, Axel e Harry.</li>
+        <li><strong>Imunes à morte:</strong> Tsubasa, Silky, Felícia, Salmoura e Minerva (ficam feridos).</li>
+        <li><strong>Recrutáveis e outros:</strong> Izegor, Carlo, Bartolomeu, Daruma, Flerbert, Smelvin, Lili, Kagami, Sophie e mais.</li>
+      </ul>
+      <h3>Traço, cor e sombra</h3><p>[A definir com o artista]</p>
+      <h3>Ângulo e pose</h3><p>[A definir com o artista]</p>
+      <h3>Elementos e afinidades</h3>
+      <p>Cada personagem tem afinidade com um elemento. Veja os ícones na seção Componentes.</p>
     </section>
 
     <!-- ===== COMPONENTES ===== -->
     <section class="page" id="componentes">
       <h1>Componentes</h1>
-      <p class="lead">Elementos de UI interativos que formam a base do projeto.</p>
+      <p class="lead">Elementos de interface do jogo. Os demos abaixo são clicáveis.</p>
+
+      <h2>Molduras e painéis</h2>
+      <p>A interface usa molduras de pedra escura com ornamentos, madeira ao fundo e papel envelhecido ou livros para itens e equipamento. Painéis de personagem têm formato chanfrado.</p>
+      <div class="img-slot wide">Print de referência das molduras</div>
 
       <h2>Botões</h2>
-      <h3>Botões personalizados</h3>
-      <p>Descreva botões que fazem parte do cenário/tema e exemplos de uso. [EDITE]</p>
-      <div class="img-slot wide">Exemplo de botões personalizados</div>
+      <h3>Menu (intermissão e sistema)</h3>
+      <p>Placas de pedra escura, texto em caixa alta branca. O item em foco recebe contorno claro.</p>
+      <div class="demo-menu" id="demo-menu">
+        <button class="stone-btn">Next</button>
+        <button class="stone-btn">Party</button>
+        <button class="stone-btn">Shop</button>
+        <button class="stone-btn">Event 1</button>
+        <button class="stone-btn">Event 2</button>
+      </div>
 
-      <h3>Botões padrão</h3>
+      <h3>Abas do menu de exploração</h3>
+      <div class="tabs" id="demo-tabs">
+        <button class="stone-btn small">Return</button>
+        <button class="stone-btn small">Formation</button>
+        <button class="stone-btn small">Items</button>
+        <button class="stone-btn small">Status</button>
+        <button class="stone-btn small">Equip</button>
+        <button class="stone-btn small">System</button>
+      </div>
+
+      <h3>Skills (A, B e C)</h3>
+      <p>Cada arma equipada abre uma coluna de habilidades, diferenciada por cor.</p>
+      <div class="skill-cols">
+        <div><b>A</b><button class="skill-btn a">Skill 1</button><button class="skill-btn a">Skill 2</button><button class="skill-btn a">Skill 3</button></div>
+        <div><b>B</b><button class="skill-btn b">Skill 1</button><button class="skill-btn b">Skill 2</button><button class="skill-btn b">Skill 3</button></div>
+        <div><b>C</b><button class="skill-btn c">Skill 1</button><button class="skill-btn c">Skill 2</button><button class="skill-btn c">Skill 3</button></div>
+      </div>
+
+      <h2>Cartão de personagem (party)</h2>
+      <p>Nome, nível, barra de HP e durabilidade da arma.</p>
+      <div class="party-row">
+        <div class="party-card"><span class="pc-name">Tsubasa</span><span class="pc-lv">LV 1</span>
+          <div class="bar hp"><i style="width:100%"></i><em>HP 120/120</em></div>
+          <span class="pc-dur">DUR 15 / 15</span></div>
+        <div class="party-card"><span class="pc-name">Chizuru</span><span class="pc-lv">LV 1</span>
+          <div class="bar hp"><i style="width:100%"></i><em>HP 90/90</em></div>
+          <span class="pc-dur">DUR 20 / 15</span></div>
+        <div class="party-card"><span class="pc-name">Axel</span><span class="pc-lv">LV 1</span>
+          <div class="bar hp"><i style="width:42%"></i><em>HP 38/90</em></div>
+          <span class="pc-dur">DUR 4 / 15</span></div>
+      </div>
+
+      <h2>Caixa de diálogo (visual novel)</h2>
+      <div class="vn-box">
+        <div class="vn-portrait">retrato</div>
+        <div class="vn-text"><span class="vn-name">Nome do personagem</span><p>Texto da fala aparece aqui. Clique para avançar.</p></div>
+      </div>
+
+      <h2>Elementos e afinidades</h2>
+      <p>Cinco elementos: fogo, gelo, raio, luz e escuridão. Cada personagem e inimigo tem uma afinidade por elemento.</p>
+      <div class="elem-row">
+        <div class="elem"><span>🔥</span>Fogo</div>
+        <div class="elem"><span>❄</span>Gelo</div>
+        <div class="elem"><span>⚡</span>Raio</div>
+        <div class="elem"><span>✦</span>Luz</div>
+        <div class="elem"><span>◐</span>Escuridão</div>
+      </div>
+      <div class="affinity-row">
+        <span class="aff neutral">Neutro: dano normal</span>
+        <span class="aff weak">Fraqueza: dano aumentado</span>
+        <span class="aff block">Bloqueio: dano anulado</span>
+        <span class="aff absorb">Absorção: regenera HP</span>
+      </div>
+      <p class="hint">Os ícones acima são provisórios. Troque pelos ícones do jogo.</p>
+
+      <h2>Status</h2>
       <ul>
-        <li><strong>Fundo:</strong> cor principal.</li>
-        <li><strong>Texto:</strong> cor escura, centralizado.</li>
-        <li><strong>Bordas:</strong> defina o estilo.</li>
+        <li><strong>Veneno:</strong> dano percentual por turno (até 45%). Não mata.</li>
+        <li><strong>Cegueira:</strong> reduz muito a chance de acerto.</li>
+        <li><strong>Sangramento:</strong> dano percentual menor que o veneno e reduz STR e DEF. Não mata.</li>
       </ul>
-      <div class="demo-row">
-        <button class="btn btn-primary">Primário</button>
-        <button class="btn btn-secondary">Secundário</button>
-        <button class="btn btn-danger">Perigo</button>
-        <button class="btn btn-primary" disabled>Desabilitado</button>
-      </div>
+      <h3>Parâmetros exibidos</h3>
+      <p>HP, STR, MAG, DEF, MDF, SPD, ACC, EVA, CRIT. Cada personagem equipa até 3 armas (conforme slots) e 1 acessório.</p>
 
-      <h2>Documentos / Cartões</h2>
-      <p>Para cada componente de conteúdo central, descreva consistência visual e variáveis de texto.</p>
-      <div class="doc-grid">
-        <article class="doc"><h4>Componente A</h4><p><strong>Consistência:</strong> [EDITE]</p><p><strong>Variáveis:</strong> [EDITE]</p><div class="img-slot">Imagem</div></article>
-        <article class="doc"><h4>Componente B</h4><p><strong>Consistência:</strong> [EDITE]</p><p><strong>Variáveis:</strong> [EDITE]</p><div class="img-slot">Imagem</div></article>
-        <article class="doc"><h4>Componente C</h4><p><strong>Consistência:</strong> [EDITE]</p><p><strong>Variáveis:</strong> [EDITE]</p><div class="img-slot">Imagem</div></article>
+      <h2>Legenda dos mapas</h2>
+      <div class="legend">
+        <span>🧰 Baú / coletável</span><span>🔒 Porta trancada</span><span>❗ Evento obrigatório</span>
+        <span>★ Evento não obrigatório</span><span>— Movimentação inimiga</span><span>💀 Inimigo</span>
+        <span>E Saída</span><span>▥ Entrada</span>
       </div>
-
-      <h2>Ferramentas de decisão</h2>
-      <p>Objetos que o usuário usa para decidir/confirmar, com feedback visual definitivo.</p>
-      <div class="demo-row">
-        <button class="btn btn-ok" id="stamp-ok">Aprovar</button>
-        <button class="btn btn-no" id="stamp-no">Recusar</button>
-      </div>
-      <div class="stamp-area" id="stamp-area"><span>Clique em um botão acima e depois nesta área para "carimbar"</span></div>
     </section>
 
     <!-- ===== INTERAÇÕES ===== -->
     <section class="page" id="interacoes">
       <h1>Interações</h1>
-      <p class="lead">Padrões de feedback visual e usabilidade.</p>
+      <p class="lead">Padrões de entrada e feedback. Os demos abaixo funcionam de verdade.</p>
+
+      <h2>Exploração em grid</h2>
+      <p>Movimento nas 4 direções por grid. A câmera gira com <kbd>Q</kbd> (esquerda) e <kbd>E</kbd> (direita), deixando o mouse livre para os botões da tela.</p>
+      <p>Clique na área e use <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> ou as setas para andar, e <kbd>Q</kbd> <kbd>E</kbd> para girar. Também dá para usar os botões.</p>
+      <div class="grid-demo">
+        <div class="grid" id="grid" tabindex="0" aria-label="Demo de movimentação"></div>
+        <div class="grid-side">
+          <div id="grid-info" class="hint">Direção: Norte</div>
+          <div class="pad">
+            <button data-act="q">Q ⟲</button><button data-act="w">▲</button><button data-act="e">⟳ E</button>
+            <button data-act="a">◀</button><button data-act="s">▼</button><button data-act="d">▶</button>
+          </div>
+        </div>
+      </div>
+      <p>Encontros aleatórios: o indicador de chance de encontro fica no canto superior esquerdo e mostra a chance a cada passo.</p>
+
+      <h2>Combate por turnos (ATB)</h2>
+      <p>Cada personagem tem uma barra de ação cuja velocidade depende do stat SPD. Quando enche, o personagem age. Durante o turno, todas as barras param.</p>
+      <div class="atb" id="atb">
+        <div class="atb-row"><span>Rápido (SPD 80)</span><div class="bar atb-bar"><i data-spd="80"></i></div></div>
+        <div class="atb-row"><span>Médio (SPD 55)</span><div class="bar atb-bar"><i data-spd="55"></i></div></div>
+        <div class="atb-row"><span>Lento (SPD 30)</span><div class="bar atb-bar"><i data-spd="30"></i></div></div>
+      </div>
+      <div class="demo-row">
+        <button class="btn btn-primary" id="atb-toggle">Iniciar</button>
+      </div>
+
+      <h3>Ações no turno</h3>
+      <p>Em cada turno: atacar, usar habilidade, defender (+defesa por 1 turno), trocar de posição ou fugir (exceto em batalhas obrigatórias).</p>
+      <div class="battle-menu" id="battle-menu">
+        <button class="stone-btn" data-cmd="Ataque básico com a arma do slot A.">Attack</button>
+        <button class="stone-btn" data-cmd="Defesa aumentada por 1 turno.">Defend</button>
+        <button class="stone-btn" id="skill-open">Skill</button>
+        <button class="stone-btn" data-cmd="Troca de posição na party.">Change</button>
+        <button class="stone-btn" data-cmd="Tentativa de fuga (indisponível em batalhas obrigatórias).">Run</button>
+      </div>
+      <div class="skill-pop" id="skill-pop" hidden>
+        <button class="skill-btn a" data-cmd="Skill A1">Skill A</button>
+        <button class="skill-btn b" data-cmd="Skill B1">Skill B</button>
+        <button class="skill-btn c" data-cmd="Skill C1">Skill C</button>
+        <button class="stone-btn small" id="skill-back">Back</button>
+      </div>
+      <div class="log" id="battle-log">Escolha uma ação.</div>
+
+      <h3>Chefes</h3>
+      <p>Chefes carregam um golpe forte por alguns turnos. Se a party causar dano suficiente durante a carga, o golpe é cancelado.</p>
 
       <h2>Mouse</h2>
-      <h3>Cursor personalizado</h3>
-      <p>Substitua o cursor padrão por um sprite do projeto. Passe o mouse na área abaixo para testar.</p>
       <ul>
-        <li><strong>Idle:</strong> estado padrão de navegação.</li>
-        <li><strong>Grab:</strong> ao clicar e segurar para arrastar.</li>
+        <li><strong>Clique:</strong> abrir menus, escolher ações, avançar diálogos.</li>
+        <li><strong>Passar o mouse:</strong> destaca o item em foco.</li>
       </ul>
 
-      <h2>Inputs</h2>
-      <h3>Clique simples</h3>
-      <p>Gatilho para ações pontuais: abrir, navegar, acionar botões.</p>
-      <h3>Clicar e arrastar</h3>
-      <p>Mover objetos e rolar listas. Teste arrastando o cartão abaixo.</p>
+      <h2>Feedback sonoro</h2>
+      <p>Os efeitos seguem a tabela abaixo (tipo e estilo definidos no GDD).</p>
+      <table class="tbl">
+        <tr><th>Ação</th><th>Tipo</th><th>Estilo</th></tr>
+        <tr><td>Andar</td><td>One-shot (pode virar loop)</td><td>Rápido, grave</td></tr>
+        <tr><td>Coletar</td><td>One-shot</td><td>Médio, grave</td></tr>
+        <tr><td>Abrir/fechar baú</td><td>One-shot</td><td>Rápido, agudo</td></tr>
+        <tr><td>Subir de nível</td><td>One-shot</td><td>Lento, agudo</td></tr>
+        <tr><td>Texto (visual novel)</td><td>Loop</td><td>Médio, agudo</td></tr>
+      </table>
 
-      <div class="playground" id="playground">
-        <div class="drag-item" id="drag-item">Arraste-me</div>
-        <div class="cursor" id="cursor" aria-hidden="true">☝</div>
-      </div>
-      <p class="hint">Substitua os símbolos do cursor em <code>script.js</code> (ou por imagens PNG) para usar seu sprite.</p>
+      <h2>Salvar</h2>
+      <p>O jogo salva em checkpoints espalhados pelo mapa (por exemplo, antes de chefes). Fora deles, o progresso entre checkpoints é perdido.</p>
     </section>
 
   </main>
 
   <footer class="footer">
+    <span>Triple Crusade · Studio &gt;:3</span>
     <a href="#" id="link-project">Link do projeto</a>
-    <a href="#" id="link-author">Feito por [Seu nome]</a>
   </footer>
 
   <script src="script.js"></script>
