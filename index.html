@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- NÃO INDEXÁVEL: impede aparecer em buscadores -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow">
+  <title>Design System - Nome do Projeto</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== CABEÇALHO / NAVEGAÇÃO ===== -->
+  <header class="topbar">
+    <a href="#home" class="brand" data-nav="home" aria-label="Início">
+      <span class="brand-icon">◆</span>
+      <span class="brand-text">Nome do Projeto</span>
+    </a>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    <nav class="nav" id="nav">
+      <a href="#fundamentos" data-nav="fundamentos">Fundamentos</a>
+      <a href="#identidade" data-nav="identidade">Identidade</a>
+      <a href="#ilustracao" data-nav="ilustracao">Ilustração</a>
+      <a href="#componentes" data-nav="componentes">Componentes</a>
+      <a href="#interacoes" data-nav="interacoes">Interações</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ===== HOME ===== -->
+    <section class="page" id="home">
+      <div class="hero">
+        <div class="logo-placeholder">LOGO TEXTO</div>
+        <p class="lead">Este é o guia de referência para a identidade visual e a experiência de usuário de <strong>Nome do Projeto</strong>. Use os cartões abaixo para navegar pelas seções.</p>
+      </div>
+      <div class="cards">
+        <button class="card" data-go="fundamentos"><h3>Fundamentos</h3><p>Vibe, linguagem e princípios que guiam todo o projeto.</p><strong>Saiba mais</strong></button>
+        <button class="card" data-go="identidade"><h3>Identidade</h3><p>Logo, tipografia e cores para manter a marca coesa.</p><strong>Saiba mais</strong></button>
+        <button class="card" data-go="ilustracao"><h3>Ilustração</h3><p>Estilo visual de personagens, cenas e elementos.</p><strong>Saiba mais</strong></button>
+        <button class="card" data-go="componentes"><h3>Componentes</h3><p>Botões, documentos e itens interativos.</p><strong>Saiba mais</strong></button>
+        <button class="card" data-go="interacoes"><h3>Interações</h3><p>Feedbacks, mouse e padrões de entrada.</p><strong>Saiba mais</strong></button>
+      </div>
+    </section>
+
+    <!-- ===== FUNDAMENTOS ===== -->
+    <section class="page" id="fundamentos">
+      <h1>Fundamentos</h1>
+      <p class="lead">Defina aqui as ideias principais do projeto. Um guia rápido para que tudo tenha a mesma vibe.</p>
+
+      <h2>A vibe</h2>
+      <p>Descreva em 2–3 parágrafos o clima geral, o público e o que o projeto quer transmitir. [EDITE ESTE TEXTO]</p>
+
+      <h2>Como "falamos" com o usuário</h2>
+      <h3>Tom de voz</h3>
+      <p>Defina o jeito de falar: formal, descontraído, gírias, etc. [EDITE ESTE TEXTO]</p>
+      <h3>O que a gente não faz</h3>
+      <p>Liste o que evitar na comunicação. [EDITE ESTE TEXTO]</p>
+
+      <h2>Princípio central</h2>
+      <p>Descreva a regra principal do projeto e dê 1–2 exemplos práticos. [EDITE ESTE TEXTO]</p>
+      <div class="callout"><strong>Exemplo 1:</strong> descreva um caso de aplicação do princípio.</div>
+      <div class="callout"><strong>Exemplo 2:</strong> descreva outro caso.</div>
+    </section>
+
+    <!-- ===== IDENTIDADE ===== -->
+    <section class="page" id="identidade">
+      <h1>Identidade</h1>
+      <p class="lead">A identidade visual reflete a atmosfera do projeto.</p>
+
+      <h2>Logo</h2>
+      <h3>Versão principal</h3>
+      <div class="logo-grid">
+        <figure><div class="logo-box light"><span>LOGO</span></div><figcaption><strong>Colorida (preferencial)</strong> Use sempre que possível.</figcaption></figure>
+        <figure><div class="logo-box light mono-black"><span>LOGO</span></div><figcaption><strong>Preta</strong> Para fundos claros.</figcaption></figure>
+        <figure><div class="logo-box dark mono-white"><span>LOGO</span></div><figcaption><strong>Branca</strong> Para fundos escuros.</figcaption></figure>
+      </div>
+
+      <h3>Versão ícone</h3>
+      <div class="logo-grid">
+        <figure><div class="logo-box light"><span class="icon">◆</span></div><figcaption>Colorida</figcaption></figure>
+        <figure><div class="logo-box light mono-black"><span class="icon">◆</span></div><figcaption>Preta</figcaption></figure>
+        <figure><div class="logo-box dark mono-white"><span class="icon">◆</span></div><figcaption>Branca</figcaption></figure>
+      </div>
+
+      <h3>Tamanho mínimo</h3>
+      <ul>
+        <li><strong>Impresso:</strong> largura mínima de 2cm.</li>
+        <li><strong>Digital:</strong> largura mínima de 50px.</li>
+      </ul>
+
+      <h3>Rotação</h3>
+      <p>Permitidos: 0° (padrão) e 90°. Nenhum outro ângulo.</p>
+      <div class="logo-grid">
+        <figure><div class="logo-box light"><span>LOGO</span></div><figcaption>0°</figcaption></figure>
+        <figure><div class="logo-box light"><span style="display:inline-block;transform:rotate(90deg)">LOGO</span></div><figcaption>90°</figcaption></figure>
+      </div>
+
+      <h2>Cores</h2>
+      <p class="hint">Dica: clique em uma cor para copiar o código HEX. Para trocar as cores, edite o bloco <code>:root</code> em <code>style.css</code> — os cartões abaixo se atualizam sozinhos.</p>
+
+      <h3>Cor principal</h3>
+      <div class="swatches">
+        <div class="swatch" data-var="--primary-light" data-label="Clara"></div>
+        <div class="swatch" data-var="--primary" data-label="Base"></div>
+        <div class="swatch" data-var="--primary-dark" data-label="Escura"></div>
+      </div>
+
+      <h3>Neutras</h3>
+      <div class="swatches">
+        <div class="swatch" data-var="--n-900" data-label="900"></div>
+        <div class="swatch" data-var="--n-800" data-label="800"></div>
+        <div class="swatch" data-var="--n-700" data-label="700"></div>
+        <div class="swatch" data-var="--n-200" data-label="200"></div>
+        <div class="swatch" data-var="--n-100" data-label="100"></div>
+        <div class="swatch" data-var="--n-000" data-label="000"></div>
+      </div>
+
+      <h3>Secundárias</h3>
+      <h4>Azul</h4>
+      <div class="swatches">
+        <div class="swatch" data-var="--blue-light" data-label="Clara"></div>
+        <div class="swatch" data-var="--blue" data-label="Base"></div>
+        <div class="swatch" data-var="--blue-dark" data-label="Escura"></div>
+      </div>
+      <h4>Verde</h4>
+      <div class="swatches">
+        <div class="swatch" data-var="--green-light" data-label="Clara"></div>
+        <div class="swatch" data-var="--green" data-label="Base"></div>
+        <div class="swatch" data-var="--green-dark" data-label="Escura"></div>
+      </div>
+      <h4>Roxo</h4>
+      <div class="swatches">
+        <div class="swatch" data-var="--purple-light" data-label="Clara"></div>
+        <div class="swatch" data-var="--purple" data-label="Base"></div>
+        <div class="swatch" data-var="--purple-dark" data-label="Escura"></div>
+      </div>
+      <h4>Vermelho</h4>
+      <div class="swatches">
+        <div class="swatch" data-var="--red-light" data-label="Clara"></div>
+        <div class="swatch" data-var="--red" data-label="Base"></div>
+        <div class="swatch" data-var="--red-dark" data-label="Escura"></div>
+      </div>
+
+      <h2>Tipografia</h2>
+      <p>Defina a família tipográfica do projeto (troque <code>--font-main</code> em <code>style.css</code>).</p>
+      <div class="specimen">
+        <p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+        <p>abcdefghijklmnopqrstuvwxyz</p>
+        <p>0123456789</p>
+        <p>-«+»!?.*\/()£€$¥¢+−±×÷=≠≈&lt;&gt;≤</p>
+      </div>
+      <h3>Tipografia de apoio</h3>
+      <p>Use esta área para fontes manuscritas, de destaque ou decorativas e onde aplicá-las.</p>
+      <ul><li>Onde usar: [EDITE]</li></ul>
+    </section>
+
+    <!-- ===== ILUSTRAÇÃO ===== -->
+    <section class="page" id="ilustracao">
+      <h1>Ilustração</h1>
+      <p class="lead">Diretrizes para estilo de arte, personagens e cenários.</p>
+
+      <h2>Estilo de ilustração</h2>
+      <div class="img-grid">
+        <div class="img-slot">Imagem de exemplo 1</div>
+        <div class="img-slot">Imagem de exemplo 2</div>
+        <div class="img-slot">Imagem de exemplo 3</div>
+      </div>
+      <h3>Por que foi escolhido?</h3>
+      <p>Explique a decisão de estilo. [EDITE ESTE TEXTO]</p>
+
+      <h2>Diretrizes para personagens</h2>
+      <div class="img-grid">
+        <div class="img-slot">Personagem 01</div>
+        <div class="img-slot">Personagem 02</div>
+        <div class="img-slot">Personagem 03</div>
+      </div>
+      <h3>Cores</h3><p>Paleta usada nos personagens. [EDITE]</p>
+      <h3>Traçado</h3><p>Cor e espessura do contorno. [EDITE]</p>
+      <h3>Tipos / variações</h3>
+      <ul><li>Variação A</li><li>Variação B</li><li>Variação C</li></ul>
+      <h3>Ângulo e pose</h3><p>Padronização de ângulo e pose. [EDITE]</p>
+      <h3>Iluminação</h3><p>Camadas de luz e sombra. [EDITE]</p>
+      <h3>Trajes e acessórios</h3><p>Como combinar acessórios. [EDITE]</p>
+    </section>
+
+    <!-- ===== COMPONENTES ===== -->
+    <section class="page" id="componentes">
+      <h1>Componentes</h1>
+      <p class="lead">Elementos de UI interativos que formam a base do projeto.</p>
+
+      <h2>Botões</h2>
+      <h3>Botões personalizados</h3>
+      <p>Descreva botões que fazem parte do cenário/tema e exemplos de uso. [EDITE]</p>
+      <div class="img-slot wide">Exemplo de botões personalizados</div>
+
+      <h3>Botões padrão</h3>
+      <ul>
+        <li><strong>Fundo:</strong> cor principal.</li>
+        <li><strong>Texto:</strong> cor escura, centralizado.</li>
+        <li><strong>Bordas:</strong> defina o estilo.</li>
+      </ul>
+      <div class="demo-row">
+        <button class="btn btn-primary">Primário</button>
+        <button class="btn btn-secondary">Secundário</button>
+        <button class="btn btn-danger">Perigo</button>
+        <button class="btn btn-primary" disabled>Desabilitado</button>
+      </div>
+
+      <h2>Documentos / Cartões</h2>
+      <p>Para cada componente de conteúdo central, descreva consistência visual e variáveis de texto.</p>
+      <div class="doc-grid">
+        <article class="doc"><h4>Componente A</h4><p><strong>Consistência:</strong> [EDITE]</p><p><strong>Variáveis:</strong> [EDITE]</p><div class="img-slot">Imagem</div></article>
+        <article class="doc"><h4>Componente B</h4><p><strong>Consistência:</strong> [EDITE]</p><p><strong>Variáveis:</strong> [EDITE]</p><div class="img-slot">Imagem</div></article>
+        <article class="doc"><h4>Componente C</h4><p><strong>Consistência:</strong> [EDITE]</p><p><strong>Variáveis:</strong> [EDITE]</p><div class="img-slot">Imagem</div></article>
+      </div>
+
+      <h2>Ferramentas de decisão</h2>
+      <p>Objetos que o usuário usa para decidir/confirmar, com feedback visual definitivo.</p>
+      <div class="demo-row">
+        <button class="btn btn-ok" id="stamp-ok">Aprovar</button>
+        <button class="btn btn-no" id="stamp-no">Recusar</button>
+      </div>
+      <div class="stamp-area" id="stamp-area"><span>Clique em um botão acima e depois nesta área para "carimbar"</span></div>
+    </section>
+
+    <!-- ===== INTERAÇÕES ===== -->
+    <section class="page" id="interacoes">
+      <h1>Interações</h1>
+      <p class="lead">Padrões de feedback visual e usabilidade.</p>
+
+      <h2>Mouse</h2>
+      <h3>Cursor personalizado</h3>
+      <p>Substitua o cursor padrão por um sprite do projeto. Passe o mouse na área abaixo para testar.</p>
+      <ul>
+        <li><strong>Idle:</strong> estado padrão de navegação.</li>
+        <li><strong>Grab:</strong> ao clicar e segurar para arrastar.</li>
+      </ul>
+
+      <h2>Inputs</h2>
+      <h3>Clique simples</h3>
+      <p>Gatilho para ações pontuais: abrir, navegar, acionar botões.</p>
+      <h3>Clicar e arrastar</h3>
+      <p>Mover objetos e rolar listas. Teste arrastando o cartão abaixo.</p>
+
+      <div class="playground" id="playground">
+        <div class="drag-item" id="drag-item">Arraste-me</div>
+        <div class="cursor" id="cursor" aria-hidden="true">☝</div>
+      </div>
+      <p class="hint">Substitua os símbolos do cursor em <code>script.js</code> (ou por imagens PNG) para usar seu sprite.</p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <a href="#" id="link-project">Link do projeto</a>
+    <a href="#" id="link-author">Feito por [Seu nome]</a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
