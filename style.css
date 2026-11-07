@@ -205,4 +205,57 @@ figcaption { font-size: .9rem; color: var(--muted); margin-top: .4rem; }
 .gate-card p { color: var(--muted); margin: 0 0 1rem; }
 .gate-card strong { color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
 .gate-icon { font-size: 2.2rem; color: var(--gold); }
-body[data-page="gate"] .nav, body[data-page="gate"] .burger { display: none; }
+body[data-page="gate"]:not(.editing) .nav, body[data-page="gate"]:not(.editing) .burger { display: none; }
+.nav .edit-only { display: none; }
+body.editing .nav .edit-only { display: inline-block; }
+
+/* ---------- imagens aplicadas ---------- */
+.img-slot.banner { min-height: 220px; margin: 0 auto 1.5rem; max-width: 720px; }
+.has-img { border: 0 !important; min-height: 0 !important; padding: 0 !important; display: block !important; position: relative; }
+.has-img img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: var(--radius); }
+.logo-placeholder.has-img img { max-height: 160px; }
+.logo-box.has-img { display: grid !important; place-items: center; }
+.logo-box.has-img img { max-height: 120px; max-width: 90%; }
+.admin-link { font-size: .75rem; opacity: .5; color: var(--muted); }
+.admin-link:hover { opacity: 1; }
+
+/* ---------- modo de edição ---------- */
+body.editing [contenteditable="true"] { outline: 1px dashed rgba(232,185,60,.55); outline-offset: 2px; cursor: text; }
+body.editing [contenteditable="true"]:focus { outline: 2px solid var(--gold); background: rgba(232,185,60,.08); }
+body.editing .img-slot, body.editing .logo-placeholder, body.editing .logo-box { position: relative; outline: 2px dashed var(--primary); outline-offset: 3px; }
+.slot-tools { position: absolute; top: 6px; right: 6px; display: flex; gap: 4px; z-index: 5; }
+.slot-tools button, .adm-panel button, .adm-modal button { font: inherit; cursor: pointer; border: 2px solid var(--stone-500); background: var(--stone-700); color: var(--text); border-radius: 4px; padding: .3rem .6rem; font-size: .8rem; }
+.slot-tools button:hover, .adm-panel button:hover { border-color: var(--gold); }
+.adm-panel button.primary, .adm-modal button.primary { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: bold; }
+.adm-panel button.danger, .slot-tools button.danger { border-color: #7a2b28; }
+.adm-panel button:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ---------- painel admin ---------- */
+.adm-panel { position: fixed; right: 14px; bottom: 14px; width: 310px; max-height: 82vh; overflow: auto; z-index: 1000; background: var(--stone-900); border: 2px solid var(--gold); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.6); font-size: .88rem; }
+.adm-head { display: flex; justify-content: space-between; align-items: center; padding: .55rem .8rem; background: var(--stone-700); position: sticky; top: 0; }
+.adm-body { padding: .7rem .8rem; display: flex; flex-direction: column; gap: .6rem; }
+.adm-panel.min .adm-body { display: none; }
+.adm-tip { margin: 0; color: var(--muted); font-size: .8rem; }
+.adm-panel details { border: 1px solid var(--line); border-radius: 6px; padding: .4rem .6rem; }
+.adm-panel summary { cursor: pointer; font-weight: bold; }
+.adm-row { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .4rem; }
+.adm-lbl { display: flex; align-items: center; gap: .4rem; margin-top: .5rem; font-size: .8rem; }
+.adm-lbl input { flex: 1; }
+.adm-colors { display: grid; grid-template-columns: 1fr; gap: .25rem; margin: .5rem 0; max-height: 220px; overflow: auto; }
+.adm-color { display: flex; justify-content: space-between; align-items: center; gap: .5rem; font-size: .8rem; }
+.adm-color input { width: 44px; height: 26px; border: 0; background: none; padding: 0; cursor: pointer; }
+.adm-changes { font-weight: bold; color: var(--gold); }
+.adm-status { min-height: 1.2em; font-size: .82rem; }
+.adm-exit { background: transparent !important; color: var(--muted) !important; }
+
+/* ---------- login ---------- */
+.adm-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 2000; display: grid; place-items: center; padding: 1rem; }
+.adm-modal { width: 100%; max-width: 400px; background: var(--stone-900); border: 2px solid var(--gold); border-radius: 8px; padding: 1.2rem; }
+.adm-modal h3 { margin-top: 0; font-family: var(--font-display); color: var(--gold); }
+.adm-modal form { display: flex; flex-direction: column; gap: .7rem; }
+.adm-modal label { display: flex; flex-direction: column; gap: .25rem; font-size: .85rem; }
+.adm-modal input { padding: .5rem; border-radius: 4px; border: 2px solid var(--stone-500); background: #0a0a0c; color: var(--text); font: inherit; }
+.adm-modal button { padding: .6rem; }
+.adm-small { font-size: .78rem; color: var(--muted); margin: 0; }
+.adm-err { color: #ff9b94; min-height: 1.1em; font-size: .85rem; }
+@media (max-width: 720px) { .adm-panel { left: 8px; right: 8px; width: auto; bottom: 8px; } }

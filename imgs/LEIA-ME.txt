@@ -11,3 +11,6 @@ Subpastas:
   cenarios/      concept arts (ex: ruinas.png, cassinus.png, torre.png)
   ui/            prints de telas e molduras (ex: tela-batalha.png)
   presskit/      imagens do press kit (capa, screenshots, banner)
+  fundos/        imagens de fundo de página (criadas pelo painel admin)
+
+Obs.: as imagens enviadas pelo painel admin são salvas aqui automaticamente.

@@ -19,3 +19,8 @@ Para editar depois, altere os arquivos no repositório (ou direto pelo editor we
 
 ## Imagens
 Crie uma pasta `imgs/` e troque os blocos `.img-slot` por `<img src="imgs/arquivo.png" alt="...">`.
+
+## Painel Admin
+Clique em "Admin" no rodapé do site. Na 1ª vez, informe o repositório, o token do GitHub e crie uma senha.
+Depois é só a senha. Edite textos clicando neles, troque imagens nas caixas tracejadas e clique em "Salvar no GitHub".
+Tudo é gravado em `content.json` e em `imgs/`.

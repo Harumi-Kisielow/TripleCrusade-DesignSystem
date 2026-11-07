@@ -41,6 +41,7 @@
     const n = parseInt(hex.slice(1), 16);
     return `rgb(${n >> 16}, ${(n >> 8) & 255}, ${n & 255})`;
   }
+  function renderSwatches() {
   document.querySelectorAll(".swatch").forEach(el => {
     let hex = rootStyle.getPropertyValue(el.dataset.var).trim();
     if (/^#[0-9a-f]{3}$/i.test(hex)) hex = "#" + [...hex.slice(1)].map(c => c + c).join("");
@@ -49,13 +50,16 @@
     el.style.color = readableText(hex);
     el.innerHTML = `<b>${el.dataset.label}</b>${hex.toUpperCase()}<br>${toRgb(hex)}`;
     el.title = "Clique para copiar";
-    el.addEventListener("click", () => {
+    el.onclick = () => {
       navigator.clipboard && navigator.clipboard.writeText(hex.toUpperCase());
       const old = el.innerHTML;
       el.innerHTML = "<b>Copiado!</b>" + hex.toUpperCase();
       setTimeout(() => (el.innerHTML = old), 900);
-    });
+    };
   });
+  }
+  renderSwatches();
+  window.DS = { renderSwatches };
 
   /* ---------- 3. Menus de pedra: foco ao clicar ---------- */
   function focusGroup(containerId) {
