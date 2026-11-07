@@ -12,7 +12,8 @@
   const valid = Array.from(pages).map(p => p.id);
 
   function show(id) {
-    if (!valid.includes(id)) id = "home";
+    if (!valid.includes(id)) id = "gate";
+    document.body.dataset.page = id;
     pages.forEach(p => p.classList.toggle("active", p.id === id));
     navLinks.forEach(a => a.classList.toggle("active", a.dataset.nav === id));
     nav.classList.remove("open");

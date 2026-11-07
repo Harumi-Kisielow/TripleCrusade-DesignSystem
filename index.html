@@ -13,12 +13,13 @@
 
   <!-- ===== CABEÇALHO / NAVEGAÇÃO ===== -->
   <header class="topbar">
-    <a href="#home" class="brand" data-nav="home" aria-label="Início">
+    <a href="#gate" class="brand" aria-label="Voltar ao seletor">
       <span class="brand-icon">✦</span>
       <span class="brand-text">Triple Crusade</span>
     </a>
     <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false">☰</button>
     <nav class="nav" id="nav">
+      <a href="#home" data-nav="home">Início</a>
       <a href="#fundamentos" data-nav="fundamentos">Fundamentos</a>
       <a href="#identidade" data-nav="identidade">Identidade</a>
       <a href="#ilustracao" data-nav="ilustracao">Ilustração</a>
@@ -29,7 +30,36 @@
 
   <main>
 
-    <!-- ===== HOME ===== -->
+    <!-- ===== SELETOR INICIAL ===== -->
+    <section class="page" id="gate">
+      <div class="hero">
+        <div class="logo-placeholder">TRIPLE CRUSADE<br><small>(coloque aqui o logo)</small></div>
+        <p class="lead">Escolha o que você quer ver.</p>
+      </div>
+      <div class="gate-grid">
+        <button class="gate-card" data-go="home">
+          <span class="gate-icon">◆</span>
+          <h2>Design System</h2>
+          <p>Identidade, ilustração, componentes e interações do jogo.</p>
+          <strong>Entrar</strong>
+        </button>
+        <button class="gate-card" data-go="presskit">
+          <span class="gate-icon">✦</span>
+          <h2>Press Kit</h2>
+          <p>Informações, imagens e materiais para imprensa e divulgação.</p>
+          <strong>Entrar</strong>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== PRESS KIT (aguardando modelo) ===== -->
+    <section class="page" id="presskit">
+      <h1>Press Kit</h1>
+      <p class="lead">Seção em construção. Será montada a partir do modelo de press kit que você enviar.</p>
+      <div class="img-slot wide">Conteúdo do Press Kit</div>
+    </section>
+
+    <!-- ===== HOME DO DESIGN SYSTEM ===== -->
     <section class="page" id="home">
       <div class="hero">
         <!-- Troque pelo logo: <img src="imgs/logo.png" alt="Triple Crusade"> -->

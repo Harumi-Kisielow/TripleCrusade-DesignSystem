@@ -196,3 +196,13 @@ figcaption { font-size: .9rem; color: var(--muted); margin-top: .4rem; }
   .nav.open { display: flex; }
   .grid { grid-template-columns: repeat(7, 32px); grid-template-rows: repeat(7, 32px); }
 }
+
+/* ---------- seletor inicial ---------- */
+.gate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; max-width: 720px; margin: 0 auto; }
+.gate-card { text-align: center; padding: 2rem 1.2rem; font: inherit; color: var(--text); cursor: pointer; background: linear-gradient(160deg, var(--stone-700), var(--stone-900)); border: 3px solid var(--stone-500); border-radius: var(--radius); transition: transform .15s, border-color .15s, box-shadow .15s; }
+.gate-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 0 8px 0 rgba(232,185,60,.25); }
+.gate-card h2 { margin: .4rem 0; color: var(--text); }
+.gate-card p { color: var(--muted); margin: 0 0 1rem; }
+.gate-card strong { color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+.gate-icon { font-size: 2.2rem; color: var(--gold); }
+body[data-page="gate"] .nav, body[data-page="gate"] .burger { display: none; }

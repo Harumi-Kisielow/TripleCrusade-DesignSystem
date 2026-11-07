@@ -1,0 +1,13 @@
+PASTA DE IMAGENS - Triple Crusade
+
+Regras para os nomes dos arquivos:
+- sem espaço, sem acento, tudo em minúsculo
+- use hífen no lugar de espaço (ex: personagem-chizuru.png)
+- formatos: png (com fundo transparente) ou jpg
+
+Subpastas:
+  logo/          logo principal, colorido, preto, branco, ícone
+  personagens/   um arquivo por personagem (ex: chizuru.png)
+  cenarios/      concept arts (ex: ruinas.png, cassinus.png, torre.png)
+  ui/            prints de telas e molduras (ex: tela-batalha.png)
+  presskit/      imagens do press kit (capa, screenshots, banner)
