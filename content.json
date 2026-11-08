@@ -160,6 +160,35 @@
       "s": {
         "width": "100%"
       }
+    },
+    "b448": {
+      "s": {
+        "text-align": "left"
+      }
+    },
+    "b506": {
+      "img": {
+        "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
+        "h": "1avcnqz"
+      }
+    },
+    "b501": {
+      "img": {
+        "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
+        "h": "kluag0"
+      }
+    },
+    "b505": {
+      "t": {
+        "h": "8onri3",
+        "v": "Banner de imprensa"
+      }
+    },
+    "b423": {
+      "t": {
+        "h": "f39rvh",
+        "v": "Jogadores de 20 a 40 anos, engajados em jogos dos gêneros: RPG de turno, dungeon Crawler e jogos com recursos limitados. Jogadores esses que são também atraídos pela estética de anime e tem mais disposição a longas sessões de jogo."
+      }
     }
   },
   "order": {
