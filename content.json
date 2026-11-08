@@ -5,6 +5,10 @@
     "presskit": {
       "path": "imgs/fundos/fundo-madeira-19j2.png",
       "dim": 0.9
+    },
+    "gate": {
+      "path": "imgs/fundos/capa-jogo-remaster-hdc0.jpg",
+      "dim": 0.9
     }
   },
   "ops": {
@@ -132,10 +136,7 @@
       "hide": 1
     },
     "b18": {
-      "img": {
-        "path": "imgs/gate/banner-1kta.png",
-        "h": "1mn68ql"
-      }
+      "hide": 1
     },
     "b21": {
       "img": {
@@ -153,6 +154,11 @@
       "img": {
         "path": "imgs/home/banner-1kta.png",
         "h": "dxuvyw"
+      }
+    },
+    "b14": {
+      "s": {
+        "width": "100%"
       }
     }
   },
@@ -202,6 +208,10 @@
       "b18",
       "b17",
       "b19"
+    ],
+    "b19": [
+      "b20",
+      "b25"
     ]
   },
   "add": {}
