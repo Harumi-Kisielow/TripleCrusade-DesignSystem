@@ -10,15 +10,16 @@
 ## Editar (só você)
 1. Abra o site, role até o rodapé e clique em "Admin" (ou acrescente ?admin ao endereço).
 2. Digite sua senha (ela só abre o token guardado no seu navegador). O token do GitHub é o que realmente impede os outros de editarem.
-3. Clique em qualquer coisa para selecionar. Aparece uma barrinha:
-   ✥ arrastar · ▲▼ mover · 📷 trocar imagem · ⧉ duplicar · ↰ selecionar o item "pai" · 🗑 apagar
-   - Texto: clique de novo e digite direto.
-   - Painel à direita: cor, fundo, fonte, tamanho, alinhamento, largura, espaçamentos, borda, cantos, link/destino, imagem e imagem de fundo.
-   - Texto por cima de imagem: use "Imagem de fundo" numa caixa, ou ative "Posição livre" no texto e arraste.
-   - Arrastar: solta ao lado de outro item. Segure Alt para soltar DENTRO de uma caixa.
-   - Adicionar: texto, título, imagem, botão, caixa, 2 colunas, "imagem + texto", ícone, espaço.
-   - Itens originais apagados ficam escondidos e podem ser restaurados em "Página".
-   - Não existe desfazer: "Descartar" recarrega e volta ao último salvo.
+3. Clique em qualquer coisa para selecionar. Aparecem a barrinha (✥ arrastar · ▲▼ mover · 📷 imagem · ⧉ duplicar · ↰ item pai · 🗑 apagar) e as alças azuis nos cantos e laterais.
+   - **Tamanho:** arraste as alças. Em imagens elas mantêm a proporção; Shift estica livremente. Também há largura/altura em % ou px no painel.
+   - **Colunas:** botões "2/3/4 colunas". No painel, escolha de 1 a 6 colunas e a largura de cada uma em % (as outras se ajustam), proporções prontas, espaço entre colunas e alinhamento. No celular elas empilham sozinhas.
+   - **Posição livre:** liga no painel (Tamanho e posição). Arraste com ✥, use as setas do teclado (Shift = passo maior). Guias rosa ajudam a centralizar e encostar nas bordas (Alt desliga o encaixe). Botões de alinhar (esquerda, centro, direita, topo, meio, base), girar em graus, camada e "para frente/para trás".
+   - **Margens e espaço interno** separados por lado; arraste o nome de qualquer campo numérico para ajustar o valor.
+   - **Imagens:** cantos por controle deslizante/número (px ou %), botões Reto/Suave/Redondo/Círculo e cada canto separado; moldura (1:1, 4:3, 16:9…), zoom, posição e o botão ✋ para arrastar a imagem dentro da moldura (a roda do mouse dá zoom); "Voltar ao tamanho original".
+   - **Painel:** arraste pelo cabeçalho, encaixe à esquerda/direita (⇄) ou minimize. A posição fica lembrada.
+   - **Atalhos:** Ctrl+D duplica · Delete exclui · Esc sai do texto e depois desmarca · Alt+↑/↓ move na ordem.
+   - Texto: clique de novo e digite. Ao arrastar, segure Alt para soltar DENTRO de uma caixa.
+   - Itens originais apagados ficam escondidos e podem ser restaurados em "Página". Não existe desfazer: "Descartar" volta ao último salvo.
 4. Clique em Salvar. Tudo vai para o GitHub (imagens em imgs/<página>/ e o layout em content.json). O site atualiza em 1–2 minutos.
 
 ## Press Kit

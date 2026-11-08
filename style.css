@@ -262,44 +262,12 @@ body.editing .nav .edit-only { display: inline-block; }
 /* itens criados no editor */
 .ds-box { border: 2px solid var(--stone-500); background: var(--panel); border-radius: var(--radius); padding: 1rem; min-height: 80px; position: relative; }
 .ds-box > :first-child { margin-top: 0; } .ds-box > :last-child { margin-bottom: 0; }
-
+.ds-cols { display: grid; grid-template-columns: var(--cols, repeat(auto-fit, minmax(220px, 1fr))); gap: var(--gap, 1rem); margin: 1rem 0; }
+.ds-cols > .ds-box { min-width: 0; }
+@media (max-width: 640px) { .ds-cols { grid-template-columns: 1fr; } }
+.ds-hero { background-color: var(--stone-700); background-size: cover; background-position: center; display: block; }
 .ds-space { height: 40px; }
 .ds-icon { font-size: 2rem; color: var(--gold); display: inline-block; }
-
-/* ============================================================
-   SUPORTE A COLUNAS LIVRES (ESTILO CARRD: 2, 3 e 4 COLUNAS)
-   ============================================================ */
-.ds-cols {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.2rem;
-  margin: 1.2rem 0;
-  width: 100%;
-}
-
-.ds-col {
-  flex: 1;
-  min-width: 200px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 1rem;
-  position: relative;
-}
-
-.ds-cols-2 .ds-col { flex: 1 1 calc(50% - 0.6rem); }
-.ds-cols-3 .ds-col { flex: 1 1 calc(33.333% - 0.8rem); }
-.ds-cols-4 .ds-col { flex: 1 1 calc(25% - 0.9rem); }
-
-@media (max-width: 768px) {
-  .ds-cols-2 .ds-col,
-  .ds-cols-3 .ds-col,
-  .ds-cols-4 .ds-col {
-    flex: 1 1 100%;
-  }
-}
-
-.ds-hero { background-color: var(--stone-700); background-size: cover; background-position: center; display: block; }
 
 /* modo de edição */
 body.editing .ds-hover { outline: 1px dashed var(--gold); outline-offset: 1px; }
@@ -356,3 +324,53 @@ b.adm-sub { display: block; margin-top: .6rem; }
 .pk-shot { min-height: 110px; font-size: .8rem; }
 
 .adm-top { padding-bottom: .4rem; border-bottom: 1px solid var(--line); }
+
+/* ---------- editor v3: tamanho, moldura, alças, guias ---------- */
+.has-img.ds-w > .slot-img { width: 100%; max-width: none; }
+.has-img.ds-h > .slot-img { width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; }
+.has-img.ds-rad > .slot-img { border-radius: inherit; }
+.has-img.ds-rad, .has-img.ds-frame { overflow: hidden; }
+.has-img.ds-frame > .slot-img { width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; }
+.has-img.ds-h, .has-img.ds-frame { display: block !important; }
+.ds-icon.has-img { display: inline-block !important; }
+
+.adm-handles { position: fixed; z-index: 900; display: none; pointer-events: none; }
+.adm-h { position: absolute; width: 11px; height: 11px; margin: -6px 0 0 -6px; background: #fff; border: 2px solid #4aa8ff; border-radius: 3px; pointer-events: auto; box-shadow: 0 1px 4px rgba(0,0,0,.5); touch-action: none; }
+.adm-h:hover { background: #4aa8ff; }
+.adm-h-nw { left: 0; top: 0; cursor: nwse-resize; } .adm-h-n { left: 50%; top: 0; cursor: ns-resize; } .adm-h-ne { left: 100%; top: 0; cursor: nesw-resize; }
+.adm-h-e { left: 100%; top: 50%; cursor: ew-resize; } .adm-h-se { left: 100%; top: 100%; cursor: nwse-resize; } .adm-h-s { left: 50%; top: 100%; cursor: ns-resize; }
+.adm-h-sw { left: 0; top: 100%; cursor: nesw-resize; } .adm-h-w { left: 0; top: 50%; cursor: ew-resize; }
+.adm-guide { position: fixed; z-index: 1450; display: none; background: #ff4d8d; pointer-events: none; }
+.adm-guide-v { width: 1px; } .adm-guide-h { height: 1px; }
+body.ds-pan .ds-sel, body.ds-pan .ds-sel * { cursor: move !important; }
+
+.adm-panel { transition: box-shadow .15s, opacity .15s; }
+.adm-panel.moving { opacity: .85; box-shadow: 0 16px 40px rgba(0,0,0,.7); }
+.adm-head { cursor: grab; user-select: none; }
+.adm-head-btns { display: flex; gap: .3rem; }
+.adm-head button { width: 28px; padding: .1rem 0 !important; }
+.adm-trail { display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: .3rem; }
+.adm-trail button { padding: .1rem .4rem !important; font-size: .72rem !important; background: transparent !important; border-width: 1px !important; }
+.adm-trail button.on { border-color: #4aa8ff !important; color: #4aa8ff; }
+.adm-note { margin: 0; min-height: 0; font-size: .78rem; color: var(--gold); }
+.adm-scrub { cursor: ew-resize; user-select: none; }
+.adm-prop { grid-template-columns: 1fr 150px; }
+.adm-dim { display: grid; grid-template-columns: 1fr 58px; gap: 4px; }
+.adm-rn { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.adm-rn input[type=range] { flex: 1; min-width: 0; }
+.adm-rn input[type=number] { width: 58px !important; flex: none; }
+.adm-rn em { font-style: normal; width: 42px; text-align: right; color: var(--muted); font-size: .75rem; }
+.adm-sides { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
+.adm-radius .adm-sides { grid-template-columns: repeat(4, 1fr); margin-top: .3rem; }
+.adm-sides input { width: 100%; min-width: 0; padding: .2rem .15rem !important; text-align: center; }
+.adm-align { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; }
+.adm-align button { padding: .2rem 0 !important; }
+.adm-colgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(78px, 1fr)); gap: 6px; margin: .4rem 0; }
+.adm-colcell { display: flex; align-items: center; gap: 3px; font-size: .75rem; flex-wrap: wrap; }
+.adm-colcell span { width: 100%; }
+.adm-colcell input { width: calc(100% - 18px); padding: .25rem !important; background: #0a0a0c; color: var(--text); border: 1px solid var(--stone-500); border-radius: 4px; font: inherit; }
+.adm-colcell em { font-style: normal; color: var(--muted); }
+.adm-radius .adm-row { margin: .3rem 0; }
+.adm-panel input[type=number], .adm-panel input[type=text] { background: #0a0a0c; color: var(--text); border: 1px solid var(--stone-500); border-radius: 4px; font: inherit; font-size: .8rem; padding: .25rem .35rem; }
+.adm-panel input[type=number]:focus, .adm-panel input[type=text]:focus, .adm-panel select:focus { outline: 2px solid #4aa8ff; outline-offset: 0; }
+.adm-panel input[type=range] { accent-color: #4aa8ff; }
