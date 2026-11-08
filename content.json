@@ -13,6 +13,10 @@
     "home": {
       "path": "imgs/fundos/capa-jogo-remaster-hdc0.jpg",
       "dim": 0.9
+    },
+    "ilustracao": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0.9
     }
   },
   "ops": {
@@ -250,6 +254,69 @@
       "t": {
         "h": "16xg1b9",
         "v": "<strong>Público-alvo:</strong>&nbsp;Jogadores de 20 a 40 anos, engajados em jogos dos gêneros: RPG de turno, dungeon Crawler e jogos com recursos limitados. Jogadores esses que são também atraídos pela estética de anime e tem mais disposição a longas sessões de jogo."
+      }
+    },
+    "b168": {
+      "img": {
+        "path": "imgs/ilustracao/babacaney-10nl.png",
+        "h": "1dnfft5"
+      }
+    },
+    "b169": {
+      "img": {
+        "path": "imgs/ilustracao/axel-lhjp.png",
+        "h": "1dnfft6"
+      }
+    },
+    "b170": {
+      "hide": 1
+    },
+    "b174": {
+      "img": {
+        "path": "imgs/ilustracao/cenario-concept-1bge.png",
+        "h": "vnz1cx"
+      }
+    },
+    "b176": {
+      "img": {
+        "path": "imgs/ilustracao/torre-concept-18ps.png",
+        "h": "1xzhnw6"
+      }
+    },
+    "b190": {
+      "img": {
+        "path": "imgs/ilustracao/axel-lhjp.png",
+        "h": "x8d9ap"
+      }
+    },
+    "b191": {
+      "img": {
+        "path": "imgs/ilustracao/magician-design-remaked-1kof.png",
+        "h": "x8d9aq"
+      }
+    },
+    "b192": {
+      "img": {
+        "path": "imgs/ilustracao/miko-pintada-1cic.png",
+        "h": "x8d9ar"
+      }
+    },
+    "b200": {
+      "t": {
+        "h": "14thav9",
+        "v": "[A definir]"
+      }
+    },
+    "b202": {
+      "t": {
+        "h": "14thav9",
+        "v": "[A definir]"
+      }
+    },
+    "b175": {
+      "img": {
+        "path": "imgs/ilustracao/whatsapp-image-2026-11-07-at-22-38-45-11g0.jpeg",
+        "h": "ln22x1"
       }
     }
   },
