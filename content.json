@@ -1,1 +1,482 @@
-{"text":{},"images":{},"vars":{},"bg":{}}
+{
+  "v": 2,
+  "vars": {},
+  "bg": {
+    "presskit": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0.9
+    },
+    "gate": {
+      "path": "imgs/fundos/capa-jogo-remaster-hdc0.jpg",
+      "dim": 0.9
+    },
+    "home": {
+      "path": "imgs/fundos/capa-jogo-remaster-hdc0.jpg",
+      "dim": 0.9
+    },
+    "ilustracao": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0.9
+    }
+  },
+  "ops": {
+    "b399": {
+      "img": {
+        "path": "imgs/presskit/banner-1kta.png",
+        "h": "1itkndl"
+      }
+    },
+    "b453": {
+      "img": {
+        "path": "imgs/presskit/logoestudiobranca-10zr.png",
+        "h": "1b1wwln"
+      }
+    },
+    "b456": {
+      "img": {
+        "path": "imgs/presskit/mine-1hh9.png",
+        "h": "yjsyot"
+      }
+    },
+    "b460": {
+      "img": {
+        "path": "imgs/presskit/jp-5ps8.png",
+        "h": "yjsyot"
+      }
+    },
+    "b464": {
+      "img": {
+        "path": "imgs/presskit/luiz-19xr.png",
+        "h": "yjsyot"
+      }
+    },
+    "b468": {
+      "img": {
+        "path": "imgs/presskit/vfl-1sxw.png",
+        "h": "yjsyot"
+      }
+    },
+    "b472": {
+      "img": {
+        "path": "imgs/presskit/3ds-1b83.png",
+        "h": "yjsyot"
+      }
+    },
+    "b480": {
+      "img": {
+        "path": "imgs/presskit/triple-rusade-logo-quase-final-7yb6.png",
+        "h": "yjxkqe"
+      },
+      "s": {
+        "background-color": "#ffffff"
+      }
+    },
+    "b479": {
+      "t": {
+        "h": "1lonrlo",
+        "v": "Logo do jogo"
+      }
+    },
+    "b3": {
+      "t": {
+        "h": "40qz",
+        "v": "<a href=\"https://harumi-kisielow.github.io/TripleCrusade-DesignSystem/#gate\">\n      <span><br></span>\n      <span>Triple Crusade</span>\n    </a>✦"
+      },
+      "hide": 1
+    },
+    "b411": {
+      "t": {
+        "h": "r1p27q",
+        "v": "12/2027"
+      }
+    },
+    "b432": {
+      "t": {
+        "h": "1rgdrx",
+        "v": "High Concept"
+      }
+    },
+    "b485": {
+      "img": {
+        "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
+        "h": "10zcvo5"
+      }
+    },
+    "b455": {
+      "bgimg": {
+        "path": "imgs/presskit/testee-17y8.jpg",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b459": {
+      "bgimg": {
+        "path": "imgs/presskit/testee-17y8.jpg",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b463": {
+      "bgimg": {
+        "path": "imgs/presskit/testee-17y8.jpg",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b467": {
+      "bgimg": {
+        "path": "imgs/presskit/testee-17y8.jpg",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b471": {
+      "bgimg": {
+        "path": "imgs/presskit/testee-17y8.jpg",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b476": {
+      "hide": 1
+    },
+    "b16": {
+      "hide": 1
+    },
+    "b18": {
+      "hide": 1
+    },
+    "b21": {
+      "img": {
+        "path": "imgs/gate/atk-up-exse.png",
+        "h": "40h7"
+      }
+    },
+    "b26": {
+      "img": {
+        "path": "imgs/gate/aura-qamv.png",
+        "h": "40qz"
+      }
+    },
+    "b36": {
+      "img": {
+        "path": "imgs/home/banner-1kta.png",
+        "h": "dxuvyw"
+      }
+    },
+    "b14": {
+      "s": {
+        "width": "100%"
+      }
+    },
+    "b448": {
+      "s": {
+        "text-align": "left"
+      }
+    },
+    "b506": {
+      "img": {
+        "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
+        "h": "1avcnqz"
+      }
+    },
+    "b501": {
+      "img": {
+        "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
+        "h": "kluag0"
+      }
+    },
+    "b505": {
+      "t": {
+        "h": "8onri3",
+        "v": "Banner de imprensa"
+      }
+    },
+    "b423": {
+      "t": {
+        "h": "f39rvh",
+        "v": "Jogadores de 20 a 40 anos, engajados em jogos dos gêneros: RPG de turno, dungeon Crawler e jogos com recursos limitados. Jogadores esses que são também atraídos pela estética de anime e tem mais disposição a longas sessões de jogo."
+      }
+    },
+    "b40": {
+      "bgimg": {
+        "path": "imgs/home/arte-apresentacao-1ezh.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b44": {
+      "bgimg": {
+        "path": "imgs/home/post-mortem-q4dt.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b46": {
+      "t": {
+        "h": "198wlil",
+        "v": "Logo, cores e&nbsp;<br>tipografia do&nbsp;<br>projeto."
+      }
+    },
+    "b42": {
+      "t": {
+        "h": "1xodgdv",
+        "v": "Conceito, tom,<br>&nbsp;pilares de&nbsp;<br>design e<br>&nbsp;referências."
+      }
+    },
+    "b48": {
+      "bgimg": {
+        "path": "imgs/home/post-2-4ski.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b52": {
+      "bgimg": {
+        "path": "imgs/home/post-3-vwnl.png",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b39": {
+      "s": {
+        "color": "#000000"
+      }
+    },
+    "b56": {
+      "bgimg": {
+        "path": "imgs/home/timelune-kqq3.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b69": {
+      "t": {
+        "h": "16xg1b9",
+        "v": "<strong>Público-alvo:</strong>&nbsp;Jogadores de 20 a 40 anos, engajados em jogos dos gêneros: RPG de turno, dungeon Crawler e jogos com recursos limitados. Jogadores esses que são também atraídos pela estética de anime e tem mais disposição a longas sessões de jogo."
+      }
+    },
+    "b168": {
+      "img": {
+        "path": "imgs/ilustracao/babacaney-10nl.png",
+        "h": "1dnfft5"
+      }
+    },
+    "b169": {
+      "img": {
+        "path": "imgs/ilustracao/axel-lhjp.png",
+        "h": "1dnfft6"
+      }
+    },
+    "b170": {
+      "hide": 1
+    },
+    "b174": {
+      "img": {
+        "path": "imgs/ilustracao/cenario-concept-1bge.png",
+        "h": "vnz1cx"
+      }
+    },
+    "b176": {
+      "img": {
+        "path": "imgs/ilustracao/torre-concept-18ps.png",
+        "h": "1xzhnw6"
+      }
+    },
+    "b190": {
+      "img": {
+        "path": "imgs/ilustracao/axel-lhjp.png",
+        "h": "x8d9ap"
+      }
+    },
+    "b191": {
+      "img": {
+        "path": "imgs/ilustracao/magician-design-remaked-1kof.png",
+        "h": "x8d9aq"
+      }
+    },
+    "b192": {
+      "img": {
+        "path": "imgs/ilustracao/miko-pintada-1cic.png",
+        "h": "x8d9ar"
+      }
+    },
+    "b200": {
+      "t": {
+        "h": "14thav9",
+        "v": "[A definir]"
+      }
+    },
+    "b202": {
+      "t": {
+        "h": "14thav9",
+        "v": "[A definir]"
+      }
+    },
+    "b175": {
+      "img": {
+        "path": "imgs/ilustracao/whatsapp-image-2026-11-07-at-22-38-45-11g0.jpeg",
+        "h": "ln22x1"
+      }
+    },
+    "nmw761gvpn71s": {
+      "t": {
+        "v": "&nbsp; &nbsp; &nbsp;"
+      },
+      "bgimg": {
+        "path": "imgs/site/logoestudiobranca-10zr.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b215": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b216": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b217": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b218": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b219": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b229": {
+      "t": {
+        "h": "xmzdqh",
+        "v": "Cada arma equipada abre uma coluna de habilidades"
+      }
+    },
+    "b222": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b223": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b224": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b225": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b226": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b227": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    }
+  },
+  "order": {
+    "b478": [
+      "b479",
+      "b480",
+      "b481"
+    ],
+    "b396": [
+      "b397",
+      "b398",
+      "b399",
+      "b400",
+      "b401",
+      "b431",
+      "b432",
+      "b433",
+      "b434",
+      "b435",
+      "b436",
+      "b437",
+      "b438",
+      "b439",
+      "b440",
+      "b445",
+      "b446",
+      "b451",
+      "b452",
+      "b453",
+      "b454",
+      "b475",
+      "b476",
+      "b477",
+      "b509",
+      "b510"
+    ],
+    "b2": [
+      "b3",
+      "b4"
+    ],
+    "b15": [
+      "b16"
+    ],
+    "b14": [
+      "b15",
+      "b18",
+      "b17",
+      "b19"
+    ],
+    "b19": [
+      "b20",
+      "b25"
+    ],
+    "b1": [
+      "nmw761gvpn71s",
+      "b2",
+      "b5",
+      "b6"
+    ]
+  },
+  "add": {
+    "nmw761gvpn71s": {
+      "tag": "span",
+      "cls": "ds-icon",
+      "attrs": {},
+      "parent": "b1"
+    }
+  }
+}
