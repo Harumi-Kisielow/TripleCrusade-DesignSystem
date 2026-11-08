@@ -21,9 +21,15 @@
     window.scrollTo({ top: 0 });
   }
   window.addEventListener("hashchange", () => show(location.hash.slice(1)));
-  document.querySelectorAll("[data-go]").forEach(btn =>
-    btn.addEventListener("click", () => { location.hash = btn.dataset.go; })
-  );
+  document.addEventListener("click", e => {
+    const g = e.target.closest("[data-go]");
+    if (g) location.hash = g.dataset.go;
+  });
+  document.addEventListener("keydown", e => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-go][role=button]")) {
+      e.preventDefault(); location.hash = e.target.dataset.go;
+    }
+  });
   burger.addEventListener("click", () => {
     const open = nav.classList.toggle("open");
     burger.setAttribute("aria-expanded", String(open));
@@ -168,10 +174,10 @@
     skillPop.hidden = true;
     log.textContent = "Escolha uma ação.";
   });
-  document.querySelectorAll("[data-cmd]").forEach(b =>
-    b.addEventListener("click", () => {
-      log.textContent = b.dataset.cmd;
-      if (b.classList.contains("skill-btn")) skillPop.hidden = true;
-    })
-  );
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-cmd]");
+    if (!b) return;
+    log.textContent = b.dataset.cmd;
+    if (b.classList.contains("skill-btn")) skillPop.hidden = true;
+  });
 })();
