@@ -1,1 +1,172 @@
-{"text":{},"images":{},"vars":{},"bg":{}}
+{
+  "v": 2,
+  "vars": {},
+  "bg": {
+    "presskit": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0.9
+    }
+  },
+  "ops": {
+    "b399": {
+      "img": {
+        "path": "imgs/presskit/banner-1kta.png",
+        "h": "1itkndl"
+      }
+    },
+    "b453": {
+      "img": {
+        "path": "imgs/presskit/logoestudiobranca-10zr.png",
+        "h": "1b1wwln"
+      }
+    },
+    "b456": {
+      "img": {
+        "path": "imgs/presskit/mine-1hh9.png",
+        "h": "yjsyot"
+      }
+    },
+    "b460": {
+      "img": {
+        "path": "imgs/presskit/jp-5ps8.png",
+        "h": "yjsyot"
+      }
+    },
+    "b464": {
+      "img": {
+        "path": "imgs/presskit/luiz-19xr.png",
+        "h": "yjsyot"
+      }
+    },
+    "b468": {
+      "img": {
+        "path": "imgs/presskit/vfl-1sxw.png",
+        "h": "yjsyot"
+      }
+    },
+    "b472": {
+      "img": {
+        "path": "imgs/presskit/3ds-1b83.png",
+        "h": "yjsyot"
+      }
+    },
+    "b480": {
+      "img": {
+        "path": "imgs/presskit/triple-rusade-logo-quase-final-7yb6.png",
+        "h": "yjxkqe"
+      },
+      "s": {
+        "background-color": "#ffffff"
+      }
+    },
+    "b479": {
+      "t": {
+        "h": "1lonrlo",
+        "v": "Logo do jogo"
+      }
+    },
+    "b3": {
+      "t": {
+        "h": "40qz",
+        "v": "<a href=\"https://harumi-kisielow.github.io/TripleCrusade-DesignSystem/#gate\">\n      <span><br></span>\n      <span>Triple Crusade</span>\n    </a>✦"
+      },
+      "hide": 1
+    },
+    "b411": {
+      "t": {
+        "h": "r1p27q",
+        "v": "12/2027"
+      }
+    },
+    "b432": {
+      "t": {
+        "h": "1rgdrx",
+        "v": "High Concept"
+      }
+    },
+    "b485": {
+      "img": {
+        "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
+        "h": "10zcvo5"
+      }
+    },
+    "b455": {
+      "bgimg": {
+        "path": "imgs/presskit/testee-17y8.jpg",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b459": {
+      "bgimg": {
+        "path": "imgs/presskit/testee-17y8.jpg",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b463": {
+      "bgimg": {
+        "path": "imgs/presskit/testee-17y8.jpg",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b467": {
+      "bgimg": {
+        "path": "imgs/presskit/testee-17y8.jpg",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b471": {
+      "bgimg": {
+        "path": "imgs/presskit/testee-17y8.jpg",
+        "dim": 0.9,
+        "size": "cover"
+      }
+    },
+    "b476": {
+      "hide": 1
+    }
+  },
+  "order": {
+    "b478": [
+      "b479",
+      "b480",
+      "b481"
+    ],
+    "b396": [
+      "b397",
+      "b398",
+      "b399",
+      "b400",
+      "b401",
+      "b431",
+      "b432",
+      "b433",
+      "b434",
+      "b435",
+      "b436",
+      "b437",
+      "b438",
+      "b439",
+      "b440",
+      "b445",
+      "b446",
+      "b451",
+      "b452",
+      "b453",
+      "b454",
+      "b475",
+      "b476",
+      "b477",
+      "b509",
+      "b510"
+    ],
+    "b2": [
+      "b3",
+      "b4"
+    ]
+  },
+  "add": {}
+}
