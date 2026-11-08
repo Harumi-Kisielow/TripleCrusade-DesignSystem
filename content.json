@@ -328,6 +328,89 @@
         "dim": 0,
         "size": "cover"
       }
+    },
+    "b215": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b216": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b217": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b218": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b219": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b229": {
+      "t": {
+        "h": "xmzdqh",
+        "v": "Cada arma equipada abre uma coluna de habilidades"
+      }
+    },
+    "b222": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b223": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b224": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b225": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b226": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "b227": {
+      "bgimg": {
+        "path": "imgs/componentes/padrao-db9d.png",
+        "dim": 0,
+        "size": "cover"
+      }
     }
   },
   "order": {
