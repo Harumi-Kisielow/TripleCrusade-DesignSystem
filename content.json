@@ -318,6 +318,16 @@
         "path": "imgs/ilustracao/whatsapp-image-2026-11-07-at-22-38-45-11g0.jpeg",
         "h": "ln22x1"
       }
+    },
+    "nmw761gvpn71s": {
+      "t": {
+        "v": "&nbsp; &nbsp; &nbsp;"
+      },
+      "bgimg": {
+        "path": "imgs/site/logoestudiobranca-10zr.png",
+        "dim": 0,
+        "size": "cover"
+      }
     }
   },
   "order": {
@@ -370,7 +380,20 @@
     "b19": [
       "b20",
       "b25"
+    ],
+    "b1": [
+      "nmw761gvpn71s",
+      "b2",
+      "b5",
+      "b6"
     ]
   },
-  "add": {}
+  "add": {
+    "nmw761gvpn71s": {
+      "tag": "span",
+      "cls": "ds-icon",
+      "attrs": {},
+      "parent": "b1"
+    }
+  }
 }
