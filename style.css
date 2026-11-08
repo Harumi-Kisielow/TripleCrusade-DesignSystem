@@ -262,10 +262,44 @@ body.editing .nav .edit-only { display: inline-block; }
 /* itens criados no editor */
 .ds-box { border: 2px solid var(--stone-500); background: var(--panel); border-radius: var(--radius); padding: 1rem; min-height: 80px; position: relative; }
 .ds-box > :first-child { margin-top: 0; } .ds-box > :last-child { margin-bottom: 0; }
-.ds-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1rem 0; }
-.ds-hero { background-color: var(--stone-700); background-size: cover; background-position: center; display: block; }
+
 .ds-space { height: 40px; }
 .ds-icon { font-size: 2rem; color: var(--gold); display: inline-block; }
+
+/* ============================================================
+   SUPORTE A COLUNAS LIVRES (ESTILO CARRD: 2, 3 e 4 COLUNAS)
+   ============================================================ */
+.ds-cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin: 1.2rem 0;
+  width: 100%;
+}
+
+.ds-col {
+  flex: 1;
+  min-width: 200px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem;
+  position: relative;
+}
+
+.ds-cols-2 .ds-col { flex: 1 1 calc(50% - 0.6rem); }
+.ds-cols-3 .ds-col { flex: 1 1 calc(33.333% - 0.8rem); }
+.ds-cols-4 .ds-col { flex: 1 1 calc(25% - 0.9rem); }
+
+@media (max-width: 768px) {
+  .ds-cols-2 .ds-col,
+  .ds-cols-3 .ds-col,
+  .ds-cols-4 .ds-col {
+    flex: 1 1 100%;
+  }
+}
+
+.ds-hero { background-color: var(--stone-700); background-size: cover; background-position: center; display: block; }
 
 /* modo de edição */
 body.editing .ds-hover { outline: 1px dashed var(--gold); outline-offset: 1px; }

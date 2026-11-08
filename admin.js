@@ -1,9 +1,5 @@
 /* ============================================================
-   Editor visual — Triple Crusade
-   Tudo na página é um "item" (data-b) que pode ser selecionado, movido,
-   estilizado, duplicado, ocultado ou criado. As alterações são salvas em
-   content.json como operações sobre os itens e enviadas ao GitHub.
-   A senha protege o token (criptografado neste navegador).
+   Editor visual — Triple Crusade (Versão Avançada Carrd-like)
    ============================================================ */
 (function () {
   "use strict";
@@ -29,7 +25,7 @@
   const CSS_OK = new Set(["color", "background-color", "font-size", "font-weight", "font-style", "font-family", "text-align",
     "width", "max-width", "height", "min-height", "padding", "margin", "border-width", "border-color", "border-style",
     "border-radius", "opacity", "position", "left", "top", "z-index", "object-fit", "display", "transform",
-    "letter-spacing", "line-height", "gap", "text-transform", "box-shadow", "text-decoration"]);
+    "letter-spacing", "line-height", "gap", "text-transform", "box-shadow", "text-decoration", "flex", "grid-template-columns"]);
   const NOTEXT_TAGS = new Set(["BUTTON", "IMG", "INPUT", "SELECT", "TEXTAREA", "HR", "BR", "TABLE", "TBODY", "TR", "UL", "OL"]);
   const FONTS = [["Padrão", "var(--font-ui)"], ["Título (serifada)", "var(--font-display)"], ["Código", "monospace"]];
   const VAULT_KEY = "ds_admin_vault";
@@ -47,10 +43,10 @@
   /* ---------- estado ---------- */
   let content = { v: 2, vars: {}, bg: {}, ops: {}, order: {}, add: {} };
   let saved = null;
-  const nodes = new Map();          // id -> elemento
-  const origInfo = new Map();       // id -> {html, h} (original, só folhas)
-  const pending = new Map();        // path -> {b64, mime}
-  const previews = new Map();       // path -> dataURL
+  const nodes = new Map();
+  const origInfo = new Map();
+  const pending = new Map();
+  const previews = new Map();
   const cleanVars = {};
   const bound = new WeakSet();
   let editing = false, sel = null, session = null, panel = null, bar = null, dropLine = null, bgStyle = null, drag = null;
@@ -68,7 +64,7 @@
     if (isAtomic(e)) return false;
     if (e.tagName === "TBODY" || e.tagName === "UL") return true;
     if (NOTEXT_TAGS.has(e.tagName)) return false;
-    if (hasImg(e)) return true;                       // imagem aceita itens por cima
+    if (hasImg(e)) return true;
     return !(isLeaf(e) && leafText(e).trim() !== "");
   };
   function leafText(e) {
@@ -150,9 +146,18 @@
     $$(":scope > .slot-img", e).forEach(x => x.remove());
     if (img && safePath(img.path)) {
       wrapOrig(e);
-      const i = mk("img", "slot-img"); i.src = previews.get(img.path) || img.path; i.alt = img.alt || ""; i.draggable = false;
+      const i = mk("img", "slot-img"); 
+      i.src = previews.get(img.path) || img.path; 
+      i.alt = img.alt || ""; 
+      i.draggable = false;
+      
       const o = content.ops[e.dataset.b] || {};
-      if (o.fit === "contain" || o.fit === "cover") i.style.objectFit = o.fit;
+      if (o.fit) i.style.objectFit = o.fit;
+      if (o.imgZoom) i.style.transform = `scale(${o.imgZoom})`;
+      if (o.imgRadius) i.style.borderRadius = o.imgRadius;
+      if (o.imgWidth) i.style.width = o.imgWidth;
+      if (o.imgHeight) i.style.height = o.imgHeight;
+
       e.insertBefore(i, e.firstChild);
       e.classList.add("has-img");
       e.removeAttribute("contenteditable");
@@ -213,11 +218,8 @@
     bgStyle.textContent = css;
   }
   function applyAll() {
-    // 1. itens adicionados
     Object.entries(content.add).forEach(([id, spec]) => { const e = createNode(id, spec); if (e) nodes.set(id, e); });
-    // 2. operações
     Object.entries(content.ops).forEach(([id, o]) => { const e = nodes.get(id); if (e) applyOpTo(e, id, o); });
-    // 3. ordem / posição
     Object.entries(content.order).forEach(([pid, ids]) => {
       const parent = nodes.get(pid); if (!parent || !Array.isArray(ids)) return;
       ids.forEach(id => { const n = nodes.get(id); if (n && n !== parent && !n.contains(parent)) parent.appendChild(n); });
@@ -226,12 +228,10 @@
       const n = nodes.get(id);
       if (n && !n.parentNode) { const p = nodes.get(spec.parent) || $(".page.active") || $(".page"); p && p.appendChild(n); }
     });
-    // ops de itens adicionados dependem de estarem no DOM para isLeaf: reaplica texto
     Object.entries(content.add).forEach(([id]) => { const e = nodes.get(id), o = content.ops[id]; if (e && o && o.t) e.innerHTML = sanitize(o.t.v); });
     fixFree(); applyVars(); applyBg();
   }
 
-  /* ---------- migração do formato antigo ---------- */
   function migrate(j, legacyText, legacySlots) {
     const out = { v: 2, vars: j.vars || {}, bg: j.bg || {}, ops: j.ops || {}, order: j.order || {}, add: j.add || {} };
     Object.entries(j.text || {}).forEach(([k, d]) => {
@@ -245,7 +245,6 @@
     return out;
   }
 
-  /* ---------- marcar alteração ---------- */
   function countChanges() { return pending.size + (JSON.stringify(content) !== JSON.stringify(saved) ? 1 : 0); }
   function markDirty() { updateStatus(); }
   function setS(e, prop, val) {
@@ -260,7 +259,6 @@
     content.order[container.dataset.b] = dchildren(container).map(c => c.dataset.b);
   }
 
-  /* ---------- texto editável ---------- */
   function onTextInput(e) {
     const id = e.dataset.b, oi = origInfo.get(id), v = sanitize(e.innerHTML);
     const o = op(id);
@@ -286,7 +284,6 @@
     });
   }
 
-  /* ---------- imagens ---------- */
   const fileInput = mk("input"); fileInput.type = "file"; fileInput.accept = "image/*"; fileInput.hidden = true;
   let fileCb = null;
   fileInput.addEventListener("change", () => {
@@ -323,7 +320,6 @@
     });
   }
 
-  /* ---------- seleção ---------- */
   function select(e) {
     if (sel) sel.classList.remove("ds-sel");
     sel = e && e.isConnected ? e : null;
@@ -360,7 +356,6 @@
     if (ev.key === "Escape" && !ev.target.isContentEditable) select(null);
   });
 
-  /* ---------- barra flutuante do item selecionado ---------- */
   function buildBar() {
     bar = mk("div", "adm-bar");
     bar.innerHTML = `<button type="button" data-a="drag" title="Arrastar para mover">✥</button>
@@ -407,7 +402,6 @@
     recordOrder(e.parentElement); markDirty(); placeBar();
   }
 
-  /* ---------- arrastar ---------- */
   function orient(c) {
     const kids = dchildren(c).filter(k => k !== (drag && drag.el) && k.offsetParent !== null);
     if (kids.length >= 2) {
@@ -447,18 +441,14 @@
     }
     if (!T) return null;
     const up = n => (n.parentElement ? n.parentElement.closest("[data-b]") : null);
-    // Alt: entra dentro do item sob o mouse
     if (alt) { let C = T; while (C && !canContain(C)) C = up(C); return C ? intoPlace(C, x, y) : null; }
-    // 1) reordenar entre os irmãos do nível original
     const old = up(drag.el);
     if (old) {
       let A = T;
       while (A && A !== old && up(A) !== old) A = up(A);
       if (A && A !== old && A !== drag.el) return sibPlace(A, old, x, y);
     }
-    // 2) soltar dentro de uma caixa (vazia, criada no editor, ou com imagem)
     for (let N = T; N; N = up(N)) { if (N !== drag.el && !drag.el.contains(N) && isDropBox(N)) return intoPlace(N, x, y); }
-    // 3) irmão do item sob o mouse
     const parent = up(T);
     return parent ? sibPlace(T, parent, x, y) : null;
   }
@@ -504,7 +494,6 @@
     placeBar(); buildProps();
   }
 
-  /* ---------- criar / duplicar / excluir ---------- */
   function spawn(spec, parentEl, refEl) {
     const id = uid();
     content.add[id] = { tag: spec.tag, cls: spec.cls || "", attrs: spec.attrs || {}, parent: parentEl.dataset.b };
@@ -534,7 +523,7 @@
   function duplicate(e) {
     if (isProtected(e)) return;
     if (e.id || e.querySelector("[id]") || isAtomic(e) || e.querySelector(ATOMIC)) {
-      alert("Este item é interativo (tem funcionamento próprio) e não pode ser duplicado. Você pode movê-lo, estilizá-lo ou ocultá-lo."); return;
+      alert("Este item é interativo e não pode ser duplicado."); return;
     }
     const n = spawn(specOf(e), e.parentElement, nextData(e));
     fixFree(); refreshEditable(); select(n); markDirty();
@@ -547,22 +536,27 @@
   }
   function removeItem(e) {
     if (isProtected(e)) return;
-    if (!confirm("Excluir este item?" + (e.dataset.added ? "" : "\n(Itens originais ficam só ocultos e podem ser restaurados no painel, em Página.)"))) return;
+    if (!confirm("Excluir este item?")) return;
     if (e.dataset.added) removeAdded(e);
     else { op(e.dataset.b).hide = 1; e.classList.add("ds-hidden"); }
     select(null); refreshPageControls(); markDirty();
   }
+
+  // PRESETS ATUALIZADOS PARA SUPORTAR ATÉ 4 COLUNAS LIVRES (Carrd Style)
   const PRESETS = {
     text: () => ({ tag: "p", t: "Novo texto. Clique para editar." }),
     title: () => ({ tag: "h2", t: "Novo título" }),
     image: () => ({ tag: "div", cls: "img-slot", t: "Clique em 📷 para enviar a imagem", s: { "min-height": "180px" } }),
     button: () => ({ tag: "a", cls: "btn btn-primary", attrs: { href: "#" }, t: "Botão" }),
     box: () => ({ tag: "div", cls: "ds-box", children: [{ tag: "p", t: "Texto da caixa" }] }),
-    cols: () => ({ tag: "div", cls: "ds-cols", children: [PRESETS.box(), PRESETS.box()] }),
+    cols2: () => ({ tag: "div", cls: "ds-cols ds-cols-2", children: [{ tag: "div", cls: "ds-col", children: [{ tag: "p", t: "Coluna 1" }] }, { tag: "div", cls: "ds-col", children: [{ tag: "p", t: "Coluna 2" }] }] }),
+    cols3: () => ({ tag: "div", cls: "ds-cols ds-cols-3", children: [{ tag: "div", cls: "ds-col", children: [{ tag: "p", t: "Coluna 1" }] }, { tag: "div", cls: "ds-col", children: [{ tag: "p", t: "Coluna 2" }] }, { tag: "div", cls: "ds-col", children: [{ tag: "p", t: "Coluna 3" }] }] }),
+    cols4: () => ({ tag: "div", cls: "ds-cols ds-cols-4", children: [{ tag: "div", cls: "ds-col", children: [{ tag: "p", t: "Col 1" }] }, { tag: "div", cls: "ds-col", children: [{ tag: "p", t: "Col 2" }] }, { tag: "div", cls: "ds-col", children: [{ tag: "p", t: "Col 3" }] }, { tag: "div", cls: "ds-col", children: [{ tag: "p", t: "Col 4" }] }] }),
     hero: () => ({ tag: "div", cls: "ds-box ds-hero", s: { "min-height": "280px" }, children: [{ tag: "h2", t: "Título sobre a imagem", s: { position: "absolute", left: "8%", top: "38%", color: "#ffffff", margin: "0" } }] }),
     space: () => ({ tag: "div", cls: "ds-space" }),
     icon: () => ({ tag: "span", cls: "ds-icon", t: "★" })
   };
+
   function addBlock(type) {
     let parent, ref = null;
     const where = $("#adm-where", panel).value;
@@ -576,7 +570,6 @@
     if (type === "hero") chooseBgFor(e);
   }
 
-  /* ---------- painel ---------- */
   const PAGES = () => $$(".page").map(p => [p.id, { gate: "Seletor inicial", home: "Design System: início", fundamentos: "Fundamentos", identidade: "Identidade", ilustracao: "Ilustração", componentes: "Componentes", interacoes: "Interações", presskit: "Press Kit" }[p.id] || p.id]);
   const currentPage = () => document.body.dataset.page || "gate";
   function rgbToHex(c) {
@@ -590,7 +583,7 @@
       <div class="adm-head"><b>🛠 Editor visual</b><button type="button" id="adm-min" title="Minimizar">–</button></div>
       <div class="adm-body">
         <label class="adm-lbl adm-top"><b>Página</b> <select id="adm-goto"></select></label>
-        <p class="adm-tip">Clique em qualquer item da página para selecioná-lo. Texto: clique e digite. Use a barra que aparece sobre o item para mover, duplicar ou excluir. Ao arrastar, segure Alt para soltar DENTRO de uma caixa.</p>
+        <p class="adm-tip">Clique em qualquer item para customizar com total flexibilidade (colunas de 2 a 4, zoom e bordas de imagem, alinhamento blueprint).</p>
         <details open><summary>Item selecionado</summary><div id="adm-props"></div></details>
         <details><summary>Adicionar à página</summary>
           <p id="adm-add-target" class="adm-small"></p>
@@ -599,7 +592,10 @@
           <div class="adm-grid" id="adm-add">
             <button type="button" data-add="text">Texto</button><button type="button" data-add="title">Título</button>
             <button type="button" data-add="image">Imagem</button><button type="button" data-add="button">Botão/link</button>
-            <button type="button" data-add="box">Caixa</button><button type="button" data-add="cols">2 colunas</button>
+            <button type="button" data-add="box">Caixa</button>
+            <button type="button" data-add="cols2">2 colunas</button>
+            <button type="button" data-add="cols3">3 colunas</button>
+            <button type="button" data-add="cols4">4 colunas</button>
             <button type="button" data-add="hero">Imagem + texto</button><button type="button" data-add="icon">Ícone</button>
             <button type="button" data-add="space">Espaço</button>
           </div></details>
@@ -650,11 +646,11 @@
     $("#adm-min", panel).addEventListener("click", () => panel.classList.toggle("min"));
     $("#adm-save", panel).addEventListener("click", saveAll);
     $("#adm-discard", panel).addEventListener("click", () => {
-      if (!confirm("Descartar todas as alterações não salvas? A página será recarregada e você entrará de novo com a senha.")) return;
+      if (!confirm("Descartar todas as alterações não salvas?")) return;
       pending.clear(); content = JSON.parse(JSON.stringify(saved)); location.reload();
     });
     $("#adm-exit", panel).addEventListener("click", () => {
-      if (countChanges() > 0 && !confirm("Há alterações não salvas. Sair mesmo assim? (A página será recarregada.)")) return;
+      if (countChanges() > 0 && !confirm("Há alterações não salvas. Sair mesmo assim?")) return;
       pending.clear(); location.reload();
     });
     buildProps(); refreshPageControls(); updateStatus(true); updateAddHint();
@@ -681,7 +677,6 @@
     refreshPageControls();
   }
 
-  /* ---------- painel: propriedades do item ---------- */
   function row(lbl, ctrl) { const r = mk("label", "adm-prop"); r.appendChild(mk("span", "", lbl)); r.appendChild(ctrl); return r; }
   function numInput(e, prop, unit, opts) {
     opts = opts || {};
@@ -718,7 +713,6 @@
     const e = sel, id = e.dataset.b, o = content.ops[id] || {};
     box.appendChild(mk("div", "adm-sel-name", esc(label(e))));
 
-    // texto de botão
     if (e.tagName === "BUTTON" && isLeaf(e)) {
       const i = mk("input"); i.type = "text"; i.value = leafText(e);
       i.addEventListener("input", () => {
@@ -727,7 +721,6 @@
       });
       box.appendChild(row("Texto do botão", i));
     }
-    // link
     if (e.tagName === "A") {
       const i = mk("input"); i.type = "text"; i.placeholder = "https://… ou #pagina"; i.value = e.getAttribute("href") || "";
       i.addEventListener("input", () => { if (safeHref(i.value)) { e.setAttribute("href", i.value); op(id).href = i.value; markDirty(); } });
@@ -737,20 +730,50 @@
       box.appendChild(row("Leva para", selInput(PAGES(), e.getAttribute("data-go"), v => { e.setAttribute("data-go", v); op(id).go = v; markDirty(); })));
     }
 
-    // imagem
+    // PAINEL DE IMAGEM AVANÇADO (Com Zoom, Redimensionamento e Borda)
     if (isSlot(e) || (isLeaf(e) && !isTextLeaf(e) && !isAtomic(e))) {
-      const s = section("Imagem", true);
+      const s = section("Imagem & Edição Avançada", true);
       const r1 = mk("div", "adm-row"); const up = mk("button", "primary", "📷 " + (o.img ? "Trocar imagem" : "Enviar imagem")); up.type = "button";
       up.addEventListener("click", () => chooseImageFor(e)); r1.appendChild(up);
       if (o.img) { const rm = mk("button", "danger", "Remover"); rm.type = "button"; rm.addEventListener("click", () => { delete op(id).img; cleanOp(id); setImage(e, null); refreshEditable(); buildProps(); markDirty(); }); r1.appendChild(rm); }
       s.appendChild(r1);
-      if (o.img) s.appendChild(row("Ajuste", selInput([["", "Padrão"], ["cover", "Preencher"], ["contain", "Caber inteira"]], o.fit || "", v => { const oo = op(id); if (v) oo.fit = v; else delete oo.fit; const i = $(":scope > .slot-img", e); if (i) i.style.objectFit = v; markDirty(); })));
+
+      if (o.img) {
+        s.appendChild(row("Ajuste (Fit)", selInput([["", "Padrão"], ["cover", "Preencher (Cover)"], ["contain", "Caber inteira (Contain)"]], o.fit || "", v => { const oo = op(id); if (v) oo.fit = v; else delete oo.fit; const i = $(":scope > .slot-img", e); if (i) i.style.objectFit = v; markDirty(); })));
+        
+        // ZOOM DA IMAGEM
+        const zoomInp = mk("input"); zoomInp.type = "range"; zoomInp.min = "0.5"; zoomInp.max = "3"; zoomInp.step = "0.1";
+        zoomInp.value = o.imgZoom || "1";
+        zoomInp.addEventListener("input", () => {
+          o.imgZoom = zoomInp.value;
+          const i = $(":scope > .slot-img", e); if (i) i.style.transform = `scale(${o.imgZoom})`;
+          markDirty();
+        });
+        s.appendChild(row("Zoom da imagem", zoomInp));
+
+        // ARREDONDAMENTO DE BORDA DA IMAGEM
+        const radiusInp = mk("input"); radiusInp.type = "text"; radiusInp.placeholder = "ex: 12px ou 50%";
+        radiusInp.value = o.imgRadius || "";
+        radiusInp.addEventListener("input", () => {
+          o.imgRadius = radiusInp.value;
+          const i = $(":scope > .slot-img", e); if (i) i.style.borderRadius = o.imgRadius;
+          markDirty();
+        });
+        s.appendChild(row("Borda arredondada", radiusInp));
+
+        // LARGURA DA IMAGEM
+        const wInp = mk("input"); wInp.type = "text"; wInp.placeholder = "ex: 100% ou 250px";
+        wInp.value = o.imgWidth || "";
+        wInp.addEventListener("input", () => {
+          o.imgWidth = wInp.value;
+          const i = $(":scope > .slot-img", e); if (i) i.style.width = o.imgWidth;
+          markDirty();
+        });
+        s.appendChild(row("Largura (Width)", wInp));
+      }
       box.appendChild(s);
-    } else if (isLeaf(e) && !isAtomic(e) && e.matches("span,div") && leafText(e).trim().length <= 4) {
-      const s = section("Imagem no lugar do ícone"); const r1 = mk("div", "adm-row"); const up = mk("button", "", "📷 Usar uma imagem"); up.type = "button";
-      up.addEventListener("click", () => chooseImageFor(e)); r1.appendChild(up); s.appendChild(r1); box.appendChild(s);
     }
-    // imagem de fundo
+
     if (!isAtomic(e)) {
       const s = section("Imagem de fundo (texto por cima)", !!o.bgimg);
       const r1 = mk("div", "adm-row"); const up = mk("button", "", "📷 " + (o.bgimg ? "Trocar fundo" : "Escolher fundo")); up.type = "button";
@@ -768,8 +791,7 @@
       box.appendChild(s);
     }
 
-    // estilo
-    const st = section("Aparência", true);
+    const st = section("Aparência & Layout", true);
     if (!isAtomic(e) || true) {
       st.appendChild(row("Cor do texto", colorInput(e, "color")));
       st.appendChild(row("Cor de fundo", colorInput(e, "background-color")));
@@ -787,15 +809,15 @@
       st.appendChild(row("Cor da borda", colorInput(e, "border-color")));
       st.appendChild(row("Cantos arredondados (px)", numInput(e, "border-radius", "px", { min: 0, max: 200, fromComputed: false })));
       st.appendChild(row("Opacidade (%)", numInput(e, "opacity", "", { min: 0, max: 100, scale: 100, fromComputed: false })));
+      
       const rs = mk("button", "", "Restaurar aparência original"); rs.type = "button";
       rs.addEventListener("click", () => { Object.keys((content.ops[id] || {}).s || {}).forEach(p => e.style.removeProperty(p)); if (content.ops[id]) delete content.ops[id].s; cleanOp(id); fixFree(); buildProps(); markDirty(); placeBar(); });
       st.appendChild(rs);
     }
     box.appendChild(st);
 
-    // posição livre
     if (!isProtected(e)) {
-      const ps = section("Posição", !!(e.style.position === "absolute"));
+      const ps = section("Posição Blueprint (Livre / Camadas)", !!(e.style.position === "absolute"));
       const free = e.style.position === "absolute";
       const cb = mk("input"); cb.type = "checkbox"; cb.checked = free;
       cb.addEventListener("change", () => {
@@ -811,13 +833,12 @@
         buildProps(); placeBar();
       });
       ps.appendChild(row("Posição livre (arrastar solto)", cb));
-      ps.appendChild(mk("p", "adm-small", "Com a posição livre ligada, use a alça ✥ da barra para arrastar o item para qualquer lugar dentro da caixa que o contém (ótimo para texto sobre imagem)."));
+      ps.appendChild(mk("p", "adm-small", "Com a posição livre ligada, use a alça ✥ da barra para arrastar o item para qualquer lugar (topo, baixo, esquerda, direita)."));
       ps.appendChild(row("Camada (z-index)", numInput(e, "z-index", "", { min: -5, max: 99, fromComputed: false })));
       box.appendChild(ps);
     }
   }
 
-  /* ---------- cripto / GitHub / login (mantidos) ---------- */
   const enc = new TextEncoder(), dec = new TextDecoder();
   const b64e = buf => { let s = ""; const a = new Uint8Array(buf); for (let i = 0; i < a.length; i += 0x8000) s += String.fromCharCode.apply(null, a.subarray(i, i + 0x8000)); return btoa(s); };
   const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
@@ -842,16 +863,16 @@
       method, headers: { Authorization: "Bearer " + session.token, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
       body: body ? JSON.stringify(body) : undefined
     });
-    let j = null; try { j = await r.json(); } catch (e) { /* sem corpo */ }
+    let j = null; try { j = await r.json(); } catch (e) {}
     return { ok: r.ok, status: r.status, json: j };
   }
   async function verifyToken(token, owner, repo) {
     session = { token, owner, repo, branch: "main" };
     const r = await gh("GET", `/repos/${owner}/${repo}`);
     if (r.status === 401) throw new Error("Token inválido ou expirado.");
-    if (r.status === 404) throw new Error("Repositório não encontrado. Confira o nome (dono/repositório) e se o token tem acesso a ele.");
+    if (r.status === 404) throw new Error("Repositório não encontrado.");
     if (!r.ok) throw new Error("Erro do GitHub (" + r.status + ").");
-    if (r.json.permissions && !r.json.permissions.push) throw new Error("O token não tem permissão de escrita. Marque Contents: Read and write.");
+    if (r.json.permissions && !r.json.permissions.push) throw new Error("O token não tem permissão de escrita.");
     session.branch = r.json.default_branch || "main";
     return session;
   }
@@ -926,14 +947,14 @@
       });
       $("#reset", m).addEventListener("click", ev => {
         ev.preventDefault();
-        if (confirm("Isso apaga o token salvo neste navegador. Você precisará colar o token do GitHub de novo. Continuar?")) { localStorage.removeItem(VAULT_KEY); close(); openLogin(); }
+        if (confirm("Isso apaga o token salvo neste navegador. Continuar?")) { localStorage.removeItem(VAULT_KEY); close(); openLogin(); }
       });
     } else {
       const { m, close } = modal(`<h3>Configurar o editor (1ª vez)</h3><form id="f">
         <label>Repositório (dono/nome)<input id="repo" value="${esc(guessRepo())}" placeholder="seuusuario/seurepositorio" required></label>
         <label>Token do GitHub<input id="tok" type="password" placeholder="github_pat_…" autocomplete="off" required></label>
         <label>Crie uma senha para o admin<input id="pw" type="password" minlength="6" placeholder="mínimo 6 caracteres" autocomplete="new-password" required></label>
-        <p class="adm-small">O token fica criptografado só neste navegador e é protegido pela sua senha. Nas próximas vezes você digita apenas a senha.</p>
+        <p class="adm-small">O token fica criptografado só neste navegador.</p>
         <div class="adm-err" id="err"></div><button class="primary" type="submit">Configurar e entrar</button></form>`);
       $("#f", m).addEventListener("submit", async ev => {
         ev.preventDefault(); const err = $("#err", m); err.textContent = "Verificando…";
@@ -948,10 +969,8 @@
     }
   }
 
-  /* ---------- inicialização ---------- */
   async function init() {
     VARS.forEach(([k]) => { cleanVars[k] = getComputedStyle(document.documentElement).getPropertyValue(k).trim(); });
-    // índices do formato antigo (para migrar edições já salvas)
     const legacyText = new Map(), legacySlots = new Map();
     $$(".page").forEach(page => {
       let ti = 0, si = 0;
@@ -965,7 +984,7 @@
     try {
       const r = await fetch("content.json?t=" + Date.now(), { cache: "no-store" });
       if (r.ok) content = migrate(await r.json(), legacyText, legacySlots);
-    } catch (e) { /* sem content.json */ }
+    } catch (e) {}
     applyAll();
     $("#admin-link").addEventListener("click", ev => { ev.preventDefault(); openLogin(); });
     if (/[?&]admin\b/.test(location.search)) openLogin();
