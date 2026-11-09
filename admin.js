@@ -24,7 +24,7 @@
     ["--world-umber", "Mundo: cinza-terra"], ["--world-black", "Mundo: preto"]
   ];
   const TEXT_TAGS_OK = new Set(["B", "STRONG", "I", "EM", "BR", "CODE", "KBD", "SMALL", "A", "SPAN"]);
-  const ADD_TAGS = new Set(["DIV", "P", "H1", "H2", "H3", "H4", "SPAN", "A", "UL", "LI", "FIGURE", "STRONG", "EM", "SECTION", "TABLE", "TBODY", "TR", "TD", "TH"]);
+  const ADD_TAGS = new Set(["DIV", "P", "H1", "H2", "H3", "H4", "SPAN", "A", "UL", "LI", "FIGURE", "STRONG", "EM", "SECTION", "TABLE", "TBODY", "TR", "TD", "TH", "HR"]);
   const ATTR_OK = ["href", "alt", "role", "tabindex", "data-go", "data-nav"];
   const CSS_OK = new Set(["color", "background-color", "font-size", "font-weight", "font-style", "font-family", "text-align",
     "width", "max-width", "height", "min-height", "padding", "margin", "border-width", "border-color", "border-style",
@@ -39,6 +39,7 @@
   const VAULT_KEY = "ds_admin_vault";
   const SHORT = new Set(["margin", "padding", "border-radius", "border-width", "gap"]);
   const FITS = ["cover", "contain", "fill"];
+  const STYLE_LAYOUT_PROPS = new Set(["position", "left", "top", "width", "height", "min-width", "max-width", "min-height", "max-height", "z-index", "transform", "margin", "margin-top", "margin-right", "margin-bottom", "margin-left"]);
 
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
@@ -49,6 +50,7 @@
   const safeHref = h => typeof h === "string" && h.length < 700 && HREF_RE.test(h) && !/javascript:/i.test(h);
   const GO_RE = /^((section|scrollpoint):(next|previous|first|last)|[a-z0-9\-]+)$/;
   const PREVIEW = /[?&]preview\b/.test(location.search);
+  const DEFAULT_TITLE = document.title;
   /* aplica um link; "||blank" no fim abre em nova aba, "file:nome" aponta para files/nome */
   function setHref(e, raw) {
     const [u0, flags] = String(raw).split("||"); let u = u0;
@@ -71,7 +73,7 @@
   const previews = new Map();       // path -> dataURL
   const cleanVars = {};
   const bound = new WeakSet();
-  let editing = false, sel = null, session = null, panel = null, bar = null, dropLine = null, bgStyle = null, drag = null;
+  let editing = false, sel = null, session = null, panel = null, bar = null, dropLine = null, bgStyle = null, siteStyle = null, responsiveStyle = null, animationStyle = null, drag = null;
   let lastGesture = 0, handles = null, guideV = null, guideH = null, rs = null, panMode = false, bgPan = false, ro = null;
 
   /* ---------- utilidades de DOM ---------- */
@@ -186,6 +188,52 @@
       syncSize(e);
     }
   }
+  function youtubeVideoId(value) {
+    if (typeof value !== "string") return "";
+    let url;
+    try { url = new URL(value.split("||")[0], location.href); } catch (e) { return ""; }
+    const host = url.hostname.toLowerCase();
+    let id = "";
+    if (host === "youtu.be") id = url.pathname.split("/").filter(Boolean)[0] || "";
+    else if (/^(www\.|m\.)?youtube\.com$/.test(host) || host === "youtube-nocookie.com") {
+      id = url.searchParams.get("v") || (/^\/(embed|shorts|live)\/([^/]+)/.exec(url.pathname) || [])[2] || "";
+    }
+    return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : "";
+  }
+  function refreshYouTubeThumbnail(e) {
+    const o = content.ops[e.dataset.b] || {};
+    const image = $(":scope > .slot-img", e);
+    if (o.thumbnail !== "youtube") {
+      if (image && image.dataset.youtubeThumb) setImage(e, o.img || null);
+      return;
+    }
+    const scope = e.closest(".ds-video-block, .video-asset");
+    const link = scope && Array.from(scope.querySelectorAll("a[href]")).find(a => youtubeVideoId(a.getAttribute("href") || ""));
+    const videoId = link && youtubeVideoId(link.getAttribute("href") || "");
+    if (!videoId) {
+      if (image && image.dataset.youtubeThumb) setImage(e, o.img || null);
+      return;
+    }
+    if (image && image.dataset.youtubeThumb) {
+      image.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+      image.alt = "Miniatura do vídeo no YouTube";
+      return;
+    }
+    if (image) image.remove();
+    wrapOrig(e);
+    const thumb = mk("img", "slot-img");
+    thumb.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    thumb.alt = "Miniatura do vídeo no YouTube";
+    thumb.draggable = false;
+    thumb.dataset.youtubeThumb = "1";
+    e.insertBefore(thumb, e.firstChild);
+    e.classList.add("has-img");
+    e.removeAttribute("contenteditable");
+    syncSize(e);
+  }
+  function refreshYouTubeThumbnails(root) {
+    $$(".ds-video-poster, .video-asset .pk-slot", root || document).forEach(refreshYouTubeThumbnail);
+  }
   /* classes auxiliares: a imagem acompanha o tamanho / cantos / moldura do item */
   function syncSize(e) {
     const st = e.style;
@@ -273,6 +321,164 @@
     });
     bgStyle.textContent = css;
   }
+  function applySiteSettings() {
+    const site = content.site || {};
+    const title = typeof site.title === "string" ? site.title.trim().slice(0, 120) : "";
+    const description = typeof site.description === "string" ? site.description.trim().slice(0, 300) : "";
+    const brand = $("#b4");
+    const brandIcon = $("#b3");
+    if (brand) brand.textContent = typeof site.brandName === "string" && site.brandName ? site.brandName.slice(0, 80) : "Triple Crusade";
+    if (brandIcon) brandIcon.textContent = typeof site.brandIcon === "string" && site.brandIcon ? site.brandIcon.slice(0, 8) : "✦";
+    document.title = title || DEFAULT_TITLE;
+    document.documentElement.lang = /^[a-z]{2}(?:-[A-Z]{2})?$/.test(site.language || "") ? site.language : "pt-BR";
+    const setMeta = (selector, attrs, value) => {
+      let el = $(selector);
+      if (!el) { el = document.createElement("meta"); Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v)); document.head.appendChild(el); }
+      if (value) el.setAttribute("content", value); else el.removeAttribute("content");
+    };
+    setMeta('meta[name="description"]', { name: "description" }, description);
+    setMeta('meta[property="og:title"]', { property: "og:title" }, title || document.title);
+    setMeta('meta[property="og:description"]', { property: "og:description" }, description);
+    const shareImage = safePath(site.shareImage)
+      ? (previews.get(site.shareImage) || new URL(site.shareImage, location.href).href)
+      : "";
+    setMeta('meta[property="og:image"]', { property: "og:image" }, shareImage);
+    setMeta('meta[property="og:type"]', { property: "og:type" }, "website");
+    setMeta('meta[name="twitter:card"]', { name: "twitter:card" }, shareImage ? "summary_large_image" : "summary");
+    setMeta('meta[name="twitter:title"]', { name: "twitter:title" }, title || document.title);
+    setMeta('meta[name="twitter:description"]', { name: "twitter:description" }, description);
+    setMeta('meta[name="twitter:image"]', { name: "twitter:image" }, shareImage);
+    let canonical = $('link[rel="canonical"]');
+    if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
+    if (typeof site.canonicalUrl === "string" && /^https?:\/\/[^\s"'<>]+$/i.test(site.canonicalUrl)) canonical.href = site.canonicalUrl;
+    else canonical.removeAttribute("href");
+    let icon = $('link[rel="icon"]');
+    if (!icon) { icon = document.createElement("link"); icon.rel = "icon"; document.head.appendChild(icon); }
+    if (safePath(site.icon)) { icon.href = previews.get(site.icon) || site.icon; }
+    else { icon.removeAttribute("href"); }
+
+    if (!siteStyle) { siteStyle = mk("style"); siteStyle.id = "ds-site-settings"; document.head.appendChild(siteStyle); }
+    const maxWidthValue = Number(site.maxWidth);
+    const maxWidth = Math.max(640, Math.min(1600, Number.isFinite(maxWidthValue) && maxWidthValue > 0 ? maxWidthValue : 980));
+    const gutter = Math.max(0, Math.min(64, Number.isFinite(Number(site.gutter)) ? Number(site.gutter) : 16));
+    const radius = Math.max(0, Math.min(48, Number.isFinite(Number(site.radius)) ? Number(site.radius) : 6));
+    const lineHeight = Math.max(1.2, Math.min(2, Number.isFinite(Number(site.lineHeight)) ? Number(site.lineHeight) : 1.6));
+    const transition = Math.max(0, Math.min(800, Number.isFinite(Number(site.transition)) ? Number(site.transition) : 250));
+    const fontChoices = {
+      "system": 'system-ui, -apple-system, "Segoe UI", sans-serif',
+      "trebuchet": '"Trebuchet MS", system-ui, sans-serif',
+      "cinzel": '"Cinzel", Georgia, serif',
+      "bodoni": '"Libre Bodoni", Georgia, serif',
+      "marcellus": '"Marcellus SC", Georgia, serif',
+      "georgia": 'Georgia, "Times New Roman", serif'
+    };
+    const bodyFont = fontChoices[site.bodyFont] || fontChoices.bodoni;
+    const headingFont = fontChoices[site.headingFont] || fontChoices.cinzel;
+    siteStyle.textContent = `:root{--maxw:${maxWidth}px;--site-gutter:${gutter}px;--radius:${radius}px;--site-line-height:${lineHeight};--site-transition:${transition}ms;--font-ui:${bodyFont};--font-display:${headingFont};--topbar-position:${site.stickyHeader === false ? "relative" : "sticky"}}main{padding-left:var(--site-gutter);padding-right:var(--site-gutter)}body{line-height:var(--site-line-height)}`;
+    if (site.home && document.getElementById(site.home) && window.DS) window.DS.setHome(site.home);
+  }
+  function applyResponsiveStyles() {
+    if (!responsiveStyle) { responsiveStyle = mk("style"); responsiveStyle.id = "ds-mobile-settings"; document.head.appendChild(responsiveStyle); }
+    const css = [];
+    Object.entries(content.ops).forEach(([id, op]) => {
+      if (!/^[A-Za-z0-9_-]+$/.test(id)) return;
+      const declarations = [];
+      if (op.hideMobile) declarations.push("display:none!important");
+      if (op.mobile && typeof op.mobile === "object") {
+        Object.entries(op.mobile).forEach(([prop, value]) => {
+          if (CSS_OK.has(prop) && okCss(prop, value)) declarations.push(`${prop}:${value}!important`);
+        });
+      }
+      if (declarations.length) css.push(`[data-b="${id}"]{${declarations.join(";")}}`);
+    });
+    responsiveStyle.textContent = `@media(max-width:720px){${css.join("")}}`;
+  }
+  function applyAnimations() {
+    if (!animationStyle) { animationStyle = mk("style"); animationStyle.id = "ds-element-animations"; document.head.appendChild(animationStyle); }
+    const effects = { fade: "ds-fade", rise: "ds-rise", slide: "ds-slide", zoom: "ds-zoom" };
+    const rules = [];
+    Object.entries(content.ops).forEach(([id, op]) => {
+      const animation = op.animation;
+      if (!/^[A-Za-z0-9_-]+$/.test(id) || !animation || !Object.prototype.hasOwnProperty.call(effects, animation.effect)) return;
+      const duration = Math.max(100, Math.min(3000, Number(animation.duration) || 500));
+      const delay = Math.max(0, Math.min(3000, Number(animation.delay) || 0));
+      const selector = `[data-b="${id}"]`;
+      rules.push(`${selector}{animation:${effects[animation.effect]} ${duration}ms ease ${delay}ms both}`);
+      rules.push(`@media(prefers-reduced-motion:reduce){${selector}{animation:none!important}}`);
+    });
+    animationStyle.textContent = `@keyframes ds-fade{from{opacity:0}to{opacity:1}}@keyframes ds-rise{from{opacity:0;translate:0 20px}to{opacity:1;translate:0 0}}@keyframes ds-slide{from{opacity:0;translate:-20px 0}to{opacity:1;translate:0 0}}@keyframes ds-zoom{from{opacity:0;scale:.92}to{opacity:1;scale:1}}${rules.join("")}`;
+  }
+  function applySharedStyle(styleId) {
+    const style = content.styles[styleId];
+    if (!style || !/^[A-Z]+$/.test(style.tag || "")) return;
+    nodes.forEach(e => {
+      const current = content.ops[e.dataset.b] || {};
+      if (current.style !== styleId || e.tagName !== style.tag) return;
+      const previous = current.s || {};
+      const next = Object.assign({}, previous);
+      Object.keys(previous).filter(prop => !STYLE_LAYOUT_PROPS.has(prop)).forEach(prop => { e.style.removeProperty(prop); delete next[prop]; });
+      Object.entries(style.s || {}).forEach(([prop, value]) => {
+        if (!STYLE_LAYOUT_PROPS.has(prop) && okCss(prop, value)) { next[prop] = value; e.style.setProperty(prop, value); }
+      });
+      if (Object.keys(next).length) current.s = next; else delete current.s;
+      if (style.bgimg && safePath(style.bgimg.path)) {
+        current.bgimg = Object.assign({}, style.bgimg);
+        setBgImg(e, current.bgimg);
+      } else {
+        delete current.bgimg;
+        setBgImg(e, null);
+      }
+      if (style.animation && ["fade", "rise", "slide", "zoom"].includes(style.animation.effect)) current.animation = Object.assign({}, style.animation);
+      else delete current.animation;
+      cleanOp(e.dataset.b);
+      syncSize(e);
+    });
+  }
+  function syncSharedStyle(e) {
+    const current = content.ops[e.dataset.b] || {}, styleId = current.style;
+    const style = styleId && content.styles[styleId];
+    if (!style || style.tag !== e.tagName) return;
+    style.s = Object.fromEntries(Object.entries(current.s || {}).filter(([prop]) => !STYLE_LAYOUT_PROPS.has(prop)));
+    if (current.bgimg && safePath(current.bgimg.path)) style.bgimg = Object.assign({}, current.bgimg);
+    else delete style.bgimg;
+    if (current.animation && ["fade", "rise", "slide", "zoom"].includes(current.animation.effect)) style.animation = Object.assign({}, current.animation);
+    else delete style.animation;
+    applySharedStyle(styleId);
+  }
+  function refreshStyleLibrary() {
+    const box = $("#adm-styles", panel); if (!box) return;
+    box.innerHTML = "";
+    const styles = Object.entries(content.styles).filter(([, style]) => style && /^[A-Z]+$/.test(style.tag || ""));
+    if (!styles.length) box.appendChild(mk("p", "adm-small", "Salve a aparência de um item para reutilizá-la em outros itens do mesmo tipo."));
+    styles.forEach(([id, style]) => {
+      const item = mk("div", "adm-style");
+      const label = mk("span"); label.textContent = `${style.name || "Estilo"} · ${style.tag.toLowerCase()}`;
+      item.appendChild(label);
+      item.appendChild(btn("Aplicar", "", () => {
+        if (!sel) { note("Selecione primeiro um item."); return; }
+        if (!attachSharedStyle(sel, id)) { note("Este estilo só pode ser aplicado a itens do tipo " + style.tag.toLowerCase() + "."); return; }
+        markDirty(); buildProps(); refreshStyleLibrary();
+      }));
+      item.appendChild(btn("Renomear", "", () => {
+        const name = prompt("Nome do estilo:", style.name || "Estilo");
+        if (!name || !name.trim()) return;
+        style.name = name.trim().slice(0, 60); markDirty(); buildProps(); refreshStyleLibrary();
+      }));
+      item.appendChild(btn("Excluir", "", () => {
+        if (!confirm("Excluir o estilo compartilhado? Os itens vinculados manterão a aparência atual.")) return;
+        nodes.forEach(e => { const current = content.ops[e.dataset.b]; if (current && current.style === id) delete current.style; });
+        delete content.styles[id]; markDirty(); buildProps(); refreshStyleLibrary();
+      }, "danger"));
+      box.appendChild(item);
+    });
+  }
+  function attachSharedStyle(e, styleId) {
+    const style = content.styles[styleId], current = op(e.dataset.b);
+    if (!style || style.tag !== e.tagName) return false;
+    current.style = styleId;
+    applySharedStyle(styleId);
+    return true;
+  }
   function applyAll() {
     // 1. itens adicionados
     Object.entries(content.add).forEach(([id, spec]) => { const e = createNode(id, spec); if (e) nodes.set(id, e); });
@@ -287,7 +493,8 @@
       const n = nodes.get(id);
       if (n && !n.parentNode) { const p = nodes.get(spec.parent) || $(".page.active") || $(".page"); p && p.appendChild(n); }
     });
-    fixFree(); applyVars(); applyBg();
+    Object.keys(content.styles).forEach(applySharedStyle);
+    fixFree(); applyVars(); applyBg(); applySiteSettings(); applyResponsiveStyles(); applyAnimations(); refreshYouTubeThumbnails();
   }
 
   /* ---------- migração do formato antigo ---------- */
@@ -336,7 +543,7 @@
     syncLinked(); markDirty(); buildProps();
   }
   function clearLinks() { linked.forEach(n => n.classList.remove("ds-linked")); linked.clear(); }
-  function markDirty() { syncLinked(); updateStatus(); scheduleCommit(); refreshTreeSoon(); }
+  function markDirty() { syncLinked(); applyResponsiveStyles(); applyAnimations(); updateStatus(); scheduleCommit(); refreshTreeSoon(); }
   let treeTimer = null;
   function refreshTreeSoon() { clearTimeout(treeTimer); treeTimer = setTimeout(() => { refreshTree(); refreshSections(); }, 160); }
   function setS(e, prop, val) {
@@ -344,7 +551,7 @@
     if (val === null || val === undefined || val === "") { delete o.s[prop]; e.style.removeProperty(prop); }
     else { if (!okCss(prop, val)) return; o.s[prop] = val; e.style.setProperty(prop, val); }
     if (!Object.keys(o.s).length) delete o.s;
-    cleanOp(id); fixFree(); syncSize(e); markDirty(); placeBar();
+    cleanOp(id); syncSharedStyle(e); fixFree(); syncSize(e); markDirty(); placeBar();
   }
   function recordOrder(container) {
     if (!container || !container.dataset.b) return;
@@ -401,6 +608,7 @@
     pickImage(f => {
       const path = registerImage(f, pageOf(e));
       const o = op(e.dataset.b), oi = origInfo.get(e.dataset.b);
+      delete o.thumbnail;
       o.img = Object.assign({ path }, oi ? { h: oi.h } : {});
       setImage(e, o.img); refreshEditable(); buildProps(); markDirty(); placeBar();
     });
@@ -412,7 +620,7 @@
       const btnLike = !prev.path && e.matches("button,[role=button],.stone-btn,.btn,.card,.gate-card,a");
       o.bgimg = { path, dim: prev.dim || 0, size: prev.size || (btnLike ? "stretch" : "cover") };
       if (prev.art || btnLike) o.bgimg.art = true;
-      setBgImg(e, o.bgimg); buildProps(); markDirty();
+      setBgImg(e, o.bgimg); syncSharedStyle(e); buildProps(); markDirty();
     });
   }
 
@@ -746,13 +954,16 @@
     if (spec.t != null) { op(id).t = { v: spec.t }; e.innerHTML = sanitize(spec.t); }
     if (spec.s) { op(id).s = {}; Object.entries(spec.s).forEach(([p, v]) => { if (okCss(p, v)) { op(id).s[p] = v; e.style.setProperty(p, v); } }); if (!Object.keys(op(id).s).length) delete op(id).s; }
     if (spec.img) { op(id).img = spec.img; setImage(e, spec.img); }
+    if (spec.thumbnail === "youtube") op(id).thumbnail = "youtube";
     if (spec.bgimg) { op(id).bgimg = spec.bgimg; setBgImg(e, spec.bgimg); }
     if (spec.sw) { op(id).sw = { label: String(spec.sw.label || "").slice(0, 60), hex: spec.sw.hex }; applySw(e, op(id).sw); }
+    if (typeof spec.style === "string" && content.styles[spec.style] && content.styles[spec.style].tag === e.tagName) op(id).style = spec.style;
     if (spec.fit && FITS.includes(spec.fit)) { op(id).fit = spec.fit; const im = $(":scope > .slot-img", e); if (im) im.style.objectFit = spec.fit; }
     if (spec.frame) { op(id).frame = Object.assign({}, spec.frame); setFrame(e, spec.frame); }
     syncSize(e);
     cleanOp(id);
     if (refEl) parentEl.insertBefore(e, refEl); else parentEl.appendChild(e);
+    if (op(id).style) applySharedStyle(op(id).style);
     (spec.children || []).forEach(c => spawn(c, e, null));
     recordOrder(parentEl);
     if (spec.sw) window.DS && window.DS.renderSwatches();
@@ -764,6 +975,8 @@
     CSS_OK.forEach(p => { const v = e.style.getPropertyValue(p); if (v) spec.s[p] = v; });
     const o = content.ops[e.dataset.b] || {};
     if (o.img) spec.img = { path: o.img.path };
+    if (o.thumbnail === "youtube") spec.thumbnail = "youtube";
+    if (o.style) spec.style = o.style;
     if (o.fit) spec.fit = o.fit;
     if (o.frame) spec.frame = Object.assign({}, o.frame);
     if (o.bgimg) spec.bgimg = Object.assign({}, o.bgimg);
@@ -807,6 +1020,18 @@
     text: () => ({ tag: "p", t: "Novo texto. Clique para editar." }),
     title: () => ({ tag: "h2", t: "Novo título" }),
     image: () => ({ tag: "div", cls: "img-slot", t: "Clique em 📷 para enviar a imagem", s: { "min-height": "180px" } }),
+    animation: () => ({ tag: "div", cls: "img-slot ds-animation", t: "Envie um GIF animado para mostrar a animação", s: { "min-height": "180px" } }),
+    divider: () => ({ tag: "hr", cls: "ds-divider" }),
+    list: () => ({ tag: "ul", cls: "ds-list", children: [
+      { tag: "li", t: "Primeiro item da lista" },
+      { tag: "li", t: "Segundo item da lista" },
+      { tag: "li", t: "Terceiro item da lista" }
+    ] }),
+    callout: () => ({ tag: "div", cls: "callout", children: [{ tag: "p", t: "Destaque ou observação importante." }] }),
+    video: () => ({ tag: "div", cls: "ds-video-block", children: [
+      { tag: "div", cls: "img-slot ds-video-poster", t: "Miniatura do YouTube (adicione o link)", s: { "aspect-ratio": "16 / 9", "min-height": "180px" } },
+      { tag: "a", cls: "ds-video-link", attrs: { href: "#" }, t: "Assistir no YouTube" }
+    ] }),
     button: () => ({ tag: "a", cls: "btn btn-primary", attrs: { href: "#" }, t: "Botão" }),
     box: () => ({ tag: "div", cls: "ds-box", children: [{ tag: "p", t: "Texto da caixa" }] }),
     cols: () => PRESETS.cols2(),
@@ -826,10 +1051,15 @@
     else if (sel && !isProtected(sel)) { parent = sel.parentElement.closest("[data-b]"); ref = nextData(sel); }
     else parent = sel && canContain(sel) ? sel : ($(".page.active") || $(".page"));
     const e = spawn(PRESETS[type](), parent, ref);
-    fixFree(); refreshEditable(); select(e); markDirty();
+    let target = e;
+    if (type === "video") {
+      const poster = $(".ds-video-poster", e);
+      if (poster) { op(poster.dataset.b).thumbnail = "youtube"; target = poster; }
+    }
+    fixFree(); refreshEditable(); refreshYouTubeThumbnails(); select(target); markDirty();
     e.scrollIntoView({ block: "nearest", behavior: "smooth" });
     showTab("item");
-    if (type === "image") chooseImageFor(e);
+    if (type === "image" || type === "animation") chooseImageFor(e);
     if (type === "hero") chooseBgFor(e);
   }
 
@@ -850,8 +1080,8 @@
         <button type="button" id="adm-viewsite" title="Abrir o site em outra aba (Alt+V)">↗</button>
       </div>
       <div class="adm-tabs" id="adm-tabs">
-        <button type="button" data-tab="item" class="on">Item</button><button type="button" data-tab="add">＋ Adicionar</button><button type="button" data-tab="tree" title="Alt+E">Elementos</button>
-        <button type="button" data-tab="sections" title="Alt+S">Seções</button><button type="button" data-tab="page">Página</button><button type="button" data-tab="site">Site</button>
+        <button type="button" data-tab="item" class="on">Item</button><button type="button" data-tab="add">Build</button><button type="button" data-tab="tree" title="Alt+E">Elementos</button>
+        <button type="button" data-tab="sections" title="Alt+S">Seções</button><button type="button" data-tab="page">Página</button><button type="button" data-tab="site">Sites</button>
       </div>
       <div class="adm-body">
         <div class="adm-pane on" data-pane="item">
@@ -867,11 +1097,15 @@
           <div class="adm-grid" id="adm-add">
             <button type="button" data-add="text">Texto</button><button type="button" data-add="title">Título</button>
             <button type="button" data-add="image">Imagem</button><button type="button" data-add="button">Botão/link</button>
+            <button type="button" data-add="video">Vídeo / YouTube</button><button type="button" data-add="animation">Animação (GIF)</button>
+            <button type="button" data-add="divider">Divisor</button><button type="button" data-add="list">Lista</button>
+            <button type="button" data-add="callout">Destaque</button>
             <button type="button" data-add="box">Caixa</button><button type="button" data-add="cols2">2 colunas</button>
             <button type="button" data-add="cols3">3 colunas</button><button type="button" data-add="cols4">4 colunas</button>
             <button type="button" data-add="hero">Imagem + texto</button><button type="button" data-add="icon">Ícone</button>
             <button type="button" data-add="space">Espaço</button><button type="button" data-add="anchor">⚓ Âncora</button><button type="button" data-add="swatch">🎨 Caixa de cor</button>
           </div></details>
+          <details open><summary>Estilos compartilhados</summary><div id="adm-styles"></div></details>
         </div>
         <div class="adm-pane" data-pane="tree"><p class="adm-small">Todos os itens da página. Clique para selecionar, duplo clique para editar, arraste para reorganizar (solte no meio de uma caixa para colocar dentro) e use 👁 para ocultar.</p><div id="adm-tree" class="adm-tree"></div></div>
         <div class="adm-pane" data-pane="sections"><div id="adm-sections" class="adm-sections"></div></div>
@@ -896,7 +1130,7 @@
     document.body.appendChild(panel);
 
     refreshPageSelect();
-    $("#adm-tabs", panel).addEventListener("click", ev => { const b = ev.target.closest("[data-tab]"); if (b) showTab(b.dataset.tab); });
+    $("#adm-tabs", panel).addEventListener("click", ev => { const b = ev.target.closest("[data-tab]"); if (b) { showTab(b.dataset.tab); if (b.dataset.tab === "site") buildSiteSettings(); if (b.dataset.tab === "add") refreshStyleLibrary(); } });
     $("#adm-undo", panel).addEventListener("click", undo);
     $("#adm-redo", panel).addEventListener("click", redo);
     $("#adm-viewsite", panel).addEventListener("click", viewSite);
@@ -911,6 +1145,8 @@
       row.appendChild(inp); box.appendChild(row);
     });
     $("#adm-colors-reset", panel).addEventListener("click", () => { content.vars = {}; applyVars(); syncColors(); markDirty(); });
+    buildSiteSettings();
+    refreshStyleLibrary();
 
     $("#adm-bg-up", panel).addEventListener("click", () => pickImage(f => {
       const page = currentPage();
@@ -984,6 +1220,87 @@
     });
   }
   function syncColors() { $$(".adm-color input", panel).forEach(i => { i.value = content.vars[i.dataset.var] || cleanVars[i.dataset.var] || "#000000"; }); }
+  function buildSiteSettings() {
+    const box = $("#adm-site", panel); if (!box) return;
+    box.innerHTML = "";
+    const site = content.site || (content.site = {});
+    const group = (title, intro) => {
+      const d = mk("details", "adm-sub"); d.open = true; d.appendChild(mk("summary", "", title));
+      if (intro) d.appendChild(mk("p", "adm-small", intro));
+      box.appendChild(d); return d;
+    };
+    const set = (key, value) => {
+      if (value === "" || value === null || value === undefined) delete site[key]; else site[key] = value;
+      applySiteSettings(); markDirty();
+    };
+    const text = (parent, title, key, placeholder, multiline, maxLength) => {
+      const input = mk(multiline ? "textarea" : "input");
+      if (!multiline) input.type = "text";
+      input.value = typeof site[key] === "string" ? site[key] : "";
+      input.placeholder = placeholder || "";
+      if (maxLength) input.maxLength = maxLength;
+      input.addEventListener("input", () => set(key, input.value));
+      parent.appendChild(row(title, input));
+    };
+    const select = (parent, title, key, options, fallback) => {
+      const value = site[key] || fallback || options[0][0];
+      parent.appendChild(row(title, selInput(options, value, v => set(key, v))));
+    };
+    const range = (parent, title, key, min, max, step, unit, fallback) => {
+      const wrap = mk("span", "adm-rn");
+      const input = mk("input"); input.type = "range"; input.min = min; input.max = max; input.step = step;
+      input.value = site[key] === undefined ? fallback : site[key];
+      const output = mk("em", "", input.value + unit); wrap.append(input, output);
+      input.addEventListener("input", () => { const value = Number(input.value); output.textContent = value + unit; set(key, value); });
+      parent.appendChild(row(title, wrap));
+    };
+    const imageControl = (parent, title, key) => {
+      const controls = mk("div", "adm-row");
+      controls.appendChild(btn("📷 Escolher", "", () => pickImage(file => {
+        site[key] = registerImage(file, "site"); applySiteSettings(); buildSiteSettings(); markDirty();
+      })));
+      if (safePath(site[key])) controls.appendChild(btn("Remover", "", () => { delete site[key]; applySiteSettings(); buildSiteSettings(); markDirty(); }, "danger"));
+      parent.appendChild(mk("b", "adm-sub", title)); parent.appendChild(controls);
+      parent.appendChild(mk("p", "adm-small", safePath(site[key]) ? site[key] : "Nenhuma imagem escolhida."));
+    };
+
+    const identity = group("Identidade e compartilhamento", "Configurações globais publicadas com o site.");
+    text(identity, "Título do site", "title", document.title, false, 120);
+    text(identity, "Descrição (SEO)", "description", "Resumo que aparece em buscadores e compartilhamentos", true, 300);
+    const canonical = mk("input"); canonical.type = "text"; canonical.placeholder = "https://seudominio.com/";
+    canonical.value = typeof site.canonicalUrl === "string" ? site.canonicalUrl : "";
+    const canonicalHint = mk("p", "adm-small", "Informe uma URL https:// ou http:// completa, se houver domínio próprio.");
+    canonical.addEventListener("input", () => {
+      const value = canonical.value.trim();
+      if (!value || /^https?:\/\/[^\s"'<>]+$/i.test(value)) { canonicalHint.textContent = ""; set("canonicalUrl", value); }
+      else canonicalHint.textContent = "URL inválida. Inclua http:// ou https://.";
+    });
+    identity.appendChild(row("URL canônica", canonical));
+    identity.appendChild(canonicalHint);
+    text(identity, "Nome no cabeçalho", "brandName", "Triple Crusade", false, 80);
+    text(identity, "Símbolo no cabeçalho", "brandIcon", "✦", false, 8);
+    select(identity, "Idioma", "language", [["pt-BR", "Português (Brasil)"], ["en", "English"], ["es", "Español"], ["fr", "Français"], ["ja", "日本語"]], "pt-BR");
+    imageControl(identity, "Ícone do site (favicon)", "icon");
+    imageControl(identity, "Imagem de compartilhamento", "shareImage");
+
+    const layout = group("Layout global", "Ajuste largura, espaçamento e identidade visual em todas as páginas.");
+    select(layout, "Página inicial", "home", PAGES(), "home");
+    range(layout, "Largura máxima", "maxWidth", 640, 1600, 20, "px", 980);
+    range(layout, "Margem lateral", "gutter", 0, 48, 2, "px", 16);
+    range(layout, "Arredondamento padrão", "radius", 0, 32, 1, "px", 6);
+    range(layout, "Altura entre linhas", "lineHeight", 1.2, 2, 0.05, "", 1.6);
+    range(layout, "Duração da transição", "transition", 0, 800, 25, "ms", 250);
+    select(layout, "Fonte do texto", "bodyFont", [["bodoni", "Libre Bodoni"], ["system", "Sistema"], ["trebuchet", "Trebuchet MS"], ["georgia", "Georgia"], ["marcellus", "Marcellus SC"], ["cinzel", "Cinzel"]], "bodoni");
+    select(layout, "Fonte dos títulos", "headingFont", [["cinzel", "Cinzel"], ["system", "Sistema"], ["trebuchet", "Trebuchet MS"], ["georgia", "Georgia"], ["marcellus", "Marcellus SC"], ["bodoni", "Libre Bodoni"]], "cinzel");
+    const sticky = mk("input"); sticky.type = "checkbox"; sticky.checked = site.stickyHeader !== false;
+    sticky.addEventListener("change", () => set("stickyHeader", sticky.checked));
+    layout.appendChild(row("Cabeçalho fixo ao rolar", sticky));
+    box.appendChild(btn("Restaurar configurações globais", "", () => {
+      if (!confirm("Restaurar título, identidade e layout globais aos padrões?")) return;
+      content.site = {}; applySiteSettings(); buildSiteSettings(); markDirty();
+    }, "danger"));
+    box.appendChild(mk("p", "adm-small", "A aba Build contém os blocos para montar páginas. Em Página você define fundos e paleta; estas opções ajustam o site inteiro. Domínio próprio e publicação continuam configurados no GitHub Pages."));
+  }
   function refreshPageControls() {
     if (!panel) return;
     $("#adm-goto", panel).value = currentPage();
@@ -1113,7 +1430,12 @@
     wrap.appendChild(i); wrap.appendChild(x); return wrap;
   }
   function selInput(opts, cur, onch) {
-    const s = mk("select"); s.innerHTML = opts.map(([v, l]) => `<option value="${v}">${l}</option>`).join(""); s.value = cur;
+    const s = mk("select");
+    opts.forEach(([value, label]) => {
+      const option = document.createElement("option");
+      option.value = String(value); option.textContent = String(label); s.appendChild(option);
+    });
+    s.value = cur == null ? "" : String(cur);
     s.addEventListener("change", () => onch(s.value)); return s;
   }
   function btn(txt, title, fn, cls) { const b = mk("button", cls || "", txt); b.type = "button"; if (title) b.title = title; b.addEventListener("click", ev => { ev.preventDefault(); fn(ev); }); return b; }
@@ -1260,11 +1582,25 @@
   }
   function imageSection(e, o, id) {
     const s = section("Imagem", true);
+    if (e.matches(".ds-video-poster") || e.matches(".video-asset .pk-slot")) {
+      s.appendChild(row("Miniatura do vídeo", selInput([["custom", "Imagem enviada"], ["youtube", "Automática do YouTube"]],
+        o.thumbnail === "youtube" ? "youtube" : "custom", mode => {
+          const oo = op(id);
+          if (mode === "youtube") oo.thumbnail = "youtube"; else delete oo.thumbnail;
+          setImage(e, mode === "youtube" ? null : oo.img || null);
+          refreshYouTubeThumbnail(e); markDirty(); buildProps();
+        })));
+    }
     const r = mk("div", "adm-row");
     r.appendChild(btn("📷 " + (o.img ? "Trocar imagem" : "Enviar imagem"), "", () => chooseImageFor(e), "primary"));
     if (o.img) r.appendChild(btn("Remover", "", () => { delete op(id).img; delete op(id).frame; cleanOp(id); setImage(e, null); refreshEditable(); buildProps(); markDirty(); }, "danger"));
     s.appendChild(r);
-    if (!o.img) { s.appendChild(mk("p", "adm-small", "Envie uma imagem para liberar tamanho, cantos, zoom e enquadramento.")); return s; }
+    if (!o.img) {
+      s.appendChild(mk("p", "adm-small", o.thumbnail === "youtube"
+        ? "A miniatura aparece quando houver um link válido do YouTube no mesmo bloco. Você também pode escolher uma imagem enviada."
+        : "Envie uma imagem para liberar tamanho, cantos, zoom e enquadramento."));
+      return s;
+    }
     s.appendChild(mk("b", "adm-sub", "Tamanho"));
     s.appendChild(row("Largura", dimInput(e, "width", "w")));
     s.appendChild(row("Altura", dimInput(e, "height", "h")));
@@ -1334,7 +1670,7 @@
     }
     if (e.tagName === "A") {
       const i = mk("input"); i.type = "text"; i.placeholder = "https://… · #secao · mailto: · tel: · section:next · scrollpoint:next · copy:texto · file:nome.pdf (||blank = nova aba)"; i.value = op(id).href || e.getAttribute("href") || "";
-      i.addEventListener("input", () => { if (safeHref(i.value)) { setHref(e, i.value); op(id).href = i.value; markDirty(); } });
+      i.addEventListener("input", () => { if (safeHref(i.value)) { setHref(e, i.value); op(id).href = i.value; refreshYouTubeThumbnails(); markDirty(); } });
       box.appendChild(row("Link (destino)", i));
     }
     if (e.matches(".ds-anchor") && e.dataset.added) {
@@ -1450,6 +1786,35 @@
 
     // aparência
     const st = section("Aparência", true);
+    if (!isProtected(e)) {
+      const styleChoices = [["", "Independente"]].concat(Object.entries(content.styles)
+        .filter(([, shared]) => shared && shared.tag === e.tagName)
+        .map(([styleId, shared]) => [styleId, shared.name || "Estilo"]));
+      st.appendChild(row("Estilo compartilhado", selInput(styleChoices, o.style || "", styleId => {
+        if (styleId) attachSharedStyle(e, styleId);
+        else { delete op(id).style; cleanOp(id); }
+        markDirty(); buildProps(); refreshStyleLibrary();
+      })));
+      const acts = mk("div", "adm-row");
+      acts.appendChild(btn("Criar estilo", "", () => {
+        const name = prompt("Nome do estilo compartilhado:", "Novo estilo");
+        if (!name || !name.trim()) return;
+        const styleId = uid();
+        content.styles[styleId] = {
+          name: name.trim().slice(0, 60),
+          tag: e.tagName,
+          s: Object.fromEntries(Object.entries(o.s || {}).filter(([prop]) => !STYLE_LAYOUT_PROPS.has(prop))),
+          ...(o.bgimg ? { bgimg: Object.assign({}, o.bgimg) } : {}),
+          ...(o.animation ? { animation: Object.assign({}, o.animation) } : {})
+        };
+        op(id).style = styleId;
+        applySharedStyle(styleId); markDirty(); buildProps(); refreshStyleLibrary();
+      }, "primary"));
+      if (o.style && content.styles[o.style]) acts.appendChild(btn("Atualizar estilo", "", () => {
+        syncSharedStyle(e); markDirty(); buildProps(); refreshStyleLibrary();
+      }));
+      st.appendChild(acts);
+    }
     st.appendChild(row("Cor do texto", colorInput(e, "color")));
     st.appendChild(row("Cor de fundo", colorInput(e, "background-color")));
     st.appendChild(row("Tamanho da letra (px)", numInput(e, "font-size", "px", { min: 6, max: 200 })));
@@ -1464,6 +1829,64 @@
     st.appendChild(row("Opacidade (%)", numInput(e, "opacity", "", { min: 0, max: 100, scale: 100, fromComputed: false })));
     st.appendChild(btn("Restaurar aparência original", "", () => { Object.keys((content.ops[id] || {}).s || {}).forEach(p => e.style.removeProperty(p)); if (content.ops[id]) delete content.ops[id].s; cleanOp(id); fixFree(); syncSize(e); buildProps(); markDirty(); placeBar(); }));
     box.appendChild(st);
+
+    if (!isProtected(e)) {
+      const animation = section("Animação", false);
+      animation.appendChild(row("Efeito", selInput([["", "Nenhum"], ["fade", "Aparecer"], ["rise", "Subir"], ["slide", "Deslizar"], ["zoom", "Zoom"]],
+        o.animation && o.animation.effect || "", effect => {
+          if (!effect) delete op(id).animation;
+          else op(id).animation = Object.assign({ duration: 500, delay: 0 }, op(id).animation, { effect });
+          cleanOp(id); applyAnimations(); markDirty(); buildProps();
+        })));
+      if (o.animation && ["fade", "rise", "slide", "zoom"].includes(o.animation.effect)) {
+        [["Duração (ms)", "duration", 100, 3000], ["Atraso (ms)", "delay", 0, 3000]].forEach(([title, prop, min, max]) => {
+          const wrap = mk("span", "adm-rn");
+          const input = mk("input"); input.type = "range"; input.min = min; input.max = max; input.step = 50;
+          input.value = Math.max(min, Math.min(max, Number(o.animation[prop]) || (prop === "duration" ? 500 : 0)));
+          const output = mk("em", "", input.value + "ms"); wrap.append(input, output);
+          input.addEventListener("input", () => {
+            op(id).animation[prop] = Number(input.value); output.textContent = input.value + "ms";
+            applyAnimations(); markDirty();
+          });
+          animation.appendChild(row(title, wrap));
+        });
+        animation.appendChild(mk("p", "adm-small", "A animação respeita a preferência de movimento reduzido do dispositivo."));
+      }
+      box.appendChild(animation);
+
+      const mobile = section("Mobile", false);
+      const manual = !!o.mobile || !!o.hideMobile;
+      mobile.appendChild(mk("p", "adm-small", "Substitua dimensões e alinhamento automaticamente ajustados em telas de até 720px."));
+      mobile.appendChild(row("Ajustes manuais", (() => {
+        const mode = selInput([["auto", "Automático"], ["manual", "Manual"]], manual ? "manual" : "auto", value => {
+          if (value === "manual") op(id).mobile = op(id).mobile || {};
+          else { delete op(id).mobile; delete op(id).hideMobile; cleanOp(id); }
+          applyResponsiveStyles(); markDirty(); buildProps();
+        });
+        return mode;
+      })()));
+      if (manual) {
+        const mobileOptions = [
+          ["width", "Largura", [["", "Automático"], ["100%", "100%"], ["90%", "90%"], ["80%", "80%"], ["75%", "75%"], ["50%", "50%"]]],
+          ["font-size", "Tamanho do texto", [["", "Automático"], ["14px", "14px"], ["16px", "16px"], ["18px", "18px"], ["20px", "20px"], ["24px", "24px"], ["28px", "28px"]]],
+          ["padding", "Espaço interno", [["", "Automático"], ["0px", "0px"], ["8px", "8px"], ["12px", "12px"], ["16px", "16px"], ["24px", "24px"], ["32px", "32px"]]],
+          ["text-align", "Alinhamento", [["", "Automático"], ["left", "Esquerda"], ["center", "Centro"], ["right", "Direita"]]]
+        ];
+        mobileOptions.forEach(([prop, title, choices]) => {
+          const value = o.mobile && o.mobile[prop] || "";
+          mobile.appendChild(row(title, selInput(choices, value, next => {
+            const settings = op(id).mobile || (op(id).mobile = {});
+            if (next) settings[prop] = next; else delete settings[prop];
+            if (!Object.keys(settings).length) delete op(id).mobile;
+            cleanOp(id); applyResponsiveStyles(); markDirty();
+          })));
+        });
+        const hidden = mk("input"); hidden.type = "checkbox"; hidden.checked = !!o.hideMobile;
+        hidden.addEventListener("change", () => { const settings = op(id); if (hidden.checked) settings.hideMobile = 1; else delete settings.hideMobile; cleanOp(id); applyResponsiveStyles(); markDirty(); });
+        mobile.appendChild(row("Ocultar em telas pequenas", hidden));
+      }
+      box.appendChild(mobile);
+    }
   }
 
   /* ============================================================

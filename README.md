@@ -20,13 +20,18 @@
    - **Atalhos:** Ctrl+D duplica · Delete exclui · Esc sai do texto e depois desmarca · Alt+↑/↓ move na ordem.
    - Texto: clique de novo e digite. Ao arrastar, segure Alt para soltar DENTRO de uma caixa.
    - Itens originais apagados ficam escondidos e podem ser restaurados em "Página". Não existe desfazer: "Descartar" volta ao último salvo.
-   - **Abas do painel:** Item · Adicionar · Elementos (árvore com todos os itens: clique seleciona, arraste reorganiza, 👁 oculta) · Seções (criar, renomear, duplicar, excluir páginas e escolher a página inicial) · Página (fundo e cores).
+   - **Build:** adicione textos, imagens/GIFs, links, vídeos do YouTube, listas, destaques, divisores, caixas e colunas. Arraste os itens na página ou na árvore de Elementos para reorganizar; use 👁 para ocultar.
+   - **Estilos compartilhados:** em Item → Aparência, salve a aparência e o fundo como estilo. Reutilize em outros itens do mesmo tipo; edições de aparência atualizam os itens vinculados.
+   - **Mobile:** em Item → Mobile, altere largura, texto, espaçamento e alinhamento em telas pequenas ou oculte o item no celular. A prévia de celular/tablet ajuda a conferir o resultado.
+   - **Sites:** configure título, descrição para SEO/compartilhamento, idioma, nome e símbolo do cabeçalho, favicon, imagem de compartilhamento, página inicial, largura, fontes, espaçamento e cabeçalho fixo.
+   - **Abas do painel:** Item · Build · Elementos (árvore com todos os itens: clique seleciona, arraste reorganiza, 👁 oculta) · Seções (criar, renomear, duplicar, excluir páginas e escolher a página inicial) · Página (fundo e cores) · Sites (configurações gerais).
    - **Desfazer/refazer:** Ctrl+Z / Ctrl+Shift+Z. Copiar/recortar/colar itens: Ctrl+C / Ctrl+X / Ctrl+V. Salvar: Ctrl+S.
    - **Âncoras:** bloco ⚓ Âncora; links aceitam #nome, section:next, scrollpoint:next, copy:texto, tel:, mailto:, file:nome.pdf e ||blank (nova aba).
 4. Clique em Salvar. Tudo vai para o GitHub (imagens em imgs/<página>/ e o layout em content.json). O site atualiza em 1–2 minutos.
 
 ## Press Kit
 Página `#presskit` montada a partir do PDF. Campos marcados [PREENCHER]: data de lançamento, preço, público-alvo, redes sociais e links de download. Logo do estúdio, fotos da equipe e mídia são caixas de imagem: clique e use 📷.
+Na aba **＋ Adicionar**, use **Vídeo / YouTube** para criar um bloco com miniatura automática (cole o link no item “Assistir no YouTube”) ou selecione uma imagem enviada como miniatura. **Animação (GIF)** permite enviar um GIF animado como imagem.
 
 ## Arte de botão e fundo por página
 - **A imagem é o botão:** selecione um botão/cartão → aba Item → "Imagem de fundo" → Escolher fundo. A imagem estica e vira o botão (continua clicável). Desmarque "A imagem é o botão" para voltar ao texto sobre imagem.
