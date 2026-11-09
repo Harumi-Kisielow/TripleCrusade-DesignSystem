@@ -1230,6 +1230,137 @@
         "y": 39,
         "x": 47
       }
+    },
+    "nmw9lqeq4ucf7": {},
+    "nmw9lqeq4wj87": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(85, 115, 20)"
+      },
+      "sw": {
+        "label": "Verde musgo",
+        "hex": "#557314"
+      }
+    },
+    "nmw9lqeq6pqyc": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(113, 115, 63)"
+      },
+      "sw": {
+        "label": "Oliva",
+        "hex": "#71733F"
+      }
+    },
+    "nmw9lqeq6cjfs": {
+      "s": {
+        "color": "rgb(0, 0, 0)",
+        "background-color": "rgb(166, 150, 141)"
+      },
+      "sw": {
+        "label": "Cinza-bege",
+        "hex": "#A6968D"
+      }
+    },
+    "nmw9lqeq8e2ab": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(101, 91, 88)"
+      },
+      "sw": {
+        "label": "Cinza-terra",
+        "hex": "#655B58"
+      }
+    },
+    "nmw9lqeq93qzu": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(13, 13, 13)"
+      },
+      "sw": {
+        "label": "Preto",
+        "hex": "#0D0D0D"
+      }
+    },
+    "nmw9lqjwcxmrc": {
+      "t": {
+        "v": "Coloração monocromática com alguns pontos de contraste. HEX do GDD."
+      }
+    },
+    "nmw9lqovrr032": {
+      "t": {
+        "v": "Paleta do mundo (Ruínas, 1ª fase)"
+      }
+    },
+    "nmw9lqruknc11": {
+      "t": {
+        "v": "Paleta do mundo (Ruínas, 1ª fase)"
+      }
+    },
+    "nmw9lqutsgnm2": {
+      "t": {
+        "v": "Coloração monocromática com alguns pontos de contraste. HEX do GDD."
+      }
+    },
+    "nmw9lr0b3lhm0": {},
+    "nmw9lr0b3gor6": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(85, 115, 20)"
+      },
+      "sw": {
+        "label": "Verde musgo",
+        "hex": "#557314"
+      }
+    },
+    "nmw9lr0b4jjow": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(113, 115, 63)"
+      },
+      "sw": {
+        "label": "Oliva",
+        "hex": "#71733F"
+      }
+    },
+    "nmw9lr0b5eaom": {
+      "s": {
+        "color": "rgb(0, 0, 0)",
+        "background-color": "rgb(166, 150, 141)"
+      },
+      "sw": {
+        "label": "Cinza-bege",
+        "hex": "#A6968D"
+      }
+    },
+    "nmw9lr0b7ku38": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(101, 91, 88)"
+      },
+      "sw": {
+        "label": "Cinza-terra",
+        "hex": "#655B58"
+      }
+    },
+    "nmw9lr0b82gzy": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(13, 13, 13)"
+      },
+      "sw": {
+        "label": "Preto",
+        "hex": "#0D0D0D"
+      }
+    },
+    "b137": {
+      "hide": 1
+    },
+    "b144": {
+      "hide": 1
+    },
+    "b145": {
+      "hide": 1
     }
   },
   "order": {
@@ -1320,7 +1451,13 @@
       "b125",
       "b126",
       "b127",
+      "nmw9lqovrr032",
+      "nmw9lqjwcxmrc",
+      "nmw9lqeq4ucf7",
       "b133",
+      "nmw9lqruknc11",
+      "nmw9lqutsgnm2",
+      "nmw9lr0b3lhm0",
       "b134",
       "b135",
       "b136",
@@ -1452,6 +1589,20 @@
       "b12",
       "b11",
       "b13"
+    ],
+    "nmw9lqeq4ucf7": [
+      "nmw9lqeq4wj87",
+      "nmw9lqeq6pqyc",
+      "nmw9lqeq6cjfs",
+      "nmw9lqeq8e2ab",
+      "nmw9lqeq93qzu"
+    ],
+    "nmw9lr0b3lhm0": [
+      "nmw9lr0b3gor6",
+      "nmw9lr0b4jjow",
+      "nmw9lr0b5eaom",
+      "nmw9lr0b7ku38",
+      "nmw9lr0b82gzy"
     ]
   },
   "add": {
@@ -1656,6 +1807,102 @@
       "cls": "img-slot pk-shot",
       "attrs": {},
       "parent": "b490"
+    },
+    "nmw9lqeq4ucf7": {
+      "tag": "div",
+      "cls": "swatches",
+      "attrs": {},
+      "parent": "b101"
+    },
+    "nmw9lqeq4wj87": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9lqeq4ucf7"
+    },
+    "nmw9lqeq6pqyc": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9lqeq4ucf7"
+    },
+    "nmw9lqeq6cjfs": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9lqeq4ucf7"
+    },
+    "nmw9lqeq8e2ab": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9lqeq4ucf7"
+    },
+    "nmw9lqeq93qzu": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9lqeq4ucf7"
+    },
+    "nmw9lqjwcxmrc": {
+      "tag": "p",
+      "cls": "",
+      "attrs": {},
+      "parent": "b101"
+    },
+    "nmw9lqovrr032": {
+      "tag": "h3",
+      "cls": "",
+      "attrs": {},
+      "parent": "b101"
+    },
+    "nmw9lqruknc11": {
+      "tag": "h3",
+      "cls": "",
+      "attrs": {},
+      "parent": "b101"
+    },
+    "nmw9lqutsgnm2": {
+      "tag": "p",
+      "cls": "",
+      "attrs": {},
+      "parent": "b101"
+    },
+    "nmw9lr0b3lhm0": {
+      "tag": "div",
+      "cls": "swatches",
+      "attrs": {},
+      "parent": "b101"
+    },
+    "nmw9lr0b3gor6": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9lr0b3lhm0"
+    },
+    "nmw9lr0b4jjow": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9lr0b3lhm0"
+    },
+    "nmw9lr0b5eaom": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9lr0b3lhm0"
+    },
+    "nmw9lr0b7ku38": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9lr0b3lhm0"
+    },
+    "nmw9lr0b82gzy": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9lr0b3lhm0"
     }
   },
   "pages": {},
