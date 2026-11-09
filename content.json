@@ -434,6 +434,34 @@
     },
     "b38": {
       "hide": 1
+    },
+    "nmw8otxk3eaos": {
+      "bgimg": {
+        "path": "imgs/home/artes-apresentacao-1x6t.png",
+        "dim": 0,
+        "size": "cover"
+      },
+      "s": {
+        "height": "214px"
+      }
+    },
+    "nmw8otxk3wspu": {
+      "t": {
+        "v": "PressKit"
+      }
+    },
+    "nmw8otxk4ndwn": {
+      "t": {
+        "v": "Movimentação, combate, cliques e sons."
+      },
+      "s": {
+        "width": "58.6%"
+      }
+    },
+    "nmw8otxk40y4u": {
+      "t": {
+        "v": "Saiba mais"
+      }
     }
   },
   "order": {
@@ -498,7 +526,13 @@
       "b44",
       "b48",
       "b52",
-      "b56"
+      "b56",
+      "nmw8otxk3eaos"
+    ],
+    "nmw8otxk3eaos": [
+      "nmw8otxk3wspu",
+      "nmw8otxk4ndwn",
+      "nmw8otxk40y4u"
     ]
   },
   "add": {
@@ -507,6 +541,34 @@
       "cls": "ds-icon",
       "attrs": {},
       "parent": "b1"
+    },
+    "nmw8otxk3eaos": {
+      "tag": "div",
+      "cls": "card",
+      "attrs": {
+        "role": "button",
+        "tabindex": "0",
+        "data-go": "interacoes"
+      },
+      "parent": "b39"
+    },
+    "nmw8otxk3wspu": {
+      "tag": "h3",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw8otxk3eaos"
+    },
+    "nmw8otxk4ndwn": {
+      "tag": "p",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw8otxk3eaos"
+    },
+    "nmw8otxk40y4u": {
+      "tag": "strong",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw8otxk3eaos"
     }
   }
 }
