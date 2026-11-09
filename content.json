@@ -353,35 +353,67 @@
       "bgimg": {
         "path": "imgs/componentes/padrao-db9d.png",
         "dim": 0,
-        "size": "cover"
+        "size": "cover",
+        "art": true
+      },
+      "s": {
+        "width": "100%",
+        "height": "73px",
+        "border-width": "0px",
+        "border-style": "solid"
       }
     },
     "b216": {
       "bgimg": {
         "path": "imgs/componentes/padrao-db9d.png",
         "dim": 0,
-        "size": "cover"
+        "size": "cover",
+        "art": true
+      },
+      "s": {
+        "width": "100%",
+        "height": "72px",
+        "border-width": "0px",
+        "border-style": "solid"
       }
     },
     "b217": {
       "bgimg": {
         "path": "imgs/componentes/padrao-db9d.png",
         "dim": 0,
-        "size": "cover"
+        "size": "cover",
+        "art": true
+      },
+      "s": {
+        "height": "72px",
+        "border-width": "0px",
+        "border-style": "solid"
       }
     },
     "b218": {
       "bgimg": {
         "path": "imgs/componentes/padrao-db9d.png",
         "dim": 0,
-        "size": "cover"
+        "size": "cover",
+        "art": true
+      },
+      "s": {
+        "height": "71px",
+        "border-width": "0px",
+        "border-style": "solid"
       }
     },
     "b219": {
       "bgimg": {
         "path": "imgs/componentes/padrao-db9d.png",
         "dim": 0,
-        "size": "cover"
+        "size": "cover",
+        "art": true
+      },
+      "s": {
+        "height": "72px",
+        "border-width": "0px",
+        "border-style": "solid"
       }
     },
     "b229": {
@@ -571,5 +603,8 @@
       "attrs": {},
       "parent": "nmw8otxk3eaos"
     }
-  }
+  },
+  "pages": {},
+  "site": {},
+  "styles": {}
 }
