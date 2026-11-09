@@ -212,11 +212,13 @@
       const d = Math.min(0.9, Math.max(0, Number(b.dim) || 0));
       const src = (previews.get(b.path) || b.path).replace(/"/g, "%22");
       e.style.backgroundImage = `linear-gradient(rgba(0,0,0,${d}),rgba(0,0,0,${d})),url("${src}")`;
-      e.style.backgroundSize = ["cover", "contain", "auto"].includes(b.size) ? b.size : "cover";
+      e.style.backgroundSize = b.size === "stretch" ? "100% 100%" : ["cover", "contain", "auto"].includes(b.size) ? b.size : "cover";
+      e.classList.toggle("ds-art", !!b.art);
       e.style.backgroundPosition = "center";
       e.style.backgroundRepeat = "no-repeat";
     } else {
       ["backgroundImage", "backgroundSize", "backgroundPosition", "backgroundRepeat"].forEach(p => e.style[p] = "");
+      e.classList.remove("ds-art");
     }
   }
   function applyOpTo(e, id, o) {
@@ -366,7 +368,9 @@
     pickImage(f => {
       const path = registerImage(f, pageOf(e));
       const o = op(e.dataset.b); const prev = o.bgimg || {};
-      o.bgimg = { path, dim: prev.dim || 0, size: prev.size || "cover" };
+      const btnLike = !prev.path && e.matches("button,[role=button],.stone-btn,.btn,.card,.gate-card,a");
+      o.bgimg = { path, dim: prev.dim || 0, size: prev.size || (btnLike ? "stretch" : "cover") };
+      if (prev.art || btnLike) o.bgimg.art = true;
       setBgImg(e, o.bgimg); buildProps(); markDirty();
     });
   }
@@ -449,7 +453,7 @@
     guideV = mk("div", "adm-guide adm-guide-v"); guideH = mk("div", "adm-guide adm-guide-h"); document.body.append(guideV, guideH);
     if (window.ResizeObserver) ro = new ResizeObserver(() => placeBar());
   }
-  const resizable = e => !isProtected(e) && !isAtomic(e) && !e.matches(".ds-anchor") && !/^(TD|TH|TR|TBODY|LI|TABLE|UL|OL|BUTTON)$/.test(e.tagName);
+  const resizable = e => !isProtected(e) && !isAtomic(e) && !e.matches(".ds-anchor") && !/^(TD|TH|TR|TBODY|LI|TABLE|UL|OL)$/.test(e.tagName);
   function startResize(ev, h) {
     const e = sel; if (!e || !resizable(e)) return;
     ev.preventDefault(); ev.stopPropagation();
@@ -785,6 +789,7 @@
           <details open><summary>Página</summary>
           <div id="adm-bgbox"><b class="adm-sub">Fundo desta página</b>
             <div class="adm-row"><button type="button" id="adm-bg-up">📷 Escolher imagem</button><button type="button" id="adm-bg-rm" class="danger">Remover</button></div>
+            <div class="adm-row"><button type="button" id="adm-bg-share">Aplicar em outras páginas…</button></div>
             <label class="adm-lbl">Escurecer <input type="range" id="adm-dim" min="0" max="90" value="0"><span id="adm-dim-v">0%</span></label></div>
           <div class="adm-row"><button type="button" id="adm-restore">Restaurar itens excluídos</button><span id="adm-hidden-n" class="adm-small"></span></div></details>
           <details><summary>Cores do site</summary><div class="adm-colors" id="adm-colors"></div>
@@ -820,10 +825,19 @@
     $("#adm-bg-up", panel).addEventListener("click", () => pickImage(f => {
       const page = currentPage();
       const path = registerImage(f, "fundos");
-      content.bg[page] = { path, dim: (content.bg[page] && content.bg[page].dim) || 0 };
+      const dim = (content.bg[page] && content.bg[page].dim) || 0;
+      content.bg[page] = { path, dim };
       applyBg(); refreshPageControls(); markDirty();
+      askBgScope("Onde usar este fundo?", ids => { ids.forEach(id => { content.bg[id] = { path, dim: (content.bg[id] && content.bg[id].dim) || dim }; }); applyBg(); refreshPageControls(); markDirty(); });
     }));
-    $("#adm-bg-rm", panel).addEventListener("click", () => { delete content.bg[currentPage()]; applyBg(); refreshPageControls(); markDirty(); });
+    $("#adm-bg-share", panel).addEventListener("click", () => {
+      const cur = content.bg[currentPage()]; if (!cur) return;
+      askBgScope("Aplicar este fundo em quais páginas?", ids => { ids.forEach(id => { content.bg[id] = { path: cur.path, dim: cur.dim || 0 }; }); applyBg(); markDirty(); });
+    });
+    $("#adm-bg-rm", panel).addEventListener("click", () => {
+      const had = content.bg[currentPage()]; delete content.bg[currentPage()]; applyBg(); refreshPageControls(); markDirty();
+      if (had) askBgScope("Remover também de outras páginas?", ids => { ids.forEach(id => { if (content.bg[id] && content.bg[id].path === had.path) delete content.bg[id]; }); applyBg(); markDirty(); }, true);
+    });
     $("#adm-dim", panel).addEventListener("input", e => {
       const b = content.bg[currentPage()]; if (!b) return;
       b.dim = e.target.value / 100; $("#adm-dim-v", panel).textContent = e.target.value + "%"; applyBg(); markDirty();
@@ -1303,7 +1317,11 @@
         const dim = mk("input"); dim.type = "range"; dim.min = 0; dim.max = 90; dim.value = Math.round((o.bgimg.dim || 0) * 100);
         dim.addEventListener("input", () => { o.bgimg.dim = dim.value / 100; setBgImg(e, o.bgimg); markDirty(); });
         s.appendChild(row("Escurecer", dim));
-        s.appendChild(row("Tamanho", selInput([["cover", "Preencher"], ["contain", "Caber inteira"], ["auto", "Original"]], o.bgimg.size || "cover", v => { o.bgimg.size = v; setBgImg(e, o.bgimg); markDirty(); })));
+        s.appendChild(row("Tamanho", selInput([["stretch", "Esticar (arte do botão)"], ["cover", "Preencher (corta)"], ["contain", "Caber inteira"], ["auto", "Original"]], o.bgimg.size || "cover", v => { o.bgimg.size = v; setBgImg(e, o.bgimg); markDirty(); })));
+        const art = mk("input"); art.type = "checkbox"; art.checked = !!o.bgimg.art;
+        art.addEventListener("change", () => { o.bgimg.art = art.checked; setBgImg(e, o.bgimg); markDirty(); placeBar(); });
+        s.appendChild(row("A imagem é o botão", art));
+        s.appendChild(mk("p", "adm-small", "Ligado: a imagem vira o próprio botão/cartão (some a cor, a borda e a sombra originais) e continua clicável. Use as alças para ajustar o tamanho do botão e a aba Aparência para a cor do texto."));
       }
       box.appendChild(s);
     }
@@ -1579,6 +1597,27 @@
     add.appendChild(btn("＋ Nova seção", "", () => { const t = prompt("Nome da nova seção (aparece no menu):", "Nova seção"); if (t) newSection(t); }, "primary"));
     box.appendChild(add);
     box.appendChild(mk("p", "adm-small", "Cada seção funciona como uma página do site (endereço #nome). O Seletor inicial é a página que abre primeiro; troque com 🏠. Seções originais não podem ser excluídas, apenas ocultadas do menu."));
+  }
+  /* pergunta em quais páginas aplicar uma ação de fundo: só esta, todas, ou uma lista */
+  function askBgScope(title, apply, removing) {
+    const cur = currentPage();
+    const back = mk("div", "adm-backdrop"), box = mk("div", "adm-modal adm-scope");
+    box.innerHTML = `<h3>${esc(title)}</h3>
+      <label class="adm-radio"><input type="radio" name="adm-sc" value="one" checked> Só esta página (${esc(pageTitle(cur))})</label>
+      <label class="adm-radio"><input type="radio" name="adm-sc" value="all"> Todas as páginas</label>
+      <label class="adm-radio"><input type="radio" name="adm-sc" value="pick"> Escolher páginas…</label>
+      <div class="adm-picklist" hidden>${PAGES().filter(([id]) => id !== cur).map(([id, l]) => `<label><input type="checkbox" value="${id}"> ${esc(l)}</label>`).join("")}</div>
+      <div class="adm-row"><button type="button" class="primary" data-ok>${removing ? "Remover" : "Aplicar"}</button><button type="button" data-no>${removing ? "Só esta" : "Só esta página"}</button></div>`;
+    back.appendChild(box); document.body.appendChild(back);
+    const list = $(".adm-picklist", box);
+    $$("input[name=adm-sc]", box).forEach(r => r.addEventListener("change", () => { list.hidden = r.value !== "pick" || !r.checked; }));
+    const close = () => back.remove();
+    $("[data-no]", box).addEventListener("click", close);
+    $("[data-ok]", box).addEventListener("click", () => {
+      const v = $("input[name=adm-sc]:checked", box).value;
+      const ids = v === "all" ? PAGES().map(x => x[0]).filter(id => id !== cur) : v === "pick" ? $$(".adm-picklist input:checked", box).map(i => i.value) : [];
+      close(); if (ids.length) apply(ids);
+    });
   }
   function refreshPageSelect() {
     if (!panel) return; const g = $("#adm-goto", panel); if (!g) return;

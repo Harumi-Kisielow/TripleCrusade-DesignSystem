@@ -27,3 +27,7 @@
 
 ## Press Kit
 Página `#presskit` montada a partir do PDF. Campos marcados [PREENCHER]: data de lançamento, preço, público-alvo, redes sociais e links de download. Logo do estúdio, fotos da equipe e mídia são caixas de imagem: clique e use 📷.
+
+## Arte de botão e fundo por página
+- **A imagem é o botão:** selecione um botão/cartão → aba Item → "Imagem de fundo" → Escolher fundo. A imagem estica e vira o botão (continua clicável). Desmarque "A imagem é o botão" para voltar ao texto sobre imagem.
+- **Fundo de página:** aba Página → Escolher fundo. Aparece a pergunta "Onde usar este fundo?" (só esta página / todas / escolher páginas). "Aplicar em outras páginas…" repete isso depois; ao remover, também pergunta.
