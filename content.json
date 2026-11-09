@@ -1635,11 +1635,6 @@
         "z": 1.05,
         "x": 49,
         "y": 50
-      },
-      "animation": {
-        "duration": 500,
-        "delay": 0,
-        "effect": "rise"
       }
     },
     "b12": {},
@@ -1811,26 +1806,14 @@
         "effect": "zoom"
       }
     },
-    "b314": {
-      "animation": {
-        "duration": 500,
-        "delay": 0,
-        "effect": "zoom"
+    "b135": {
+      "t": {
+        "h": "zpd159",
+        "v": "&nbsp;Substitur pelos HEX oficiais."
       }
     },
-    "b317": {
-      "animation": {
-        "duration": 500,
-        "delay": 0,
-        "effect": "zoom"
-      }
-    },
-    "b327": {
-      "animation": {
-        "duration": 500,
-        "delay": 0,
-        "effect": "rise"
-      }
+    "b152": {
+      "hide": 1
     }
   },
   "order": {
