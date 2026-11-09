@@ -275,6 +275,12 @@
       "img": {
         "path": "imgs/ilustracao/cenario-concept-1bge.png",
         "h": "vnz1cx"
+      },
+      "s": {},
+      "frame": {
+        "z": 1.05,
+        "x": 50,
+        "y": 50
       }
     },
     "b176": {
