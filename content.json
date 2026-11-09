@@ -17,6 +17,22 @@
     "ilustracao": {
       "path": "imgs/fundos/fundo-madeira-19j2.png",
       "dim": 0.9
+    },
+    "componentes": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0.9
+    },
+    "fundamentos": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0
+    },
+    "identidade": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0
+    },
+    "interacoes": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0
     }
   },
   "ops": {
