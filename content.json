@@ -50,31 +50,51 @@
     },
     "b456": {
       "img": {
-        "path": "imgs/presskit/mine-1hh9.png",
+        "path": "imgs/presskit/fpf-square-hq4k.png",
         "h": "yjsyot"
+      },
+      "s": {
+        "aspect-ratio": "1"
+      },
+      "frame": {
+        "z": 1.05,
+        "x": 50,
+        "y": 50
       }
     },
     "b460": {
       "img": {
-        "path": "imgs/presskit/jp-5ps8.png",
+        "path": "imgs/presskit/post-1-apresentando-o-estudio-3-10bw.png",
         "h": "yjsyot"
+      },
+      "s": {},
+      "frame": {
+        "z": 1.3,
+        "x": 76,
+        "y": 39
       }
     },
     "b464": {
       "img": {
-        "path": "imgs/presskit/luiz-19xr.png",
+        "path": "imgs/presskit/post-1-apresentando-o-estudio-1-1jl9.png",
         "h": "yjsyot"
+      },
+      "s": {},
+      "frame": {
+        "z": 1,
+        "x": 78,
+        "y": 44
       }
     },
     "b468": {
       "img": {
-        "path": "imgs/presskit/vfl-1sxw.png",
+        "path": "imgs/presskit/post-1-apresentando-o-estudio-2-geb5.png",
         "h": "yjsyot"
       }
     },
     "b472": {
       "img": {
-        "path": "imgs/presskit/3ds-1b83.png",
+        "path": "imgs/presskit/post-1-apresentando-o-estudio-3pk6.png",
         "h": "yjsyot"
       }
     },
@@ -369,6 +389,9 @@
         "path": "imgs/site/logoestudiobranca-10zr.png",
         "dim": 0,
         "size": "cover"
+      },
+      "s": {
+        "width": "3%"
       }
     },
     "b215": {
@@ -1107,6 +1130,81 @@
       "s": {
         "width": "100%"
       }
+    },
+    "b491": {
+      "img": {
+        "path": "imgs/presskit/captura-de-tela-2026-11-09-105611-1rme.png",
+        "h": "1ssrvqs"
+      }
+    },
+    "b492": {
+      "img": {
+        "path": "imgs/presskit/captura-de-tela-2026-11-09-105640-oo8g.png",
+        "h": "1ssrvqt"
+      }
+    },
+    "b493": {
+      "img": {
+        "path": "imgs/presskit/captura-de-tela-2026-11-09-105653-i3cx.png",
+        "h": "1ssrvqu"
+      }
+    },
+    "b494": {
+      "img": {
+        "path": "imgs/presskit/captura-de-tela-2026-11-09-105713-10u1.png",
+        "h": "1ssrvqv"
+      }
+    },
+    "b495": {
+      "img": {
+        "path": "imgs/presskit/captura-de-tela-2026-11-09-105713-10u1.png",
+        "h": "1ssrvqw"
+      }
+    },
+    "b496": {
+      "img": {
+        "path": "imgs/presskit/captura-de-tela-2026-11-09-105732-8of7.png",
+        "h": "1ssrvqx"
+      }
+    },
+    "nmw9buj8mlq0l": {
+      "img": {
+        "path": "imgs/presskit/captura-de-tela-2026-09-20-204450-xe5z.png"
+      }
+    },
+    "b512": {
+      "t": {
+        "h": "kkb9f2",
+        "v": "<strong>Redes sociais:</strong>&nbsp;@studiomaiorigualatres em todas as redes sociais."
+      }
+    },
+    "b482": {},
+    "b417": {
+      "t": {
+        "h": "lokcml",
+        "v": "R$ 19,99 / $19,99USD"
+      }
+    },
+    "b7": {
+      "hide": 1
+    },
+    "b12": {
+      "hide": 1
+    },
+    "b11": {
+      "hide": 1
+    },
+    "b10": {
+      "hide": 1
+    },
+    "b9": {
+      "hide": 1
+    },
+    "b8": {
+      "hide": 1
+    },
+    "b2": {
+      "href": "#"
     }
   },
   "order": {
@@ -1311,6 +1409,15 @@
       "nmw9bf9bthvml",
       "nmw9bf9bu37e4",
       "nmw9bf9bubn5w"
+    ],
+    "b490": [
+      "b491",
+      "b492",
+      "b493",
+      "b494",
+      "b495",
+      "b496",
+      "nmw9buj8mlq0l"
     ]
   },
   "add": {
@@ -1509,6 +1616,12 @@
       "cls": "ds-space",
       "attrs": {},
       "parent": "b205"
+    },
+    "nmw9buj8mlq0l": {
+      "tag": "div",
+      "cls": "img-slot pk-shot",
+      "attrs": {},
+      "parent": "b490"
     }
   },
   "pages": {},
