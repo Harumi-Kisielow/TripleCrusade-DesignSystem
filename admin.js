@@ -25,7 +25,7 @@
   ];
   const TEXT_TAGS_OK = new Set(["B", "STRONG", "I", "EM", "BR", "CODE", "KBD", "SMALL", "A", "SPAN"]);
   const ADD_TAGS = new Set(["DIV", "P", "H1", "H2", "H3", "H4", "SPAN", "A", "UL", "LI", "FIGURE", "STRONG", "EM", "SECTION", "TABLE", "TBODY", "TR", "TD", "TH"]);
-  const ATTR_OK = ["href", "alt", "role", "tabindex", "data-go"];
+  const ATTR_OK = ["href", "alt", "role", "tabindex", "data-go", "data-nav"];
   const CSS_OK = new Set(["color", "background-color", "font-size", "font-weight", "font-style", "font-family", "text-align",
     "width", "max-width", "height", "min-height", "padding", "margin", "border-width", "border-color", "border-style",
     "border-radius", "opacity", "position", "left", "top", "z-index", "object-fit", "display", "transform",
@@ -45,13 +45,25 @@
   const hash = str => { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
   const slug = n => n.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   const safePath = p => typeof p === "string" && /^imgs\/[A-Za-z0-9_\-./]+$/.test(p) && !p.includes("..");
-  const safeHref = h => typeof h === "string" && /^(https?:\/\/|#|mailto:)[^\s"'<>]*$/i.test(h);
+  const HREF_RE = /^(https?:\/\/|#|mailto:|tel:|sms:|skype:|browser:|section:|scrollpoint:|file:)[^\s"'<>]*$|^(copy|clipboard):[^"'<>]*$/i;
+  const safeHref = h => typeof h === "string" && h.length < 700 && HREF_RE.test(h) && !/javascript:/i.test(h);
+  const GO_RE = /^((section|scrollpoint):(next|previous|first|last)|[a-z0-9\-]+)$/;
+  const PREVIEW = /[?&]preview\b/.test(location.search);
+  /* aplica um link; "||blank" no fim abre em nova aba, "file:nome" aponta para files/nome */
+  function setHref(e, raw) {
+    const [u0, flags] = String(raw).split("||"); let u = u0;
+    if (/^file:/i.test(u)) { const n = u.slice(5); if (!/^[\w.\-]+$/.test(n)) return; u = "files/" + n; }
+    e.setAttribute("href", u);
+    if (flags && /\bblank\b/.test(flags)) { e.setAttribute("target", "_blank"); e.setAttribute("rel", "noopener noreferrer"); }
+    else { e.removeAttribute("target"); e.removeAttribute("rel"); }
+  }
   const mk = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const uid = () => "n" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
   /* ---------- estado ---------- */
-  let content = { v: 2, vars: {}, bg: {}, ops: {}, order: {}, add: {} };
+  let content = { v: 2, vars: {}, bg: {}, ops: {}, order: {}, add: {}, pages: {}, site: {}, styles: {} };
+  let curTab = "item";
   let saved = null;
   const nodes = new Map();          // id -> elemento
   const origInfo = new Map();       // id -> {html, h} (original, só folhas)
@@ -68,7 +80,7 @@
   const isLeaf = e => !e.querySelector("[data-b]");
   const isSlot = e => e.matches(SLOTCLS) || !!(content.ops[e.dataset.b] || {}).img;
   const hasImg = e => !!(content.ops[e.dataset.b] || {}).img;
-  const isProtected = e => e.classList.contains("page") || e.tagName === "HEADER" || e.tagName === "FOOTER";
+  const isProtected = e => e.classList.contains("page") || e.tagName === "HEADER" || e.tagName === "FOOTER" || e.tagName === "MAIN";
   const pageOf = e => { const p = e.closest(".page"); return p ? p.id : "site"; };
   const isTextLeaf = e => !isAtomic(e) && !NOTEXT_TAGS.has(e.tagName) && !hasImg(e) && isLeaf(e) && leafText(e).trim() !== "";
   const canContain = e => {
@@ -137,11 +149,13 @@
     e.dataset.b = id; e.dataset.added = "1";
     if (typeof spec.cls === "string" && /^[\w\- ]{0,120}$/.test(spec.cls)) e.className = spec.cls;
     const at = spec.attrs || {};
-    if (safeHref(at.href)) e.setAttribute("href", at.href);
+    if (safeHref(at.href)) setHref(e, at.href);
+    if (/^[a-z][a-z0-9\-]{0,40}$/.test(at.id || "") && !document.getElementById(at.id)) e.id = at.id;
+    if (/^[a-z0-9\-]+$/.test(at["data-nav"] || "")) e.setAttribute("data-nav", at["data-nav"]);
     if (typeof at.alt === "string") e.setAttribute("alt", at.alt.slice(0, 200));
     if (at.role === "button") e.setAttribute("role", "button");
     if (/^-?\d{1,2}$/.test(String(at.tabindex || ""))) e.setAttribute("tabindex", at.tabindex);
-    if (/^[a-z0-9\-]+$/.test(at["data-go"] || "") && document.getElementById(at["data-go"])) e.setAttribute("data-go", at["data-go"]);
+    if (GO_RE.test(at["data-go"] || "")) e.setAttribute("data-go", at["data-go"]);
     return e;
   }
   function wrapOrig(e) {
@@ -219,8 +233,8 @@
     if (o.bgimg) setBgImg(e, o.bgimg);
     if (o.frame) setFrame(e, o.frame);
     syncSize(e);
-    if (o.href && safeHref(o.href) && e.tagName === "A") e.setAttribute("href", o.href);
-    if (o.go && /^[a-z0-9\-]+$/.test(o.go) && document.getElementById(o.go)) e.setAttribute("data-go", o.go);
+    if (o.href && safeHref(o.href) && e.tagName === "A") setHref(e, o.href);
+    if (o.go && GO_RE.test(o.go)) e.setAttribute("data-go", o.go);
   }
   function fixFree() {
     $$("[data-b]").forEach(e => {
@@ -265,7 +279,7 @@
 
   /* ---------- migração do formato antigo ---------- */
   function migrate(j, legacyText, legacySlots) {
-    const out = { v: 2, vars: j.vars || {}, bg: j.bg || {}, ops: j.ops || {}, order: j.order || {}, add: j.add || {} };
+    const out = normContent({ v: 2, vars: j.vars || {}, bg: j.bg || {}, ops: j.ops || {}, order: j.order || {}, add: j.add || {}, pages: j.pages || {}, site: j.site || {}, styles: j.styles || {} });
     Object.entries(j.text || {}).forEach(([k, d]) => {
       const e = legacyText.get(k);
       if (e && e.dataset.b && isLeaf(e)) { (out.ops[e.dataset.b] = out.ops[e.dataset.b] || {}).t = { h: d.h, v: d.v }; }
@@ -279,7 +293,9 @@
 
   /* ---------- marcar alteração ---------- */
   function countChanges() { return pending.size + (JSON.stringify(content) !== JSON.stringify(saved) ? 1 : 0); }
-  function markDirty() { updateStatus(); }
+  function markDirty() { updateStatus(); scheduleCommit(); refreshTreeSoon(); }
+  let treeTimer = null;
+  function refreshTreeSoon() { clearTimeout(treeTimer); treeTimer = setTimeout(() => { refreshTree(); refreshSections(); }, 160); }
   function setS(e, prop, val) {
     const id = e.dataset.b, o = op(id); o.s = o.s || {};
     if (val === null || val === undefined || val === "") { delete o.s[prop]; e.style.removeProperty(prop); }
@@ -356,13 +372,13 @@
   }
 
   /* ---------- seleção ---------- */
-  function select(e) {
+  function select(e, keepTab) {
     if (sel) sel.classList.remove("ds-sel");
     sel = e && e.isConnected ? e : null;
     if (sel) sel.classList.add("ds-sel");
     if (ro) { ro.disconnect(); if (sel) ro.observe(sel); }
     if (panMode && !(sel && hasImg(sel))) { panMode = false; document.body.classList.remove("ds-pan"); }
-    buildProps(); placeBar(); updateAddHint();
+    buildProps(); placeBar(); updateAddHint(); refreshTree();
   }
   function updateAddHint() {
     const h = panel && $("#adm-add-target", panel); if (!h) return;
@@ -374,9 +390,9 @@
     if (ev.target.closest(".adm-panel,.adm-modal,.adm-backdrop,.adm-bar,.adm-handles")) return;
     const t = ev.target.closest("[data-b]");
     if (!t && performance.now() - lastGesture < 80) return;     // clique "fantasma" ao soltar um arraste: não desmarca
-    if (!t) { select(null); return; }
+    if (!t || t.tagName === "MAIN") { select(null); return; }
     if (ev.target.closest("a,button,[data-go],[data-cmd],label,select,input")) { ev.preventDefault(); ev.stopImmediatePropagation(); }
-    select(t);
+    select(t); if (curTab !== "item" && curTab !== "add") showTab("item");
   }, true);
   let hov = null;
   document.addEventListener("mouseover", ev => {
@@ -384,13 +400,14 @@
     const t = ev.target.closest && ev.target.closest(".adm-panel,.adm-bar,.adm-modal") ? null : ev.target.closest && ev.target.closest("[data-b]");
     if (hov === t) return;
     if (hov) hov.classList.remove("ds-hover");
-    hov = t; if (hov && hov !== sel) hov.classList.add("ds-hover");
+    hov = t && t.tagName === "MAIN" ? null : t; if (hov && hov !== sel) hov.classList.add("ds-hover");
   });
   window.addEventListener("hashchange", () => { select(null); setTimeout(() => { fixFree(); refreshPageControls(); }, 0); });
   window.addEventListener("scroll", () => placeBar(), true);
   window.addEventListener("resize", () => placeBar());
   window.addEventListener("beforeunload", ev => { if (editing && countChanges() > 0) { ev.preventDefault(); ev.returnValue = ""; } });
   document.addEventListener("keydown", ev => {
+    if (globalKeys(ev)) return;
     if (!editing || !sel) return;
     const typing = ev.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(ev.target.tagName);
     if (typing) { if (ev.key === "Escape" && ev.target.isContentEditable) ev.target.blur(); return; }
@@ -432,7 +449,7 @@
     guideV = mk("div", "adm-guide adm-guide-v"); guideH = mk("div", "adm-guide adm-guide-h"); document.body.append(guideV, guideH);
     if (window.ResizeObserver) ro = new ResizeObserver(() => placeBar());
   }
-  const resizable = e => !isProtected(e) && !isAtomic(e) && !/^(TD|TH|TR|TBODY|LI|TABLE|UL|OL|BUTTON)$/.test(e.tagName);
+  const resizable = e => !isProtected(e) && !isAtomic(e) && !e.matches(".ds-anchor") && !/^(TD|TH|TR|TBODY|LI|TABLE|UL|OL|BUTTON)$/.test(e.tagName);
   function startResize(ev, h) {
     const e = sel; if (!e || !resizable(e)) return;
     ev.preventDefault(); ev.stopPropagation();
@@ -703,9 +720,11 @@
     cols2: () => mkCols(2), cols3: () => mkCols(3), cols4: () => mkCols(4),
     hero: () => ({ tag: "div", cls: "ds-box ds-hero", s: { "min-height": "280px" }, children: [{ tag: "h2", t: "Título sobre a imagem", s: { position: "absolute", left: "8%", top: "38%", color: "#ffffff", margin: "0" } }] }),
     space: () => ({ tag: "div", cls: "ds-space" }),
-    icon: () => ({ tag: "span", cls: "ds-icon", t: "★" })
+    icon: () => ({ tag: "span", cls: "ds-icon", t: "★" }),
+    anchor: () => ({ tag: "div", cls: "ds-anchor", attrs: { id: uniqueAnchor() } })
   };
   const mkCols = n => ({ tag: "div", cls: "ds-cols", s: { "--cols": Array(n).fill(r1(100 / n) + "fr").join(" ") }, children: Array.from({ length: n }, () => PRESETS.box()) });
+  function uniqueAnchor() { let n = 1; while (document.getElementById("ancora-" + n)) n++; return "ancora-" + n; }
   function addBlock(type) {
     let parent, ref = null;
     const where = $("#adm-where", panel).value;
@@ -715,12 +734,13 @@
     const e = spawn(PRESETS[type](), parent, ref);
     fixFree(); refreshEditable(); select(e); markDirty();
     e.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    showTab("item");
     if (type === "image") chooseImageFor(e);
     if (type === "hero") chooseBgFor(e);
   }
 
   /* ---------- painel ---------- */
-  const PAGES = () => $$(".page").map(p => [p.id, { gate: "Seletor inicial", home: "Design System: início", fundamentos: "Fundamentos", identidade: "Identidade", ilustracao: "Ilustração", componentes: "Componentes", interacoes: "Interações", presskit: "Press Kit" }[p.id] || p.id]);
+  const PAGES = () => $$(".page").map(p => [p.id, pageTitle(p.id)]);
   const currentPage = () => document.body.dataset.page || "gate";
   function rgbToHex(c) {
     const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/.exec(c || "");
@@ -730,12 +750,23 @@
   function buildPanel() {
     panel = mk("aside", "adm-panel");
     panel.innerHTML = `
-      <div class="adm-head" title="Arraste para mover o painel"><b>🛠 Editor visual</b><span class="adm-head-btns"><button type="button" id="adm-dock" title="Encostar na esquerda / direita">⇄</button><button type="button" id="adm-min" title="Minimizar">–</button></span></div>
+      <div class="adm-head" title="Arraste para mover o painel"><b>🛠 Editor visual</b><span class="adm-head-btns"><button type="button" id="adm-dock" title="Encostar na esquerda / direita (Alt+← / Alt+→)">⇄</button><button type="button" id="adm-min" title="Minimizar">–</button></span></div>
+      <div class="adm-toolbar">
+        <button type="button" id="adm-undo" title="Desfazer (Ctrl+Z)">↶</button><button type="button" id="adm-redo" title="Refazer (Ctrl+Shift+Z)">↷</button><i></i>
+        <button type="button" id="adm-viewsite" title="Abrir o site em outra aba (Alt+V)">↗</button>
+      </div>
+      <div class="adm-tabs" id="adm-tabs">
+        <button type="button" data-tab="item" class="on">Item</button><button type="button" data-tab="add">＋ Adicionar</button><button type="button" data-tab="tree" title="Alt+E">Elementos</button>
+        <button type="button" data-tab="sections" title="Alt+S">Seções</button><button type="button" data-tab="page">Página</button><button type="button" data-tab="site">Site</button>
+      </div>
       <div class="adm-body">
-        <label class="adm-lbl adm-top"><b>Página</b> <select id="adm-goto"></select></label>
-        <p class="adm-tip">Clique em qualquer item da página para selecioná-lo. Texto: clique e digite. Use a barra que aparece sobre o item para mover, duplicar ou excluir. Ao arrastar, segure Alt para soltar DENTRO de uma caixa. Atalhos: Ctrl+D duplica · Delete exclui · Esc sai do texto / desmarca · setas movem itens de posição livre · arraste o nome de um campo numérico para ajustar o valor.</p>
-        <details open><summary>Item selecionado</summary><div id="adm-props"></div></details>
-        <details><summary>Adicionar à página</summary>
+        <div class="adm-pane on" data-pane="item">
+          <label class="adm-lbl adm-top"><b>Página</b> <select id="adm-goto"></select></label>
+          <p class="adm-tip">Clique em qualquer item da página para selecioná-lo. Texto: clique e digite. Ao arrastar, segure Alt para soltar DENTRO de uma caixa. Atalhos: Ctrl+Z/Ctrl+Shift+Z desfaz/refaz · Ctrl+C/X/V copia/recorta/cola · Ctrl+D duplica · Delete exclui · Ctrl+S salva · Esc sai do texto / desmarca · setas movem itens de posição livre.</p>
+          <details open><summary>Item selecionado</summary><div id="adm-props"></div></details>
+        </div>
+        <div class="adm-pane" data-pane="add">
+          <details open><summary>Adicionar à página</summary>
           <p id="adm-add-target" class="adm-small"></p>
           <label class="adm-lbl">Onde
             <select id="adm-where"><option value="after">Logo depois do item selecionado</option><option value="inside">Dentro do item selecionado</option></select></label>
@@ -745,24 +776,35 @@
             <button type="button" data-add="box">Caixa</button><button type="button" data-add="cols2">2 colunas</button>
             <button type="button" data-add="cols3">3 colunas</button><button type="button" data-add="cols4">4 colunas</button>
             <button type="button" data-add="hero">Imagem + texto</button><button type="button" data-add="icon">Ícone</button>
-            <button type="button" data-add="space">Espaço</button>
+            <button type="button" data-add="space">Espaço</button><button type="button" data-add="anchor">⚓ Âncora</button>
           </div></details>
-        <details><summary>Página</summary>
+        </div>
+        <div class="adm-pane" data-pane="tree"><p class="adm-small">Todos os itens da página. Clique para selecionar, duplo clique para editar, arraste para reorganizar (solte no meio de uma caixa para colocar dentro) e use 👁 para ocultar.</p><div id="adm-tree" class="adm-tree"></div></div>
+        <div class="adm-pane" data-pane="sections"><div id="adm-sections" class="adm-sections"></div></div>
+        <div class="adm-pane" data-pane="page">
+          <details open><summary>Página</summary>
           <div id="adm-bgbox"><b class="adm-sub">Fundo desta página</b>
             <div class="adm-row"><button type="button" id="adm-bg-up">📷 Escolher imagem</button><button type="button" id="adm-bg-rm" class="danger">Remover</button></div>
             <label class="adm-lbl">Escurecer <input type="range" id="adm-dim" min="0" max="90" value="0"><span id="adm-dim-v">0%</span></label></div>
           <div class="adm-row"><button type="button" id="adm-restore">Restaurar itens excluídos</button><span id="adm-hidden-n" class="adm-small"></span></div></details>
-        <details><summary>Cores do site</summary><div class="adm-colors" id="adm-colors"></div>
+          <details><summary>Cores do site</summary><div class="adm-colors" id="adm-colors"></div>
           <button type="button" id="adm-colors-reset" class="danger">Restaurar cores originais</button></details>
+        </div>
+        <div class="adm-pane" data-pane="site"><div id="adm-site"></div></div>
+      </div>
+      <div class="adm-foot">
         <div id="adm-changes" class="adm-changes"></div>
         <div id="adm-status" class="adm-status"></div>
-        <div class="adm-row"><button type="button" id="adm-save" class="primary">💾 Salvar no GitHub</button><button type="button" id="adm-discard">Descartar</button></div>
+        <div class="adm-row"><button type="button" id="adm-save" class="primary" title="Ctrl+S">💾 Salvar no GitHub</button><button type="button" id="adm-discard">Descartar</button></div>
         <button type="button" id="adm-exit" class="adm-exit">Sair do modo admin</button>
       </div>`;
     document.body.appendChild(panel);
 
-    $("#adm-goto", panel).innerHTML = PAGES().map(([id, l]) => `<option value="${id}">${l}</option>`).join("");
-    $("#adm-goto", panel).value = currentPage();
+    refreshPageSelect();
+    $("#adm-tabs", panel).addEventListener("click", ev => { const b = ev.target.closest("[data-tab]"); if (b) showTab(b.dataset.tab); });
+    $("#adm-undo", panel).addEventListener("click", undo);
+    $("#adm-redo", panel).addEventListener("click", redo);
+    $("#adm-viewsite", panel).addEventListener("click", viewSite);
     $("#adm-goto", panel).addEventListener("change", e => { location.hash = e.target.value; });
     $("#adm-add", panel).addEventListener("click", ev => { const b = ev.target.closest("[data-add]"); if (b) addBlock(b.dataset.add); });
 
@@ -803,10 +845,18 @@
       if (countChanges() > 0 && !confirm("Há alterações não salvas. Sair mesmo assim? (A página será recarregada.)")) return;
       pending.clear(); location.reload();
     });
-    buildProps(); refreshPageControls(); updateStatus(true); updateAddHint();
+    buildProps(); refreshPageControls(); updateStatus(true); updateAddHint(); updateUndoButtons();
+  }
+  function showTab(name) {
+    curTab = name;
+    $$(".adm-pane", panel).forEach(p => p.classList.toggle("on", p.dataset.pane === name));
+    $$("[data-tab]", panel).forEach(b => b.classList.toggle("on", b.dataset.tab === name));
+    panel.classList.remove("min");
+    if (name === "tree") refreshTree(); if (name === "sections") refreshSections(); if (name === "site" && window.buildSitePane) window.buildSitePane();
   }
   function dockPanel(side) {
     panel.dataset.side = side; panel.style.top = ""; panel.style.bottom = "14px";
+    if (pv) { pv.wrap.classList.remove("side-left", "side-right"); pv.wrap.classList.add("side-" + side); }
     panel.style.left = side === "left" ? "14px" : ""; panel.style.right = side === "left" ? "" : "14px";
     try { localStorage.setItem("ds_admin_pos", JSON.stringify({ side })); } catch (e) { /* sem storage */ }
   }
@@ -1171,12 +1221,22 @@
       box.appendChild(row("Texto do botão", i));
     }
     if (e.tagName === "A") {
-      const i = mk("input"); i.type = "text"; i.placeholder = "https://… ou #pagina"; i.value = e.getAttribute("href") || "";
-      i.addEventListener("input", () => { if (safeHref(i.value)) { e.setAttribute("href", i.value); op(id).href = i.value; markDirty(); } });
+      const i = mk("input"); i.type = "text"; i.placeholder = "https://… · #secao · mailto: · tel: · section:next · scrollpoint:next · copy:texto · file:nome.pdf (||blank = nova aba)"; i.value = op(id).href || e.getAttribute("href") || "";
+      i.addEventListener("input", () => { if (safeHref(i.value)) { setHref(e, i.value); op(id).href = i.value; markDirty(); } });
       box.appendChild(row("Link (destino)", i));
     }
+    if (e.matches(".ds-anchor") && e.dataset.added) {
+      const i = mk("input"); i.type = "text"; i.value = e.id;
+      i.addEventListener("change", () => {
+        const v = slug(i.value);
+        if (!/^[a-z][a-z0-9\-]{0,40}$/.test(v) || (document.getElementById(v) && v !== e.id)) { note("Nome inválido ou já usado."); i.value = e.id; return; }
+        e.id = v; const sp = content.add[id]; sp.attrs = sp.attrs || {}; sp.attrs.id = v; markDirty(); buildProps();
+      });
+      box.appendChild(row("Nome da âncora", i));
+      box.appendChild(mk("p", "adm-small", "Aponte botões e links para #" + e.id + " (ou scrollpoint:next, scrollpoint:previous…) e a página rola até aqui."));
+    }
     if (e.hasAttribute("data-go")) {
-      box.appendChild(row("Leva para", selInput(PAGES(), e.getAttribute("data-go"), v => { e.setAttribute("data-go", v); op(id).go = v; markDirty(); })));
+      box.appendChild(row("Leva para", selInput(PAGES().concat([["section:next", "→ Próxima seção"], ["section:previous", "← Seção anterior"], ["section:first", "Primeira seção"], ["section:last", "Última seção"], ["scrollpoint:next", "↓ Próxima âncora"], ["scrollpoint:previous", "↑ Âncora anterior"]]), e.getAttribute("data-go"), v => { e.setAttribute("data-go", v); op(id).go = v; markDirty(); })));
     }
 
     if (e.matches(".ds-cols")) box.appendChild(colsSection(e));
@@ -1266,6 +1326,307 @@
     box.appendChild(st);
   }
 
+  /* ============================================================
+     Histórico (desfazer / refazer)
+     Guardamos o estado "original" dos itens ao carregar; para voltar a um
+     estado antigo, restauramos os itens tocados e reaplicamos o conteúdo.
+     ============================================================ */
+  const orig = { el: new Map(), kids: new Map() };
+  const hist = { undo: [], redo: [], last: "" };
+  const RUNTIME_CLS = ["active", "open", "focus", "selected", "ready"];
+  let commitTimer = null;
+  function captureOrig() {
+    $$("[data-b]").forEach(e => {
+      const id = e.dataset.b;
+      orig.el.set(id, { attrs: Array.from(e.attributes).map(a => [a.name, a.value]), html: isLeaf(e) ? e.innerHTML : null });
+      if (dchildren(e).length) orig.kids.set(id, Array.from(e.childNodes));
+    });
+  }
+  function restoreOriginals(ids) {
+    $$("[data-added]").forEach(n => { nodes.delete(n.dataset.b); n.remove(); });
+    ids.forEach(id => {
+      const e = nodes.get(id), o = orig.el.get(id); if (!e || !o) return;
+      if ($(":scope > .slot-img", e) || $(":scope > .slot-orig", e)) setImage(e, null);
+      const live = RUNTIME_CLS.filter(c => e.classList.contains(c));      // estado vivo do script.js (página aberta, aba ativa…)
+      const keep = new Map(o.attrs);
+      Array.from(e.attributes).forEach(a => { if (!keep.has(a.name) && a.name !== "contenteditable" && a.name !== "spellcheck") e.removeAttribute(a.name); });
+      keep.forEach((v, k) => { if (e.getAttribute(k) !== v) e.setAttribute(k, v); });
+      RUNTIME_CLS.forEach(c => e.classList.toggle(c, live.includes(c)));
+      if (o.html !== null && isLeaf(e) && e.innerHTML !== o.html) e.innerHTML = o.html;
+    });
+    ids.forEach(id => {
+      const parent = nodes.get(id), kids = orig.kids.get(id); if (!parent || !kids) return;
+      kids.forEach(k => { if (k.parentNode !== parent || k !== parent.childNodes[kids.indexOf(k)]) parent.appendChild(k); });
+    });
+  }
+  function normContent(c) {
+    c = c || {};
+    ["vars", "bg", "ops", "order", "add", "pages", "site", "styles"].forEach(k => { if (!c[k] || typeof c[k] !== "object") c[k] = {}; });
+    c.v = 2; return c;
+  }
+  function loadSnapshot(str, keepSel) {
+    const selId = keepSel && sel ? sel.dataset.b : null;
+    const old = content, nc = normContent(JSON.parse(str));
+    const ids = new Set(["main"]);
+    [old, nc].forEach(c => { Object.keys(c.ops).forEach(k => ids.add(k)); Object.keys(c.order).forEach(k => ids.add(k)); });
+    orig.el.forEach((v, k) => { if (!ids.has(k) && (k === "main" || false)) ids.add(k); });
+    select(null);
+    restoreOriginals(ids);
+    content = nc;
+    applyAll();
+    refreshEditable();
+    if (selId && nodes.get(selId) && nodes.get(selId).isConnected) select(nodes.get(selId));
+    refreshAfterChange();
+  }
+  function refreshAfterChange() {
+    fixFree(); updateStatus(); refreshTree(); refreshSections(); updateUndoButtons(); buildProps(); placeBar(); syncPreview();
+  }
+  function scheduleCommit() { clearTimeout(commitTimer); commitTimer = setTimeout(commit, 350); }
+  function commit() {
+    clearTimeout(commitTimer);
+    const cur = JSON.stringify(content);
+    if (cur === hist.last) return;
+    hist.undo.push(hist.last); if (hist.undo.length > 100) hist.undo.shift();
+    hist.redo = []; hist.last = cur; updateUndoButtons(); syncPreview();
+  }
+  function undo() {
+    commit();
+    if (!hist.undo.length) { note("Nada para desfazer."); return; }
+    hist.redo.push(hist.last); hist.last = hist.undo.pop(); loadSnapshot(hist.last, true);
+  }
+  function redo() {
+    commit();
+    if (!hist.redo.length) { note("Nada para refazer."); return; }
+    hist.undo.push(hist.last); hist.last = hist.redo.pop(); loadSnapshot(hist.last, true);
+  }
+  function updateUndoButtons() {
+    if (!panel) return;
+    const u = $("#adm-undo", panel), r = $("#adm-redo", panel);
+    if (u) u.disabled = !hist.undo.length && JSON.stringify(content) === hist.last;
+    if (r) r.disabled = !hist.redo.length;
+  }
+
+  /* ============================================================
+     Pré-visualização (celular / tablet) — iframe com o conteúdo atual
+     ============================================================ */
+  let pv = null;
+  function openPreview(mode) {
+    closePreview();
+    if (mode === "desktop") { setViewButtons("desktop"); return; }
+    const wrap = mk("div", "adm-preview adm-pv-" + mode);
+    const dev = mk("div", "adm-pv-dev");
+    const fr = mk("iframe"); fr.title = "Pré-visualização";
+    fr.src = location.href.split("#")[0].split("?")[0] + "?preview=1#" + currentPage();
+    dev.appendChild(fr);
+    wrap.appendChild(mk("div", "adm-pv-label", { tablet: "Tablet · 820 px", mobile: "Celular · 390 px", "mobile-x": "Celular (expandido) · 390 px" }[mode] || ""));
+    wrap.appendChild(dev);
+    wrap.className += " side-" + ((panel && panel.dataset.side) || "right");
+    document.body.appendChild(wrap);
+    pv = { wrap, fr, mode, ready: false };
+    setViewButtons(mode);
+  }
+  function closePreview() { if (pv) { pv.wrap.remove(); pv = null; } setViewButtons("desktop"); }
+  function setViewButtons(mode) { if (panel) $$("[data-view]", panel).forEach(b => b.classList.toggle("on", b.dataset.view === mode)); }
+  function syncPreview() {
+    if (!pv || !pv.ready || !pv.fr.contentWindow) return;
+    const pr = {}; previews.forEach((v, k) => { pr[k] = v; });
+    pv.fr.contentWindow.postMessage({ ds: "content", content, previews: pr, page: currentPage() }, location.origin);
+  }
+  window.addEventListener("message", ev => {
+    if (ev.origin !== location.origin || !ev.data) return;
+    if (ev.data.ds === "ready" && pv && ev.source === pv.fr.contentWindow) { pv.ready = true; syncPreview(); }
+    if (ev.data.ds === "content" && PREVIEW && ev.source === parent) {          // somos o iframe da prévia
+      if (ev.data.previews) Object.entries(ev.data.previews).forEach(([k, v]) => { if (safePath(k) && typeof v === "string" && /^data:image\//.test(v)) previews.set(k, v); });
+      loadSnapshot(JSON.stringify(ev.data.content), false);
+      if (ev.data.page && location.hash.slice(1) !== ev.data.page && !location.hash.slice(1).startsWith("x")) { location.hash = ev.data.page; }
+    }
+  });
+
+  /* ============================================================
+     Painel de elementos (árvore)
+     ============================================================ */
+  const treeOpen = new Set();
+  let treeDrag = null;
+  function pageTitle(id) { return (content.pages[id] && content.pages[id].title) || BASE_TITLES[id] || id; }
+  const BASE_TITLES = { gate: "Seletor inicial", home: "Design System: início", fundamentos: "Fundamentos", identidade: "Identidade", ilustracao: "Ilustração", componentes: "Componentes", interacoes: "Interações", presskit: "Press Kit" };
+  function moveNode(el, container, ref) {
+    if (container === el || el.contains(container)) return false;
+    const old = el.parentElement && el.parentElement.closest("[data-b]");
+    if (ref) container.insertBefore(el, ref); else container.appendChild(el);
+    if (old) recordOrder(old); recordOrder(container); fixFree(); markDirty(); return true;
+  }
+  function refreshTree() {
+    if (!panel || curTab !== "tree") return;
+    const box = $("#adm-tree", panel); if (!box) return;
+    const scrollTop = box.parentElement.scrollTop;
+    box.innerHTML = "";
+    const anc = new Set(); for (let n = sel; n; n = n.parentElement && n.parentElement.closest("[data-b]")) anc.add(n);
+    [["header[data-b]", 0], [".page.active", 0], ["footer[data-b]", 0]].forEach(([q]) => { const r = $(q); if (r) box.appendChild(treeRow(r, 0, anc)); });
+    box.parentElement.scrollTop = scrollTop;
+  }
+  function treeRow(e, depth, anc) {
+    const wrap = mk("div", "adm-tw");
+    const kids = dchildren(e).filter(k => !k.matches(".slot-orig"));
+    const open = treeOpen.has(e.dataset.b) || anc.has(e) && e !== sel || depth < 1;
+    const hidden = !!(content.ops[e.dataset.b] || {}).hide;
+    const row = mk("div", "adm-tr" + (e === sel ? " on" : "") + (hidden ? " off" : ""));
+    row.style.paddingLeft = 4 + depth * 12 + "px";
+    row.draggable = !isProtected(e);
+    const caret = mk("button", "adm-caret", kids.length ? (open ? "▾" : "▸") : "·"); caret.type = "button";
+    caret.addEventListener("click", ev => { ev.stopPropagation(); if (!kids.length) return; if (open) { treeOpen.delete(e.dataset.b); anc.delete(e); } else treeOpen.add(e.dataset.b); refreshTree(); });
+    const name = mk("span", "adm-tn", esc(e.classList.contains("page") ? "Página: " + pageTitle(e.id) : label(e)));
+    row.append(caret, name);
+    if (!isProtected(e)) {
+      const eye = btn(hidden ? "🙈" : "👁", hidden ? "Mostrar" : "Ocultar", () => {
+        const o = op(e.dataset.b); if (o.hide) delete o.hide; else o.hide = 1; cleanOp(e.dataset.b);
+        e.classList.toggle("ds-hidden", !!(content.ops[e.dataset.b] || {}).hide); markDirty(); refreshTree(); placeBar();
+      }, "adm-ico");
+      row.appendChild(eye);
+    }
+    row.addEventListener("click", () => { select(e, true); });
+    row.addEventListener("dblclick", () => { showTab("item"); });
+    row.addEventListener("dragstart", ev => { treeDrag = e; ev.dataTransfer.effectAllowed = "move"; ev.dataTransfer.setData("text/plain", e.dataset.b); });
+    row.addEventListener("dragend", () => { treeDrag = null; $$(".adm-tr", panel).forEach(r => r.classList.remove("d-before", "d-after", "d-in")); });
+    row.addEventListener("dragover", ev => {
+      if (!treeDrag || treeDrag === e || treeDrag.contains(e)) return;
+      ev.preventDefault();
+      const r = row.getBoundingClientRect(), y = (ev.clientY - r.top) / r.height;
+      const zone = isProtected(e) ? (e.classList.contains("page") ? "in" : null) : (y < 0.3 ? "before" : y > 0.7 && !(canContain(e) && kids.length && open) ? "after" : canContain(e) ? "in" : "after");
+      $$(".adm-tr", panel).forEach(x => x.classList.remove("d-before", "d-after", "d-in"));
+      if (zone) { row.classList.add("d-" + zone); row.dataset.zone = zone; } else delete row.dataset.zone;
+    });
+    row.addEventListener("drop", ev => {
+      ev.preventDefault(); const zone = row.dataset.zone; if (!treeDrag || !zone) return;
+      const d = treeDrag; treeDrag = null;
+      let ok = false;
+      if (zone === "in") ok = moveNode(d, e, null);
+      else { const par = e.parentElement.closest("[data-b]"); if (par) ok = moveNode(d, par, zone === "before" ? e : nextData(e)); }
+      if (ok) { treeOpen.add(e.dataset.b); refreshTree(); placeBar(); }
+    });
+    wrap.appendChild(row);
+    if (open) kids.forEach(k => wrap.appendChild(treeRow(k, depth + 1, anc)));
+    return wrap;
+  }
+
+  /* ============================================================
+     Painel de seções (páginas do site)
+     ============================================================ */
+  function pageList() { return $$(".page"); }
+  function navLinkOf(id) { return $('#nav a[data-nav="' + id + '"]'); }
+  function uniquePageId(base) {
+    let id = base || "secao", n = 2;
+    while (document.getElementById(id) || content.pages[id]) id = (base || "secao") + "-" + n++;
+    return id;
+  }
+  function newSection(title, from) {
+    title = (title || "").trim(); if (!title) return;
+    const id = uniquePageId(slug(title));
+    const nav = $("#nav"), main = $("main");
+    let spec;
+    if (from) {
+      spec = specOf(from); spec.cls = "page"; spec.attrs = Object.assign({}, spec.attrs);
+    } else spec = { tag: "section", cls: "page", attrs: {}, children: [{ tag: "h1", t: esc(title) }, { tag: "p", t: "Conteúdo da nova seção. Clique para editar ou adicione blocos pela aba ＋." }] };
+    spec.attrs.id = id;
+    const page = spawn(spec, main, null);
+    const link = spawn({ tag: "a", attrs: { href: "#" + id, "data-nav": id }, t: esc(title) }, nav, null);
+    content.pages[id] = { title, nav: link.dataset.b, page: page.dataset.b };
+    fixFree(); refreshEditable(); markDirty(); location.hash = id; refreshSections();
+  }
+  function deleteSection(id) {
+    const meta = content.pages[id]; if (!meta || !meta.page) return;
+    if (!confirm("Excluir a seção “" + pageTitle(id) + "” e tudo que está nela?")) return;
+    const pe = nodes.get(meta.page), ne = nodes.get(meta.nav);
+    if (currentPage() === id) location.hash = (content.site.home && document.getElementById(content.site.home)) ? content.site.home : "gate";
+    if (pe) removeAdded(pe); if (ne) removeAdded(ne);
+    delete content.pages[id]; Object.keys(content.bg).forEach(k => { if (k === id) delete content.bg[k]; });
+    markDirty(); refreshSections();
+  }
+  function refreshSections() {
+    if (!panel || curTab !== "sections") return;
+    const box = $("#adm-sections", panel); if (!box) return;
+    box.innerHTML = "";
+    const home = content.site.home || "gate";
+    pageList().forEach(p => {
+      const id = p.id, meta = content.pages[id] || {}, added = !!meta.page, link = navLinkOf(id);
+      const hidden = link ? !!(content.ops[link.dataset.b] || {}).hide : false;
+      const r = mk("div", "adm-sec" + (id === currentPage() ? " on" : ""));
+      r.appendChild(mk("div", "adm-sec-t", `<b>${esc(pageTitle(id))}</b><code>#${esc(id)}</code>${id === home ? '<em title="Página inicial do site">🏠</em>' : ""}`));
+      const acts = mk("div", "adm-row");
+      acts.appendChild(btn("Abrir", "Ir para esta seção", () => { location.hash = id; }));
+      acts.appendChild(btn("✎", "Renomear (título e menu)", () => {
+        const t = prompt("Novo nome da seção:", pageTitle(id)); if (!t || !t.trim()) return;
+        content.pages[id] = Object.assign(content.pages[id] || {}, { title: t.trim() });
+        if (link) { link.innerHTML = esc(t.trim()); onTextInput(link); }
+        markDirty(); refreshSections(); refreshPageSelect();
+      }));
+      if (link) {
+        acts.appendChild(btn(hidden ? "Mostrar no menu" : "Ocultar do menu", "", () => {
+          const o = op(link.dataset.b); if (o.hide) delete o.hide; else o.hide = 1; cleanOp(link.dataset.b);
+          link.classList.toggle("ds-hidden", !!(content.ops[link.dataset.b] || {}).hide); markDirty(); refreshSections();
+        }));
+        acts.appendChild(btn("◀", "Mover no menu para trás", () => { sel = sel; const prev = link.previousElementSibling; if (prev) { link.parentElement.insertBefore(link, prev); recordOrder($("#nav")); markDirty(); refreshSections(); } }));
+        acts.appendChild(btn("▶", "Mover no menu para frente", () => { const nx = link.nextElementSibling; if (nx) { link.parentElement.insertBefore(link, nx.nextElementSibling); recordOrder($("#nav")); markDirty(); refreshSections(); } }));
+      }
+      acts.appendChild(btn("🏠", "Definir como página inicial do site", () => { content.site.home = id; markDirty(); refreshSections(); }));
+      acts.appendChild(btn("⧉", "Duplicar seção", () => {
+        if (p.querySelector("[id]") || p.querySelector(ATOMIC)) { alert("Esta seção contém itens interativos e não pode ser duplicada."); return; }
+        const t = prompt("Nome da cópia:", pageTitle(id) + " (cópia)"); if (t) newSection(t, p);
+      }));
+      if (added) acts.appendChild(btn("🗑", "Excluir seção", () => deleteSection(id), "danger"));
+      r.appendChild(acts); box.appendChild(r);
+    });
+    const add = mk("div", "adm-row");
+    add.appendChild(btn("＋ Nova seção", "", () => { const t = prompt("Nome da nova seção (aparece no menu):", "Nova seção"); if (t) newSection(t); }, "primary"));
+    box.appendChild(add);
+    box.appendChild(mk("p", "adm-small", "Cada seção funciona como uma página do site (endereço #nome). O Seletor inicial é a página que abre primeiro; troque com 🏠. Seções originais não podem ser excluídas, apenas ocultadas do menu."));
+  }
+  function refreshPageSelect() {
+    if (!panel) return; const g = $("#adm-goto", panel); if (!g) return;
+    g.innerHTML = PAGES().map(([id, l]) => `<option value="${id}">${esc(l)}</option>`).join(""); g.value = currentPage();
+  }
+
+  /* ============================================================
+     Atalhos de teclado (iguais aos do Carrd)
+     ============================================================ */
+  let clipSpec = null;
+  function canClone(e) { return !(e.id || e.querySelector("[id]") || isAtomic(e) || e.querySelector(ATOMIC)); }
+  function copyItem(e) {
+    if (!e || isProtected(e)) return false;
+    if (!canClone(e)) { note("Este item é interativo e não pode ser copiado."); return false; }
+    clipSpec = specOf(e); note("Item copiado."); return true;
+  }
+  function pasteItem() {
+    if (!clipSpec) return;
+    let parent, ref = null;
+    if (sel && !isProtected(sel)) { parent = sel.parentElement.closest("[data-b]"); ref = nextData(sel); }
+    else parent = sel && canContain(sel) ? sel : ($(".page.active") || $(".page"));
+    const n = spawn(JSON.parse(JSON.stringify(clipSpec)), parent, ref);
+    fixFree(); refreshEditable(); select(n); markDirty();
+  }
+  function globalKeys(ev) {
+    if (!editing || $(".adm-backdrop")) return false;
+    const typing = ev.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(ev.target.tagName);
+    const mod = ev.ctrlKey || ev.metaKey, code = ev.code;
+    if (ev.altKey && !mod) {
+      const map = { KeyE: () => showTab("tree"), KeyS: () => showTab("sections"), KeyV: () => viewSite(),
+        ArrowLeft: () => dockPanel("left"), ArrowRight: () => dockPanel("right") };
+      if (map[code]) { ev.preventDefault(); map[code](); return true; }
+      return false;
+    }
+    if (!mod) return false;
+    if (code === "KeyS") { ev.preventDefault(); saveAll(); return true; }
+    if (typing) return false;                                   // dentro de um campo, o navegador cuida do desfazer/copiar
+    if (code === "KeyZ") { ev.preventDefault(); ev.shiftKey ? redo() : undo(); return true; }
+    if (code === "KeyY") { ev.preventDefault(); redo(); return true; }
+    if (window.getSelection && String(window.getSelection()).length && !ev.shiftKey) return false;
+    if (code === "KeyC" && sel) { ev.preventDefault(); copyItem(sel); return true; }
+    if (code === "KeyX" && sel) { ev.preventDefault(); if (copyItem(sel)) { if (sel.dataset.added) removeAdded(sel); else { op(sel.dataset.b).hide = 1; sel.classList.add("ds-hidden"); } select(null); markDirty(); } return true; }
+    if (code === "KeyV") { ev.preventDefault(); pasteItem(); return true; }
+    return false;
+  }
+  function viewSite() { window.open(location.href.split("#")[0].split("?")[0] + location.hash, "_blank"); }
+  function playAnims() { if (window.DS_ANIM) window.DS_ANIM.play(); }
+
   /* ---------- cripto / GitHub / login (mantidos) ---------- */
   const enc = new TextEncoder(), dec = new TextDecoder();
   const b64e = buf => { let s = ""; const a = new Uint8Array(buf); for (let i = 0; i < a.length; i += 0x8000) s += String.fromCharCode.apply(null, a.subarray(i, i + 0x8000)); return btoa(s); };
@@ -1342,7 +1703,7 @@
     refreshEditable();
   }
   function enterAdmin(sess) {
-    session = sess; saved = JSON.parse(JSON.stringify(content));
+    session = sess; saved = JSON.parse(JSON.stringify(content)); hist.last = JSON.stringify(content);
     buildPanel(); buildBar(); setEditing(true);
     $("#admin-link").textContent = "Admin (ativo)";
   }
@@ -1407,6 +1768,8 @@
       $$(LEGACY_TEXT_SEL, page).forEach(e => { if (!e.closest(SLOTCLS)) legacyText.set(page.id + ":" + (ti++), e); });
       $$(LEGACY_SLOT_SEL, page).forEach(e => legacySlots.set(page.id + ":" + (si++), e));
     });
+    const mainEl = $("main"); if (mainEl && !mainEl.dataset.b) mainEl.dataset.b = "main";
+    captureOrig();
     $$("[data-b]").forEach(e => {
       nodes.set(e.dataset.b, e);
       if (isLeaf(e)) origInfo.set(e.dataset.b, { html: e.innerHTML, h: hash(e.innerHTML) });
@@ -1416,6 +1779,14 @@
       if (r.ok) content = migrate(await r.json(), legacyText, legacySlots);
     } catch (e) { /* sem content.json */ }
     applyAll();
+    hist.last = JSON.stringify(content);
+    const home = content.site && content.site.home;
+    if (home && document.getElementById(home) && !location.hash && window.DS) { window.DS.setHome(home); location.replace("#" + home); }
+    if (PREVIEW) {
+      document.body.classList.add("ds-preview");
+      window.parent.postMessage({ ds: "ready" }, location.origin);
+      return;
+    }
     $("#admin-link").addEventListener("click", ev => { ev.preventDefault(); openLogin(); });
     if (/[?&]admin\b/.test(location.search)) openLogin();
   }

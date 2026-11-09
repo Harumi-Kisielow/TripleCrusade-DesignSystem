@@ -219,10 +219,10 @@ body.editing .nav .edit-only { display: inline-block; }
 .adm-panel button:disabled { opacity: .4; cursor: not-allowed; }
 
 /* ---------- painel admin ---------- */
-.adm-panel { position: fixed; right: 14px; bottom: 14px; width: 310px; max-height: 82vh; overflow: auto; z-index: 1000; background: var(--stone-900); border: 2px solid var(--gold); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.6); font-size: .88rem; }
+.adm-panel { position: fixed; right: 14px; bottom: 14px; width: 310px; max-height: 86vh; overflow: hidden; display: flex; flex-direction: column; z-index: 1000; background: var(--stone-900); border: 2px solid var(--gold); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.6); font-size: .88rem; }
 .adm-head { display: flex; justify-content: space-between; align-items: center; padding: .55rem .8rem; background: var(--stone-700); position: sticky; top: 0; }
 .adm-body { padding: .7rem .8rem; display: flex; flex-direction: column; gap: .6rem; }
-.adm-panel.min .adm-body { display: none; }
+.adm-panel.min .adm-body, .adm-panel.min .adm-foot, .adm-panel.min .adm-toolbar, .adm-panel.min .adm-tabs { display: none; }
 .adm-tip { margin: 0; color: var(--muted); font-size: .8rem; }
 .adm-panel details { border: 1px solid var(--line); border-radius: 6px; padding: .4rem .6rem; }
 .adm-panel summary { cursor: pointer; font-weight: bold; }
@@ -374,3 +374,48 @@ body.ds-pan .ds-sel, body.ds-pan .ds-sel * { cursor: move !important; }
 .adm-panel input[type=number], .adm-panel input[type=text] { background: #0a0a0c; color: var(--text); border: 1px solid var(--stone-500); border-radius: 4px; font: inherit; font-size: .8rem; padding: .25rem .35rem; }
 .adm-panel input[type=number]:focus, .adm-panel input[type=text]:focus, .adm-panel select:focus { outline: 2px solid #4aa8ff; outline-offset: 0; }
 .adm-panel input[type=range] { accent-color: #4aa8ff; }
+
+#ds-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); background: #111; color: #fff; border: 1px solid #444; border-radius: 8px; padding: .5rem .9rem; opacity: 0; pointer-events: none; transition: .25s; z-index: 3000; }
+#ds-toast.on { opacity: 1; transform: translate(-50%, 0); }
+.ds-anchor { height: 0; margin: 0 !important; padding: 0 !important; border: 0 !important; scroll-margin-top: 70px; }
+body.editing .ds-anchor { height: 22px; border: 1px dashed #4aa8ff !important; border-radius: 4px; margin: .4rem 0 !important; position: relative; }
+body.editing .ds-anchor::after { content: "⚓ âncora #" attr(id); position: absolute; left: 6px; top: 2px; font: 600 .7rem var(--font-ui); color: #4aa8ff; }
+
+/* ---------- editor v4: abas, barra de ferramentas, árvore, seções, prévia ---------- */
+.adm-head { position: static; flex: none; }
+.adm-body { overflow: auto; flex: 1 1 auto; min-height: 120px; }
+.adm-foot { flex: none; padding: .5rem .8rem .6rem; border-top: 1px solid var(--line); background: var(--stone-900); display: flex; flex-direction: column; gap: .3rem; }
+.adm-foot .adm-row { margin: 0; }
+.adm-toolbar { flex: none; display: flex; align-items: center; gap: 3px; padding: .35rem .6rem; background: #17171b; border-bottom: 1px solid var(--line); }
+.adm-toolbar button { padding: .2rem .45rem !important; font-size: .9rem !important; min-width: 30px; }
+.adm-toolbar button.on { border-color: #4aa8ff !important; color: #4aa8ff; }
+.adm-toolbar i { width: 1px; align-self: stretch; background: var(--line); margin: 0 3px; }
+.adm-tabs { flex: none; display: flex; flex-wrap: wrap; gap: 2px; padding: .35rem .5rem 0; background: #17171b; }
+.adm-tabs button { border-radius: 6px 6px 0 0 !important; border-bottom: 0 !important; font-size: .74rem !important; padding: .28rem .5rem !important; background: transparent !important; color: var(--muted) !important; }
+.adm-tabs button.on { background: var(--stone-900) !important; color: var(--gold) !important; border-color: var(--gold) !important; }
+.adm-pane { display: none; flex-direction: column; gap: .6rem; }
+.adm-pane.on { display: flex; }
+.adm-tree { display: flex; flex-direction: column; }
+.adm-tr { display: flex; align-items: center; gap: 2px; padding: 2px 4px; border-radius: 4px; cursor: pointer; border-top: 2px solid transparent; border-bottom: 2px solid transparent; }
+.adm-tr:hover { background: #26262c; }
+.adm-tr.on { background: #1d3a5c; }
+.adm-tr.off .adm-tn { opacity: .45; text-decoration: line-through; }
+.adm-tr.d-before { border-top-color: #4aa8ff; } .adm-tr.d-after { border-bottom-color: #4aa8ff; } .adm-tr.d-in { background: #1d3a5c; outline: 1px dashed #4aa8ff; }
+.adm-tn { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: .78rem; }
+.adm-panel button.adm-caret, .adm-panel button.adm-ico { border: 0 !important; background: transparent !important; padding: 0 .2rem !important; min-width: 16px; font-size: .8rem !important; }
+.adm-sec { border: 1px solid var(--line); border-radius: 6px; padding: .45rem .55rem; margin-bottom: .4rem; }
+.adm-sec.on { border-color: #4aa8ff; }
+.adm-sec-t { display: flex; gap: .5rem; align-items: baseline; }
+.adm-sec-t code { color: var(--muted); font-size: .72rem; }
+.adm-sec .adm-row { margin-top: .35rem; }
+.adm-sec .adm-row button { padding: .15rem .4rem !important; font-size: .72rem !important; }
+.adm-preview { position: fixed; inset: 0; z-index: 900; background: rgba(0,0,0,.72); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; padding: 12px; }
+.adm-preview.side-right { padding-right: 372px; } .adm-preview.side-left { padding-left: 372px; }
+.adm-pv-label { color: #cfd3da; font: 600 .78rem var(--font-ui); }
+.adm-pv-dev { background: #000; border-radius: 28px; padding: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.8); border: 2px solid #444; }
+.adm-pv-dev iframe { display: block; border: 0; border-radius: 18px; background: var(--bg); }
+.adm-pv-mobile .adm-pv-dev iframe { width: 390px; height: min(780px, calc(100vh - 90px)); }
+.adm-pv-mobile-x .adm-pv-dev iframe { width: 390px; height: calc(100vh - 90px); }
+.adm-pv-tablet .adm-pv-dev iframe { width: 820px; max-width: calc(100vw - 420px); height: calc(100vh - 90px); }
+body.ds-preview .adm-panel, body.ds-preview #admin-link { display: none; }
+@media (max-width: 720px) { .adm-preview.side-right, .adm-preview.side-left { padding: 12px; } }

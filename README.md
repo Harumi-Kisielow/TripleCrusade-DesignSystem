@@ -20,6 +20,9 @@
    - **Atalhos:** Ctrl+D duplica · Delete exclui · Esc sai do texto e depois desmarca · Alt+↑/↓ move na ordem.
    - Texto: clique de novo e digite. Ao arrastar, segure Alt para soltar DENTRO de uma caixa.
    - Itens originais apagados ficam escondidos e podem ser restaurados em "Página". Não existe desfazer: "Descartar" volta ao último salvo.
+   - **Abas do painel:** Item · Adicionar · Elementos (árvore com todos os itens: clique seleciona, arraste reorganiza, 👁 oculta) · Seções (criar, renomear, duplicar, excluir páginas e escolher a página inicial) · Página (fundo e cores).
+   - **Desfazer/refazer:** Ctrl+Z / Ctrl+Shift+Z. Copiar/recortar/colar itens: Ctrl+C / Ctrl+X / Ctrl+V. Salvar: Ctrl+S.
+   - **Âncoras:** bloco ⚓ Âncora; links aceitam #nome, section:next, scrollpoint:next, copy:texto, tel:, mailto:, file:nome.pdf e ||blank (nova aba).
 4. Clique em Salvar. Tudo vai para o GitHub (imagens em imgs/<página>/ e o layout em content.json). O site atualiza em 1–2 minutos.
 
 ## Press Kit
