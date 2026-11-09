@@ -363,12 +363,22 @@
         "z": 1.05,
         "x": 50,
         "y": 50
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b169": {
       "img": {
         "path": "imgs/ilustracao/axel-lhjp.png",
         "h": "1dnfft6"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b170": {
@@ -384,30 +394,55 @@
         "z": 1.05,
         "x": 50,
         "y": 50
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b176": {
       "img": {
         "path": "imgs/ilustracao/torre-concept-18ps.png",
         "h": "1xzhnw6"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b190": {
       "img": {
         "path": "imgs/ilustracao/axel-lhjp.png",
         "h": "x8d9ap"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b191": {
       "img": {
         "path": "imgs/ilustracao/magician-design-remaked-1kof.png",
         "h": "x8d9aq"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b192": {
       "img": {
         "path": "imgs/ilustracao/miko-pintada-1cic.png",
         "h": "x8d9ar"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b200": {
@@ -434,6 +469,11 @@
         "z": 1.4,
         "x": 37,
         "y": 22
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "nmw761gvpn71s": {
@@ -1667,6 +1707,27 @@
       }
     },
     "b153": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "zoom"
+      }
+    },
+    "b179": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "zoom"
+      }
+    },
+    "b182": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "zoom"
+      }
+    },
+    "b185": {
       "animation": {
         "duration": 500,
         "delay": 0,
