@@ -1178,7 +1178,13 @@
         "v": "<strong>Redes sociais:</strong>&nbsp;@studiomaiorigualatres em todas as redes sociais."
       }
     },
-    "b482": {},
+    "b482": {
+      "href": "https://drive.google.com/drive/folders/1lOERpqvODOgahEOjNpH6Maowi_CN7RT7?usp=drive_link",
+      "t": {
+        "h": "3e3j83",
+        "v": "PREENCHER: link para download da logo"
+      }
+    },
     "b417": {
       "t": {
         "h": "lokcml",
@@ -1345,6 +1351,28 @@
       "sw": {
         "label": "Preto",
         "hex": "#0D0D0D"
+      }
+    },
+    "b498": {
+      "href": "https://drive.google.com/drive/folders/1lOERpqvODOgahEOjNpH6Maowi_CN7RT7?usp=drive_link",
+      "t": {
+        "h": "17u8wdn",
+        "v": "&nbsp;link para a pasta de screenshots de gameplay e exploração"
+      }
+    },
+    "b503": {},
+    "b508": {
+      "href": "https://drive.google.com/drive/folders/1lOERpqvODOgahEOjNpH6Maowi_CN7RT7?usp=drive_link",
+      "t": {
+        "h": "14rqpvu",
+        "v": "link do banner"
+      }
+    },
+    "b487": {
+      "href": "https://drive.google.com/drive/folders/1lOERpqvODOgahEOjNpH6Maowi_CN7RT7?usp=drive_link",
+      "t": {
+        "h": "qewywm",
+        "v": "link para a key art"
       }
     }
   },
