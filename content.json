@@ -1471,10 +1471,7 @@
         "--cols": "50fr 50fr"
       }
     },
-    "b355": {
-      "hide": 1
-    },
-    "nmw9mkm53y3yd": {
+    "nmw9mu35qyscj": {
       "t": {
         "v": "Clique em 📷 para enviar a imagem"
       },
@@ -1486,9 +1483,12 @@
       },
       "frame": {
         "z": 1.05,
-        "x": 49,
+        "x": 50,
         "y": 50
       }
+    },
+    "b355": {
+      "hide": 1
     }
   },
   "order": {
@@ -1746,8 +1746,8 @@
       "b327",
       "b340",
       "b342",
-      "nmw9mkm53y3yd",
       "b343",
+      "nmw9mu35qyscj",
       "b344",
       "nmw9lx9bo76ut",
       "b350",
@@ -2068,7 +2068,7 @@
       "attrs": {},
       "parent": "b307"
     },
-    "nmw9mkm53y3yd": {
+    "nmw9mu35qyscj": {
       "tag": "div",
       "cls": "img-slot",
       "attrs": {},
