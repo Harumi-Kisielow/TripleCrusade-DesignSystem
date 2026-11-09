@@ -1286,6 +1286,66 @@
         "h": "10sht63",
         "v": "<strong>Diálogos (visual novel):</strong>&nbsp;LT Cushion"
       }
+    },
+    "nmw9kyl1juag6": {
+      "t": {
+        "v": "Paleta do mundo (Torre do rei demônio, 3ª fase)"
+      }
+    },
+    "nmw9kypel7s45": {
+      "t": {
+        "v": "Coloração monocromática com alguns pontos de contraste. HEX do GDD."
+      }
+    },
+    "nmw9kyuy5eh22": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(85, 115, 20)"
+      },
+      "sw": {
+        "label": "Verde musgo",
+        "hex": "#557314"
+      }
+    },
+    "nmw9kyuy7gpmy": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(113, 115, 63)"
+      },
+      "sw": {
+        "label": "Oliva",
+        "hex": "#71733F"
+      }
+    },
+    "nmw9kyuy8rsop": {
+      "s": {
+        "color": "rgb(0, 0, 0)",
+        "background-color": "rgb(166, 150, 141)"
+      },
+      "sw": {
+        "label": "Cinza-bege",
+        "hex": "#A6968D"
+      }
+    },
+    "nmw9kyuy9purz": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(101, 91, 88)"
+      },
+      "sw": {
+        "label": "Cinza-terra",
+        "hex": "#655B58"
+      }
+    },
+    "nmw9kyuya8yf0": {
+      "s": {
+        "color": "rgb(255, 255, 255)",
+        "background-color": "rgb(13, 13, 13)"
+      },
+      "sw": {
+        "label": "Preto",
+        "hex": "#0D0D0D"
+      }
     }
   },
   "order": {
@@ -1380,6 +1440,9 @@
       "nmw9ktbcmau4s",
       "nmw9ktfnfv8fe",
       "nmw9ktivk50yo",
+      "nmw9kyl1juag6",
+      "nmw9kypel7s45",
+      "nmw9kyuy5x02r",
       "b134",
       "b135",
       "b136",
@@ -1509,6 +1572,13 @@
       "nmw9ktivmfzer",
       "nmw9ktivnirgr",
       "nmw9ktivot8kx"
+    ],
+    "nmw9kyuy5x02r": [
+      "nmw9kyuy5eh22",
+      "nmw9kyuy7gpmy",
+      "nmw9kyuy8rsop",
+      "nmw9kyuy9purz",
+      "nmw9kyuya8yf0"
     ]
   },
   "add": {
@@ -1761,6 +1831,54 @@
       "cls": "swatch",
       "attrs": {},
       "parent": "nmw9ktivk50yo"
+    },
+    "nmw9kyl1juag6": {
+      "tag": "h3",
+      "cls": "",
+      "attrs": {},
+      "parent": "b101"
+    },
+    "nmw9kypel7s45": {
+      "tag": "p",
+      "cls": "",
+      "attrs": {},
+      "parent": "b101"
+    },
+    "nmw9kyuy5x02r": {
+      "tag": "div",
+      "cls": "swatches",
+      "attrs": {},
+      "parent": "b101"
+    },
+    "nmw9kyuy5eh22": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9kyuy5x02r"
+    },
+    "nmw9kyuy7gpmy": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9kyuy5x02r"
+    },
+    "nmw9kyuy8rsop": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9kyuy5x02r"
+    },
+    "nmw9kyuy9purz": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9kyuy5x02r"
+    },
+    "nmw9kyuya8yf0": {
+      "tag": "div",
+      "cls": "swatch",
+      "attrs": {},
+      "parent": "nmw9kyuy5x02r"
     }
   },
   "pages": {},
