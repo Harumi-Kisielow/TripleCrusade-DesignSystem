@@ -1239,6 +1239,15 @@
         "h": "qewywm",
         "v": "&nbsp;link para a key art"
       }
+    },
+    "b1": {
+      "bgimg": {
+        "path": "imgs/site/tiles-tijolos-8thu.png",
+        "dim": 0.79,
+        "size": "free",
+        "y": 39,
+        "x": 47
+      }
     }
   },
   "order": {
