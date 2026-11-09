@@ -230,15 +230,17 @@
     "b40": {
       "bgimg": {
         "path": "imgs/home/arte-apresentacao-1ezh.png",
-        "dim": 0,
-        "size": "cover"
+        "dim": 0.84,
+        "size": "cover",
+        "x": 61
       }
     },
     "b44": {
       "bgimg": {
         "path": "imgs/home/post-mortem-q4dt.png",
-        "dim": 0,
-        "size": "cover"
+        "dim": 0.74,
+        "size": "cover",
+        "x": 100
       }
     },
     "b46": {
@@ -247,17 +249,12 @@
         "v": "Logo, cores e&nbsp;<br>tipografia do&nbsp;<br>projeto."
       }
     },
-    "b42": {
-      "t": {
-        "h": "1xodgdv",
-        "v": "Conceito, tom,<br>&nbsp;pilares de&nbsp;<br>design e<br>&nbsp;referências."
-      }
-    },
     "b48": {
       "bgimg": {
         "path": "imgs/home/post-2-4ski.png",
-        "dim": 0,
-        "size": "cover"
+        "dim": 0.79,
+        "size": "cover",
+        "x": 100
       }
     },
     "b52": {
@@ -270,8 +267,9 @@
     "b56": {
       "bgimg": {
         "path": "imgs/home/timelune-kqq3.png",
-        "dim": 0,
-        "size": "cover"
+        "dim": 0.74,
+        "size": "cover",
+        "x": 100
       }
     },
     "b69": {
@@ -486,8 +484,9 @@
     "nmw8otxk3eaos": {
       "bgimg": {
         "path": "imgs/home/artes-apresentacao-1x6t.png",
-        "dim": 0,
-        "size": "cover"
+        "dim": 0.79,
+        "size": "cover",
+        "x": 72
       },
       "s": {
         "height": "214px"
@@ -566,6 +565,24 @@
     },
     "b133": {
       "hide": 1
+    },
+    "b42": {
+      "t": {
+        "h": "1xodgdv",
+        "v": "Conceito, tom,&nbsp;<br>pilares de&nbsp;<br>design e&nbsp;<br>referências."
+      }
+    },
+    "b50": {
+      "t": {
+        "h": "w0ywqq",
+        "v": "Estilo de arte, personagens&nbsp;<br>e cenários."
+      }
+    },
+    "b58": {
+      "t": {
+        "h": "ngga5",
+        "v": "Movimentação,&nbsp;<br>combate,&nbsp;<br>cliques e sons."
+      }
     }
   },
   "order": {
