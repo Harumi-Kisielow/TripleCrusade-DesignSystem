@@ -1659,6 +1659,8 @@
     }
   },
   "pages": {},
-  "site": {},
+  "site": {
+    "icon": "imgs/site/cursor-sr6x.png"
+  },
   "styles": {}
 }
