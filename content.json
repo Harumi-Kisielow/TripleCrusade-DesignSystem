@@ -119,6 +119,13 @@
         "v": "Logo do jogo"
       }
     },
+    "b3": {
+      "t": {
+        "h": "40qz",
+        "v": "<a href=\"https://harumi-kisielow.github.io/TripleCrusade-DesignSystem/#gate\">\n      <span><br></span>\n      <span>Triple Crusade</span>\n    </a>✦"
+      },
+      "hide": 1
+    },
     "b411": {
       "t": {
         "h": "r1p27q",
@@ -223,7 +230,6 @@
       }
     },
     "b501": {
-      "thumbnail": "youtube",
       "img": {
         "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
         "h": "kluag0"
@@ -1178,6 +1184,9 @@
         "h": "lokcml",
         "v": "R$ 19,99 / $19,99USD"
       }
+    },
+    "b2": {
+      "href": "#"
     }
   },
   "order": {
