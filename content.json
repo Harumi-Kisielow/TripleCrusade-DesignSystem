@@ -838,6 +838,11 @@
       "s": {
         "border-width": "0px",
         "border-style": "solid"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "zoom"
       }
     },
     "b233": {
@@ -961,18 +966,33 @@
       "s": {
         "width": "18.4%",
         "height": "222px"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b231": {
       "s": {
         "width": "18.4%",
         "height": "222px"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b241": {
       "s": {
         "width": "18.4%",
         "height": "222px"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b271": {
@@ -984,6 +1004,11 @@
       },
       "s": {
         "height": "176px"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b275": {
@@ -1229,6 +1254,11 @@
       "img": {
         "path": "imgs/componentes/planejamento-hud-h6j0.png",
         "h": "pd58dv"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b230": {
@@ -1728,6 +1758,48 @@
       }
     },
     "b185": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "zoom"
+      }
+    },
+    "b221": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "zoom"
+      }
+    },
+    "b278": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "zoom"
+      }
+    },
+    "nmw9bf3b8dn99": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "zoom"
+      }
+    },
+    "b284": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "slide"
+      }
+    },
+    "nmw9bf9btt611": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "zoom"
+      }
+    },
+    "nmw9bb9kt6zzy": {
       "animation": {
         "duration": 500,
         "delay": 0,
