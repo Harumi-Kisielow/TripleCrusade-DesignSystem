@@ -24,15 +24,15 @@
     },
     "fundamentos": {
       "path": "imgs/fundos/fundo-madeira-19j2.png",
-      "dim": 0
+      "dim": 0.9
     },
     "identidade": {
       "path": "imgs/fundos/fundo-madeira-19j2.png",
-      "dim": 0
+      "dim": 0.9
     },
     "interacoes": {
       "path": "imgs/fundos/fundo-madeira-19j2.png",
-      "dim": 0
+      "dim": 0.9
     }
   },
   "ops": {
