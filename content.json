@@ -338,19 +338,27 @@
     "b200": {
       "t": {
         "h": "14thav9",
-        "v": "[A definir]"
-      }
+        "v": "&nbsp;"
+      },
+      "hide": 1
     },
     "b202": {
       "t": {
         "h": "14thav9",
         "v": "[A definir]"
-      }
+      },
+      "hide": 1
     },
     "b175": {
       "img": {
         "path": "imgs/ilustracao/whatsapp-image-2026-11-07-at-22-38-45-11g0.jpeg",
         "h": "ln22x1"
+      },
+      "s": {},
+      "frame": {
+        "z": 1.4,
+        "x": 37,
+        "y": 22
       }
     },
     "nmw761gvpn71s": {
@@ -583,6 +591,66 @@
         "h": "ngga5",
         "v": "Movimentação,&nbsp;<br>combate,&nbsp;<br>cliques e sons."
       }
+    },
+    "b197": {
+      "t": {
+        "h": "1rru8dq",
+        "v": "<strong>Imunes à morte:</strong> Tsubasa, Silky, Felícia, Lillia e Minerva (ficam feridos)."
+      }
+    },
+    "nmw9acgr770gx": {
+      "t": {
+        "v": "<strong>Pincel e Dinâmica: Todos os desenhos foram feitos utilizando um pincel duro, sem variação de opacidade, mas com variação de tamanho controlada por pressão.</strong>"
+      }
+    },
+    "nmw9acgr7yqgx": {
+      "t": {
+        "v": "<strong>Cor do Traço: A line art é inteiramente preta, mantendo um padrão consistente em todas as ilustrações.</strong>"
+      }
+    },
+    "nmw9acgr7zpsq": {
+      "t": {
+        "v": "<strong>Espessura Orgânica: A espessura do traço seguiu uma abordagem livre e gestual. Em vez de uma regra estrita baseada apenas na proximidade com a câmera ou nas áreas de sombra, a espessura varia conforme o ritmo e a expressividade do desenho, alternando entre traços mais finos ou mais grossos de forma intuitiva.</strong>"
+      }
+    },
+    "nmw9anctpej5s": {
+      "t": {
+        "v": "<strong>Paleta de Cores: A seleção de cores baseou-se em combinações complementares e/ou análogas. O objetivo foi buscar um meio-termo equilibrado, evitando saturação excessiva ou tons muito acinzentados.</strong>"
+      }
+    },
+    "nmw9ao0319ug7": {
+      "t": {
+        "v": "<strong>Estilo de Sombreado: As sombras foram construídas de forma intencional utilizando o modo de mesclagem Multiply, aplicando uma cartela de tons baseada em variações de lilás, laranja desbotado e azulado.</strong>"
+      }
+    },
+    "nmw9aojc8rpgi": {
+      "t": {
+        "v": "<strong>Iluminação: A luz principal é predominantemente difusa. Embora existam sombras duras causadas por sobreposição de elementos, não foram utilizadas fontes de luz direta acentuadas nos personagens.</strong>"
+      }
+    },
+    "nmw9ap5p43h1o": {
+      "t": {
+        "v": "<strong>Padrão Geral (Três Quartos): Para manter a coesão visual, tanto os personagens aliados quanto os inimigos foram construídos em um ângulo de três quartos voltado para a esquerda de quem observa a tela (ou seja, à direita dos próprios personagens). Na interface de batalha, esse posicionamento foi padronizado para que todos fiquem alinhados voltados para a esquerda do jogador.</strong>"
+      }
+    },
+    "nmw9ap5p4dww6": {
+      "t": {
+        "v": "<strong>Personagens Jogáveis (Recrutáveis): O ângulo de três quartos foi trabalhado de forma mais frontal, aproximando o jogador dos protagonistas e aliados.</strong>"
+      }
+    },
+    "nmw9ap5p4txdu": {
+      "t": {
+        "v": "<strong>Inimigos e Oponentes: Para os inimigos, a perspectiva foi ajustada para um três quartos visto ligeiramente de cima. Essa escolha sutil foi adaptada para acompanhar melhor a perspectiva da câmera do jogo e o comportamento das sombras no cenário.</strong>"
+      }
+    },
+    "b204": {
+      "hide": 1
+    },
+    "b203": {
+      "hide": 1
+    },
+    "b193": {
+      "hide": 1
     }
   },
   "order": {
@@ -683,6 +751,49 @@
       "b152",
       "b153",
       "b158"
+    ],
+    "b195": [
+      "b196",
+      "b197",
+      "b198"
+    ],
+    "b162": [
+      "b163",
+      "b164",
+      "b165",
+      "b166",
+      "b167",
+      "b171",
+      "b172",
+      "b173",
+      "b177",
+      "b178",
+      "b188",
+      "b189",
+      "b193",
+      "b194",
+      "b195",
+      "b199",
+      "nmw9acgr7uif6",
+      "b200",
+      "b201",
+      "nmw9ap5p4pb7z",
+      "b202",
+      "b203",
+      "b204"
+    ],
+    "nmw9acgr7uif6": [
+      "nmw9acgr770gx",
+      "nmw9acgr7yqgx",
+      "nmw9acgr7zpsq",
+      "nmw9anctpej5s",
+      "nmw9ao0319ug7",
+      "nmw9aojc8rpgi"
+    ],
+    "nmw9ap5p4pb7z": [
+      "nmw9ap5p43h1o",
+      "nmw9ap5p4dww6",
+      "nmw9ap5p4txdu"
     ]
   },
   "add": {
@@ -719,6 +830,72 @@
       "cls": "",
       "attrs": {},
       "parent": "nmw8otxk3eaos"
+    },
+    "nmw9acgr7uif6": {
+      "tag": "ul",
+      "cls": "",
+      "attrs": {},
+      "parent": "b162"
+    },
+    "nmw9acgr770gx": {
+      "tag": "li",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw9acgr7uif6"
+    },
+    "nmw9acgr7yqgx": {
+      "tag": "li",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw9acgr7uif6"
+    },
+    "nmw9acgr7zpsq": {
+      "tag": "li",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw9acgr7uif6"
+    },
+    "nmw9anctpej5s": {
+      "tag": "li",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw9acgr7uif6"
+    },
+    "nmw9ao0319ug7": {
+      "tag": "li",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw9acgr7uif6"
+    },
+    "nmw9aojc8rpgi": {
+      "tag": "li",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw9acgr7uif6"
+    },
+    "nmw9ap5p4pb7z": {
+      "tag": "ul",
+      "cls": "",
+      "attrs": {},
+      "parent": "b162"
+    },
+    "nmw9ap5p43h1o": {
+      "tag": "li",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw9ap5p4pb7z"
+    },
+    "nmw9ap5p4dww6": {
+      "tag": "li",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw9ap5p4pb7z"
+    },
+    "nmw9ap5p4txdu": {
+      "tag": "li",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmw9ap5p4pb7z"
     }
   },
   "pages": {},
