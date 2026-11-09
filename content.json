@@ -162,6 +162,10 @@
       "img": {
         "path": "imgs/home/banner-1kta.png",
         "h": "dxuvyw"
+      },
+      "s": {
+        "width": "100%",
+        "height": "239px"
       }
     },
     "b14": {
@@ -236,11 +240,6 @@
         "path": "imgs/home/post-3-vwnl.png",
         "dim": 0.9,
         "size": "cover"
-      }
-    },
-    "b39": {
-      "s": {
-        "color": "#000000"
       }
     },
     "b56": {
@@ -423,6 +422,9 @@
         "dim": 0,
         "size": "cover"
       }
+    },
+    "b38": {
+      "hide": 1
     }
   },
   "order": {
@@ -481,6 +483,13 @@
       "b2",
       "b5",
       "b6"
+    ],
+    "b39": [
+      "b40",
+      "b44",
+      "b48",
+      "b52",
+      "b56"
     ]
   },
   "add": {
