@@ -893,27 +893,29 @@
     },
     "nmw9bb9kttord": {
       "t": {
-        "v": "Fogo"
+        "v": "Veneno: dano percentual por turno (até 45%). Não mata."
+      },
+      "s": {
+        "width": "13.9%",
+        "height": "149px"
       }
     },
     "nmw9bb9ktmpmz": {
       "t": {
-        "v": "Gelo"
+        "v": "Cegueira: reduz muito a chance de acerto."
+      },
+      "s": {
+        "width": "13.9%",
+        "height": "149px"
       }
     },
     "nmw9bb9kttvtg": {
       "t": {
-        "v": "Raio"
-      }
-    },
-    "nmw9bb9kta1mg": {
-      "t": {
-        "v": "Luz"
-      }
-    },
-    "nmw9bb9kttvwj": {
-      "t": {
-        "v": "Escuridão"
+        "v": "Sangramento: dano percentual menor que o veneno e reduz STR e DEF. Não mata."
+      },
+      "s": {
+        "width": "13.9%",
+        "height": "149px"
       }
     },
     "nmw9bc619k970": {
@@ -976,6 +978,126 @@
     },
     "b289": {
       "hide": 1
+    },
+    "nmw9bf3b8u83f": {
+      "t": {
+        "v": "Fogo"
+      }
+    },
+    "nmw9bf3b807is": {
+      "t": {
+        "v": "Gelo"
+      }
+    },
+    "nmw9bf3b89l62": {
+      "t": {
+        "v": "Raio"
+      }
+    },
+    "nmw9bf3b8ie0h": {
+      "t": {
+        "v": "Luz"
+      }
+    },
+    "nmw9bf3b85jtw": {
+      "t": {
+        "v": "Escuridão"
+      }
+    },
+    "nmw9bf9bthvml": {
+      "s": {
+        "background-color": "rgb(176, 175, 157)",
+        "aspect-ratio": "1",
+        "width": "14%",
+        "border-radius": "17px"
+      },
+      "img": {
+        "path": "imgs/componentes/veneno-1vn1.png"
+      },
+      "frame": {
+        "z": 1.4,
+        "x": 50,
+        "y": 50
+      }
+    },
+    "nmw9bf9bu37e4": {
+      "s": {
+        "background-color": "rgb(176, 175, 157)",
+        "aspect-ratio": "1",
+        "width": "14%",
+        "border-radius": "17px"
+      },
+      "img": {
+        "path": "imgs/componentes/blinf-1vlt.png"
+      },
+      "frame": {
+        "z": 1.4,
+        "x": 50,
+        "y": 50
+      }
+    },
+    "nmw9bf9bubn5w": {
+      "s": {
+        "background-color": "rgb(176, 175, 157)",
+        "aspect-ratio": "1",
+        "width": "14%",
+        "border-radius": "17px"
+      },
+      "img": {
+        "path": "imgs/componentes/sangramento-1vn4.png"
+      },
+      "frame": {
+        "z": 1.4,
+        "x": 50,
+        "y": 50
+      }
+    },
+    "nmw9bho6dtsi8": {
+      "t": {
+        "v": ""
+      },
+      "s": {
+        "width": "99.9%",
+        "height": "16px"
+      }
+    },
+    "b292": {
+      "t": {
+        "h": "rjka69",
+        "v": ""
+      },
+      "hide": 1
+    },
+    "b293": {
+      "t": {
+        "h": "9dpbdd",
+        "v": ""
+      },
+      "hide": 1
+    },
+    "b294": {
+      "t": {
+        "h": "1xfj8hd",
+        "v": ""
+      },
+      "hide": 1
+    },
+    "b298": {
+      "hide": 1
+    },
+    "b297": {
+      "hide": 1
+    },
+    "b210": {
+      "img": {
+        "path": "imgs/componentes/planejamento-hud-h6j0.png",
+        "h": "pd58dv"
+      }
+    },
+    "b230": {
+      "s": {
+        "width": "100%"
+      }
     }
   },
   "order": {
@@ -1123,9 +1245,7 @@
     "nmw9bb9kt6zzy": [
       "nmw9bb9kttord",
       "nmw9bb9ktmpmz",
-      "nmw9bb9kttvtg",
-      "nmw9bb9kta1mg",
-      "nmw9bb9kttvwj"
+      "nmw9bb9kttvtg"
     ],
     "b205": [
       "b206",
@@ -1151,10 +1271,13 @@
       "b277",
       "b278",
       "nmw9bc619k970",
-      "nmw9bb9kt6zzy",
+      "nmw9bf3b8dn99",
       "b284",
       "b289",
       "b290",
+      "nmw9bf9btt611",
+      "nmw9bho6dtsi8",
+      "nmw9bb9kt6zzy",
       "b291",
       "b295",
       "b296",
@@ -1167,6 +1290,18 @@
       "b281",
       "b282",
       "b283"
+    ],
+    "nmw9bf3b8dn99": [
+      "nmw9bf3b8u83f",
+      "nmw9bf3b807is",
+      "nmw9bf3b89l62",
+      "nmw9bf3b8ie0h",
+      "nmw9bf3b85jtw"
+    ],
+    "nmw9bf9btt611": [
+      "nmw9bf9bthvml",
+      "nmw9bf9bu37e4",
+      "nmw9bf9bubn5w"
     ]
   },
   "add": {
@@ -1294,23 +1429,77 @@
       "attrs": {},
       "parent": "nmw9bb9kt6zzy"
     },
-    "nmw9bb9kta1mg": {
-      "tag": "div",
-      "cls": "elem",
-      "attrs": {},
-      "parent": "nmw9bb9kt6zzy"
-    },
-    "nmw9bb9kttvwj": {
-      "tag": "div",
-      "cls": "elem",
-      "attrs": {},
-      "parent": "nmw9bb9kt6zzy"
-    },
     "nmw9bc619k970": {
       "tag": "div",
       "cls": "ds-space",
       "attrs": {},
       "parent": "b278"
+    },
+    "nmw9bf3b8dn99": {
+      "tag": "div",
+      "cls": "elem-row",
+      "attrs": {},
+      "parent": "b205"
+    },
+    "nmw9bf3b8u83f": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf3b8dn99"
+    },
+    "nmw9bf3b807is": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf3b8dn99"
+    },
+    "nmw9bf3b89l62": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf3b8dn99"
+    },
+    "nmw9bf3b8ie0h": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf3b8dn99"
+    },
+    "nmw9bf3b85jtw": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf3b8dn99"
+    },
+    "nmw9bf9btt611": {
+      "tag": "div",
+      "cls": "elem-row",
+      "attrs": {},
+      "parent": "b205"
+    },
+    "nmw9bf9bthvml": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf9btt611"
+    },
+    "nmw9bf9bu37e4": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf9btt611"
+    },
+    "nmw9bf9bubn5w": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf9btt611"
+    },
+    "nmw9bho6dtsi8": {
+      "tag": "div",
+      "cls": "ds-space",
+      "attrs": {},
+      "parent": "b205"
     }
   },
   "pages": {},
