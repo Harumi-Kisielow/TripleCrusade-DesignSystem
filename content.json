@@ -46,6 +46,11 @@
       "img": {
         "path": "imgs/presskit/logoestudiobranca-10zr.png",
         "h": "1b1wwln"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b456": {
@@ -152,6 +157,11 @@
         "path": "imgs/presskit/testee-17y8.jpg",
         "dim": 0.9,
         "size": "cover"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b459": {
@@ -159,6 +169,11 @@
         "path": "imgs/presskit/testee-17y8.jpg",
         "dim": 0.9,
         "size": "cover"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b463": {
@@ -166,6 +181,11 @@
         "path": "imgs/presskit/testee-17y8.jpg",
         "dim": 0.9,
         "size": "cover"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b467": {
@@ -173,6 +193,11 @@
         "path": "imgs/presskit/testee-17y8.jpg",
         "dim": 0.9,
         "size": "cover"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b471": {
@@ -180,6 +205,11 @@
         "path": "imgs/presskit/testee-17y8.jpg",
         "dim": 0.9,
         "size": "cover"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
     "b476": {
@@ -1471,7 +1501,10 @@
         "--cols": "50fr 50fr"
       }
     },
-    "nmw9mu35qyscj": {
+    "b355": {
+      "hide": 1
+    },
+    "nmw9mkm53y3yd": {
       "t": {
         "v": "Clique em 📷 para enviar a imagem"
       },
@@ -1483,12 +1516,45 @@
       },
       "frame": {
         "z": 1.05,
-        "x": 50,
+        "x": 49,
         "y": 50
       }
     },
-    "b355": {
-      "hide": 1
+    "b12": {},
+    "b478": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
+      }
+    },
+    "b483": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
+      }
+    },
+    "b488": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
+      }
+    },
+    "b504": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
+      }
+    },
+    "b499": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
+      }
     }
   },
   "order": {
@@ -1746,8 +1812,8 @@
       "b327",
       "b340",
       "b342",
+      "nmw9mkm53y3yd",
       "b343",
-      "nmw9mu35qyscj",
       "b344",
       "nmw9lx9bo76ut",
       "b350",
@@ -2068,7 +2134,7 @@
       "attrs": {},
       "parent": "b307"
     },
-    "nmw9mu35qyscj": {
+    "nmw9mkm53y3yd": {
       "tag": "div",
       "cls": "img-slot",
       "attrs": {},
