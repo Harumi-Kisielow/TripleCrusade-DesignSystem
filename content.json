@@ -1431,7 +1431,8 @@
         "margin": "1px",
         "border-width": "0px",
         "border-style": "solid"
-      }
+      },
+      "hide": 1
     },
     "b347": {
       "bgimg": {
@@ -1470,120 +1471,23 @@
         "--cols": "50fr 50fr"
       }
     },
-    "nmw9lxkgyfnnf": {
-      "s": {
-        "width": "23.8%",
-        "margin-top": "-4px",
-        "margin-bottom": "-17px"
-      },
-      "bgimg": {
-        "path": "imgs/interacoes/esquerda1-1qr6.png",
-        "dim": 0,
-        "size": "cover",
-        "art": true
-      }
+    "b355": {
+      "hide": 1
     },
-    "nmw9lxkgy5sla": {
+    "nmw9mkm53y3yd": {
       "t": {
-        "v": "ATTACK"
+        "v": "Clique em 📷 para enviar a imagem"
       },
       "s": {
-        "height": "43px",
-        "text-align": "center"
-      }
-    },
-    "nmw9lya6yu6l0": {
-      "s": {
-        "width": "26.5%",
-        "margin-top": "-19px",
-        "margin-right": "-4px",
-        "margin-bottom": "-17px"
+        "min-height": "180px"
       },
-      "bgimg": {
-        "path": "imgs/interacoes/esquerda3-xwms.png",
-        "dim": 0,
-        "size": "cover",
-        "art": true,
-        "x": 15
-      }
-    },
-    "nmw9lya6ztahy": {
-      "t": {
-        "v": "SKILL"
+      "img": {
+        "path": "imgs/interacoes/fundo-eoi4.png"
       },
-      "s": {
-        "text-align": "center",
-        "margin": "10px",
-        "font-size": "27px"
-      }
-    },
-    "nmw9lyneu0kao": {
-      "s": {
-        "width": "23.8%"
-      },
-      "bgimg": {
-        "path": "imgs/interacoes/esquerda4-1l9a.png",
-        "dim": 0,
-        "size": "cover",
-        "art": true
-      }
-    },
-    "nmw9lyneu4ygk": {
-      "t": {
-        "v": "CHANGE"
-      },
-      "s": {
-        "text-align": "center",
-        "margin": "10px",
-        "font-size": "27px"
-      }
-    },
-    "nmw9lyxjvhn4z": {
-      "s": {
-        "width": "26.1%",
-        "height": "73px"
-      },
-      "bgimg": {
-        "path": "imgs/interacoes/esquerda2-7ge5.png",
-        "dim": 0,
-        "size": "cover",
-        "art": true
-      }
-    },
-    "nmw9lyxjv38qz": {
-      "t": {
-        "v": "DEFEND"
-      },
-      "s": {
-        "text-align": "center",
-        "margin": "10px",
-        "font-size": "27px"
-      }
-    },
-    "nmw9lza312w8d": {
-      "s": {
-        "width": "19.3%",
-        "height": "57px",
-        "margin": "-12px",
-        "margin-right": "-14px",
-        "margin-top": "-19px",
-        "margin-bottom": "0px"
-      },
-      "bgimg": {
-        "path": "imgs/interacoes/esquerda4-1l9a.png",
-        "dim": 0,
-        "size": "stretch",
-        "art": true
-      }
-    },
-    "nmw9lza319hay": {
-      "t": {
-        "v": "RUN"
-      },
-      "s": {
-        "text-align": "center",
-        "margin": "10px",
-        "font-size": "27px"
+      "frame": {
+        "z": 1.05,
+        "x": 49,
+        "y": 50
       }
     }
   },
@@ -1842,15 +1746,11 @@
       "b327",
       "b340",
       "b342",
+      "nmw9mkm53y3yd",
       "b343",
       "b344",
       "nmw9lx9bo76ut",
       "b350",
-      "nmw9lxkgyfnnf",
-      "nmw9lyxjvhn4z",
-      "nmw9lya6yu6l0",
-      "nmw9lyneu0kao",
-      "nmw9lza312w8d",
       "b355",
       "b356",
       "b357",
@@ -1861,21 +1761,6 @@
       "b364",
       "b390",
       "b391"
-    ],
-    "nmw9lxkgyfnnf": [
-      "nmw9lxkgy5sla"
-    ],
-    "nmw9lya6yu6l0": [
-      "nmw9lya6ztahy"
-    ],
-    "nmw9lyneu0kao": [
-      "nmw9lyneu4ygk"
-    ],
-    "nmw9lyxjvhn4z": [
-      "nmw9lyxjv38qz"
-    ],
-    "nmw9lza312w8d": [
-      "nmw9lza319hay"
     ]
   },
   "add": {
@@ -2183,65 +2068,11 @@
       "attrs": {},
       "parent": "b307"
     },
-    "nmw9lxkgyfnnf": {
+    "nmw9mkm53y3yd": {
       "tag": "div",
-      "cls": "ds-box",
-      "attrs": {},
-      "parent": "nmw9lx9bo76ut"
-    },
-    "nmw9lxkgy5sla": {
-      "tag": "p",
-      "cls": "",
-      "attrs": {},
-      "parent": "nmw9lxkgyfnnf"
-    },
-    "nmw9lya6yu6l0": {
-      "tag": "div",
-      "cls": "ds-box",
+      "cls": "img-slot",
       "attrs": {},
       "parent": "b307"
-    },
-    "nmw9lya6ztahy": {
-      "tag": "p",
-      "cls": "",
-      "attrs": {},
-      "parent": "nmw9lya6yu6l0"
-    },
-    "nmw9lyneu0kao": {
-      "tag": "div",
-      "cls": "ds-box",
-      "attrs": {},
-      "parent": "b307"
-    },
-    "nmw9lyneu4ygk": {
-      "tag": "p",
-      "cls": "",
-      "attrs": {},
-      "parent": "nmw9lyneu0kao"
-    },
-    "nmw9lyxjvhn4z": {
-      "tag": "div",
-      "cls": "ds-box",
-      "attrs": {},
-      "parent": "b307"
-    },
-    "nmw9lyxjv38qz": {
-      "tag": "p",
-      "cls": "",
-      "attrs": {},
-      "parent": "nmw9lyxjvhn4z"
-    },
-    "nmw9lza312w8d": {
-      "tag": "div",
-      "cls": "ds-box",
-      "attrs": {},
-      "parent": "b307"
-    },
-    "nmw9lza319hay": {
-      "tag": "p",
-      "cls": "",
-      "attrs": {},
-      "parent": "nmw9lza312w8d"
     }
   },
   "pages": {},
