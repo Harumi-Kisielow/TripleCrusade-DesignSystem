@@ -17,6 +17,22 @@
     "ilustracao": {
       "path": "imgs/fundos/fundo-madeira-19j2.png",
       "dim": 0.9
+    },
+    "componentes": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0.9
+    },
+    "fundamentos": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0.9
+    },
+    "identidade": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0.9
+    },
+    "interacoes": {
+      "path": "imgs/fundos/fundo-madeira-19j2.png",
+      "dim": 0.9
     }
   },
   "ops": {
@@ -353,35 +369,67 @@
       "bgimg": {
         "path": "imgs/componentes/padrao-db9d.png",
         "dim": 0,
-        "size": "cover"
+        "size": "cover",
+        "art": true
+      },
+      "s": {
+        "width": "100%",
+        "height": "73px",
+        "border-width": "0px",
+        "border-style": "solid"
       }
     },
     "b216": {
       "bgimg": {
         "path": "imgs/componentes/padrao-db9d.png",
         "dim": 0,
-        "size": "cover"
+        "size": "cover",
+        "art": true
+      },
+      "s": {
+        "width": "100%",
+        "height": "72px",
+        "border-width": "0px",
+        "border-style": "solid"
       }
     },
     "b217": {
       "bgimg": {
         "path": "imgs/componentes/padrao-db9d.png",
         "dim": 0,
-        "size": "cover"
+        "size": "cover",
+        "art": true
+      },
+      "s": {
+        "height": "72px",
+        "border-width": "0px",
+        "border-style": "solid"
       }
     },
     "b218": {
       "bgimg": {
         "path": "imgs/componentes/padrao-db9d.png",
         "dim": 0,
-        "size": "cover"
+        "size": "cover",
+        "art": true
+      },
+      "s": {
+        "height": "71px",
+        "border-width": "0px",
+        "border-style": "solid"
       }
     },
     "b219": {
       "bgimg": {
         "path": "imgs/componentes/padrao-db9d.png",
         "dim": 0,
-        "size": "cover"
+        "size": "cover",
+        "art": true
+      },
+      "s": {
+        "height": "72px",
+        "border-width": "0px",
+        "border-style": "solid"
       }
     },
     "b229": {
@@ -463,6 +511,61 @@
       "t": {
         "v": "Saiba mais"
       }
+    },
+    "b85": {
+      "hide": 1
+    },
+    "b105": {
+      "hide": 1
+    },
+    "b109": {
+      "hide": 1
+    },
+    "b108": {
+      "hide": 1
+    },
+    "b115": {
+      "hide": 1
+    },
+    "b114": {
+      "hide": 1
+    },
+    "b112": {
+      "img": {
+        "path": "imgs/identidade/triple-rusade-logo-17uc.png",
+        "h": "1ilu8ql"
+      },
+      "s": {
+        "height": "277px",
+        "width": "41.8%"
+      }
+    },
+    "b118": {
+      "hide": 1
+    },
+    "b117": {
+      "hide": 1
+    },
+    "b113": {
+      "t": {
+        "h": "1emtkwz",
+        "v": "Apenas para fundo branco."
+      }
+    },
+    "b121": {
+      "hide": 1
+    },
+    "b122": {
+      "hide": 1
+    },
+    "b119": {
+      "hide": 1
+    },
+    "b124": {
+      "hide": 1
+    },
+    "b133": {
+      "hide": 1
     }
   },
   "order": {
@@ -534,6 +637,35 @@
       "nmw8otxk3wspu",
       "nmw8otxk4ndwn",
       "nmw8otxk40y4u"
+    ],
+    "b111": [],
+    "b101": [
+      "b102",
+      "b103",
+      "b104",
+      "b105",
+      "b106",
+      "b107",
+      "b113",
+      "b117",
+      "b118",
+      "b119",
+      "b120",
+      "b123",
+      "b124",
+      "b125",
+      "b126",
+      "b127",
+      "b133",
+      "b134",
+      "b135",
+      "b136",
+      "b144",
+      "b145",
+      "b151",
+      "b152",
+      "b153",
+      "b158"
     ]
   },
   "add": {
@@ -571,5 +703,8 @@
       "attrs": {},
       "parent": "nmw8otxk3eaos"
     }
-  }
+  },
+  "pages": {},
+  "site": {},
+  "styles": {}
 }
