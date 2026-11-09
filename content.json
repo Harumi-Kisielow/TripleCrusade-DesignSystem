@@ -260,6 +260,12 @@
       "img": {
         "path": "imgs/ilustracao/babacaney-10nl.png",
         "h": "1dnfft5"
+      },
+      "s": {},
+      "frame": {
+        "z": 1.05,
+        "x": 50,
+        "y": 50
       }
     },
     "b169": {
