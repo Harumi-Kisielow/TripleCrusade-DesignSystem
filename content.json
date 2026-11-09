@@ -1367,6 +1367,24 @@
         "h": "1m8tzdb",
         "v": "Paleta de interface&nbsp;"
       }
+    },
+    "b160": {
+      "t": {
+        "h": "10sht63",
+        "v": "<strong>Diálogos (visual novel):</strong>&nbsp; LT Cushion"
+      }
+    },
+    "b161": {
+      "t": {
+        "h": "1eb33fs",
+        "v": "<strong>Logo / títulos:</strong>&nbsp;Cinzel (alterado manualmente)"
+      }
+    },
+    "b159": {
+      "t": {
+        "h": "9k8zsh",
+        "v": "<strong>Interface (botões, HUD):</strong>&nbsp;LT Carpet"
+      }
     }
   },
   "order": {
