@@ -283,6 +283,11 @@
         "dim": 0.84,
         "size": "cover",
         "x": 61
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "slide"
       }
     },
     "b44": {
@@ -291,6 +296,11 @@
         "dim": 0.74,
         "size": "cover",
         "x": 100
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "slide"
       }
     },
     "b46": {
@@ -305,6 +315,11 @@
         "dim": 0.79,
         "size": "cover",
         "x": 100
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "slide"
       }
     },
     "b52": {
@@ -312,6 +327,11 @@
         "path": "imgs/home/post-3-vwnl.png",
         "dim": 0.9,
         "size": "cover"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "slide"
       }
     },
     "b56": {
@@ -320,6 +340,11 @@
         "dim": 0.74,
         "size": "cover",
         "x": 100
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "slide"
       }
     },
     "b69": {
@@ -594,7 +619,12 @@
       "s": {
         "height": "214px"
       },
-      "go": "presskit"
+      "go": "presskit",
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "slide"
+      }
     },
     "nmw8otxk3wspu": {
       "t": {
