@@ -389,6 +389,9 @@
         "path": "imgs/site/logoestudiobranca-10zr.png",
         "dim": 0,
         "size": "cover"
+      },
+      "s": {
+        "width": "3%"
       }
     },
     "b215": {
@@ -1181,6 +1184,27 @@
         "h": "lokcml",
         "v": "R$ 19,99 / $19,99USD"
       }
+    },
+    "b7": {
+      "hide": 1
+    },
+    "b12": {
+      "hide": 1
+    },
+    "b11": {
+      "hide": 1
+    },
+    "b10": {
+      "hide": 1
+    },
+    "b9": {
+      "hide": 1
+    },
+    "b8": {
+      "hide": 1
+    },
+    "b2": {
+      "href": "#"
     }
   },
   "order": {
