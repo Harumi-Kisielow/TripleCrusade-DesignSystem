@@ -68,7 +68,13 @@
         "h": "yjxkqe"
       },
       "s": {
-        "background-color": "#ffffff"
+        "background-color": "#ffffff",
+        "height": "149px"
+      },
+      "frame": {
+        "z": 1,
+        "x": 31,
+        "y": 23
       }
     },
     "b479": {
@@ -100,6 +106,9 @@
       "img": {
         "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
         "h": "10zcvo5"
+      },
+      "s": {
+        "height": "151px"
       }
     },
     "b455": {
