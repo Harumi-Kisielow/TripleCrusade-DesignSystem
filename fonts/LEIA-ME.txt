@@ -1,0 +1,5 @@
+Coloque aqui as fontes que não são do Google Fonts (baixe no dafont.com):
+  LTCarpet.ttf   -> botões de batalha, camp, nomes de inimigos, skills
+  LTCushion.ttf  -> texto da visual novel
+Os nomes dos arquivos precisam ser exatamente esses. Sem eles, o site usa uma fonte parecida.
+Cinzel, Libre Bodoni e Marcellus SC já carregam sozinhas do Google Fonts.

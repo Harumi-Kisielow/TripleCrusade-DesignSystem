@@ -31,3 +31,10 @@ Página `#presskit` montada a partir do PDF. Campos marcados [PREENCHER]: data d
 ## Arte de botão e fundo por página
 - **A imagem é o botão:** selecione um botão/cartão → aba Item → "Imagem de fundo" → Escolher fundo. A imagem estica e vira o botão (continua clicável). Desmarque "A imagem é o botão" para voltar ao texto sobre imagem.
 - **Fundo de página:** aba Página → Escolher fundo. Aparece a pergunta "Onde usar este fundo?" (só esta página / todas / escolher páginas). "Aplicar em outras páginas…" repete isso depois; ao remover, também pergunta.
+
+## Fontes, cores, fundo posicionável e estilo vinculado
+- **Fontes do jogo:** Cinzel (títulos/números), Libre Bodoni (nomes, textos), Marcellus SC (botões) via Google Fonts. LT Carpet / LT Cushion: colocar `LTCarpet.ttf` e `LTCushion.ttf` em `fonts/`.
+- **Caixas de cor:** duplicáveis (Ctrl+D) e criáveis em ＋ Adicionar → Caixa de cor; nome e hex editáveis no painel Item.
+- **Imagem de fundo:** Tamanho "Livre" (zoom %), posição ←→ ↑↓, e "✋ Arrastar a imagem de fundo" (arraste + roda do mouse).
+- **Vincular itens:** selecione um item e Shift+clique em outros; eles copiam estilo e fundo do selecionado. Clique normal desfaz.
+- Página inicial: `#home` (Design System Início). O seletor antigo continua existindo em `#gate`, sem link.

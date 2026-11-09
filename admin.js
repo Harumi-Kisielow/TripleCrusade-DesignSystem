@@ -11,7 +11,7 @@
   /* ---------- constantes ---------- */
   const LEGACY_TEXT_SEL = "h1,h2,h3,h4,p,li,figcaption,th,td,.callout,.vn-name,.legend span,.aff,.card strong,.gate-card strong";
   const LEGACY_SLOT_SEL = ".img-slot,.logo-placeholder,.logo-box";
-  const ATOMIC = "#grid,#grid-info,#battle-log,.swatch";
+  const ATOMIC = "#grid,#grid-info,#battle-log";
   const SLOTCLS = ".img-slot,.logo-box,.logo-placeholder";
   const VARS = [
     ["--primary", "Azul do logo"], ["--gold", "Dourado (destaques)"], ["--bg", "Fundo do site"],
@@ -72,7 +72,7 @@
   const cleanVars = {};
   const bound = new WeakSet();
   let editing = false, sel = null, session = null, panel = null, bar = null, dropLine = null, bgStyle = null, drag = null;
-  let lastGesture = 0, handles = null, guideV = null, guideH = null, rs = null, panMode = false, ro = null;
+  let lastGesture = 0, handles = null, guideV = null, guideH = null, rs = null, panMode = false, bgPan = false, ro = null;
 
   /* ---------- utilidades de DOM ---------- */
   const isAtomic = e => e.matches(ATOMIC);
@@ -82,7 +82,7 @@
   const hasImg = e => !!(content.ops[e.dataset.b] || {}).img;
   const isProtected = e => e.classList.contains("page") || e.tagName === "HEADER" || e.tagName === "FOOTER" || e.tagName === "MAIN";
   const pageOf = e => { const p = e.closest(".page"); return p ? p.id : "site"; };
-  const isTextLeaf = e => !isAtomic(e) && !NOTEXT_TAGS.has(e.tagName) && !hasImg(e) && isLeaf(e) && leafText(e).trim() !== "";
+  const isTextLeaf = e => !e.matches(".swatch") && !isAtomic(e) && !NOTEXT_TAGS.has(e.tagName) && !hasImg(e) && isLeaf(e) && leafText(e).trim() !== "";
   const canContain = e => {
     if (isAtomic(e)) return false;
     if (e.tagName === "TBODY" || e.tagName === "UL") return true;
@@ -207,19 +207,29 @@
     i.style.transform = z === 1 ? "" : `scale(${z})`;
     e.classList.add("ds-frame");
   }
+  const bgDims = new Map();
   function setBgImg(e, b) {
     if (b && safePath(b.path)) {
       const d = Math.min(0.9, Math.max(0, Number(b.dim) || 0));
       const src = (previews.get(b.path) || b.path).replace(/"/g, "%22");
       e.style.backgroundImage = `linear-gradient(rgba(0,0,0,${d}),rgba(0,0,0,${d})),url("${src}")`;
-      e.style.backgroundSize = b.size === "stretch" ? "100% 100%" : ["cover", "contain", "auto"].includes(b.size) ? b.size : "cover";
+      e.style.backgroundSize = b.size === "stretch" ? "100% 100%" : b.size === "free" ? (Math.min(400, Math.max(10, Number(b.w) || 100))) + "% auto" : ["cover", "contain", "auto"].includes(b.size) ? b.size : "cover";
       e.classList.toggle("ds-art", !!b.art);
-      e.style.backgroundPosition = "center";
+      const px = b.x === undefined ? 50 : Math.min(100, Math.max(0, Number(b.x) || 0)), py = b.y === undefined ? 50 : Math.min(100, Math.max(0, Number(b.y) || 0));
+      e.style.backgroundPosition = px + "% " + py + "%";
+      if (!bgDims.has(b.path)) { const im = new Image(); im.onload = () => bgDims.set(b.path, { w: im.naturalWidth, h: im.naturalHeight }); im.src = (previews.get(b.path) || b.path); }
       e.style.backgroundRepeat = "no-repeat";
     } else {
       ["backgroundImage", "backgroundSize", "backgroundPosition", "backgroundRepeat"].forEach(p => e.style[p] = "");
       e.classList.remove("ds-art");
     }
+  }
+  const HEX_RE = /^#[0-9a-f]{6}$/i;
+  function applySw(e, sw) {
+    if (!sw) return;
+    if (typeof sw.label === "string") e.dataset.label = sw.label.slice(0, 60);
+    if (HEX_RE.test(sw.hex || "")) { e.dataset.hex = sw.hex; e.removeAttribute("data-var"); }
+    window.DS && window.DS.renderSwatches();
   }
   function applyOpTo(e, id, o) {
     if (o.t && typeof o.t.v === "string" && isLeaf(e)) {
@@ -233,6 +243,7 @@
       if (o.img.h === undefined || (oi && oi.h === o.img.h)) setImage(e, o.img);
     }
     if (o.bgimg) setBgImg(e, o.bgimg);
+    if (o.sw) applySw(e, o.sw);
     if (o.frame) setFrame(e, o.frame);
     syncSize(e);
     if (o.href && safeHref(o.href) && e.tagName === "A") setHref(e, o.href);
@@ -295,7 +306,37 @@
 
   /* ---------- marcar alteração ---------- */
   function countChanges() { return pending.size + (JSON.stringify(content) !== JSON.stringify(saved) ? 1 : 0); }
-  function markDirty() { updateStatus(); scheduleCommit(); refreshTreeSoon(); }
+  /* ---------- itens vinculados: copiam o estilo do item selecionado (o "chefe") ---------- */
+  const linked = new Set();
+  const LINK_SKIP = new Set(["left", "top", "position", "transform", "z-index", "--cols", "--gap"]);
+  function syncLinked() {
+    if (!sel || !linked.size) return;
+    const so = content.ops[sel.dataset.b] || {};
+    linked.forEach(n => {
+      if (!n.isConnected || n === sel) return;
+      const id = n.dataset.b, o = op(id);
+      CSS_OK.forEach(p => {
+        if (LINK_SKIP.has(p)) return;
+        const v = (so.s || {})[p], cur = (o.s || {})[p];
+        if (v === cur) return;
+        if (v) { o.s = o.s || {}; o.s[p] = v; n.style.setProperty(p, v); }
+        else { if (o.s) delete o.s[p]; n.style.removeProperty(p); }
+      });
+      if (o.s && !Object.keys(o.s).length) delete o.s;
+      if (JSON.stringify(so.bgimg || null) !== JSON.stringify(o.bgimg || null)) {
+        if (so.bgimg) { o.bgimg = Object.assign({}, so.bgimg); setBgImg(n, o.bgimg); } else { delete o.bgimg; setBgImg(n, null); }
+      }
+      syncSize(n); cleanOp(id);
+    });
+  }
+  function toggleLink(t) {
+    if (!sel || t === sel || isProtected(t) || t.contains(sel) || sel.contains(t)) return;
+    if (linked.has(t)) { linked.delete(t); t.classList.remove("ds-linked"); }
+    else { linked.add(t); t.classList.add("ds-linked"); }
+    syncLinked(); markDirty(); buildProps();
+  }
+  function clearLinks() { linked.forEach(n => n.classList.remove("ds-linked")); linked.clear(); }
+  function markDirty() { syncLinked(); updateStatus(); scheduleCommit(); refreshTreeSoon(); }
   let treeTimer = null;
   function refreshTreeSoon() { clearTimeout(treeTimer); treeTimer = setTimeout(() => { refreshTree(); refreshSections(); }, 160); }
   function setS(e, prop, val) {
@@ -377,11 +418,13 @@
 
   /* ---------- seleção ---------- */
   function select(e, keepTab) {
+    clearLinks();
     if (sel) sel.classList.remove("ds-sel");
     sel = e && e.isConnected ? e : null;
     if (sel) sel.classList.add("ds-sel");
     if (ro) { ro.disconnect(); if (sel) ro.observe(sel); }
     if (panMode && !(sel && hasImg(sel))) { panMode = false; document.body.classList.remove("ds-pan"); }
+    if (bgPan && !(sel && (content.ops[sel.dataset.b] || {}).bgimg)) { bgPan = false; document.body.classList.remove("ds-pan"); }
     buildProps(); placeBar(); updateAddHint(); refreshTree();
   }
   function updateAddHint() {
@@ -396,6 +439,7 @@
     if (!t && performance.now() - lastGesture < 80) return;     // clique "fantasma" ao soltar um arraste: não desmarca
     if (!t || t.tagName === "MAIN") { select(null); return; }
     if (ev.target.closest("a,button,[data-go],[data-cmd],label,select,input")) { ev.preventDefault(); ev.stopImmediatePropagation(); }
+    if (ev.shiftKey && sel && t !== sel) { ev.preventDefault(); ev.stopImmediatePropagation(); toggleLink(t); return; }
     select(t); if (curTab !== "item" && curTab !== "add") showTab("item");
   }, true);
   let hov = null;
@@ -510,6 +554,39 @@
     const up = () => { window.removeEventListener("pointermove", mv); lastGesture = performance.now(); buildProps(); };
     window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up, { once: true });
   }, true);
+  /* mover / dar zoom na imagem de fundo (texto por cima) */
+  function bgFree(e, b) {
+    const d = bgDims.get(b.path), bw = e.clientWidth, bh = e.clientHeight; if (!d) return null;
+    let iw, ih;
+    if (b.size === "stretch") return null;
+    if (b.size === "free") { iw = bw * (Math.min(400, Math.max(10, Number(b.w) || 100)) / 100); ih = iw * d.h / d.w; }
+    else if (b.size === "contain") { const k = Math.min(bw / d.w, bh / d.h); iw = d.w * k; ih = d.h * k; }
+    else if (b.size === "auto") { iw = d.w; ih = d.h; }
+    else { const k = Math.max(bw / d.w, bh / d.h); iw = d.w * k; ih = d.h * k; }
+    return { x: bw - iw, y: bh - ih };
+  }
+  document.addEventListener("pointerdown", ev => {
+    if (!editing || !bgPan || !sel || ev.target.closest(".adm-panel,.adm-bar,.adm-handles") || !sel.contains(ev.target)) return;
+    const o = op(sel.dataset.b), b = o.bgimg; if (!b) return;
+    ev.preventDefault(); ev.stopPropagation();
+    const fr = bgFree(sel, b), x0 = ev.clientX, y0 = ev.clientY, bx = b.x === undefined ? 50 : b.x, by = b.y === undefined ? 50 : b.y;
+    if (!fr) { note("No modo \"Esticar\" a imagem já ocupa tudo. Troque o Tamanho para Livre ou Preencher."); return; }
+    const mv = m => {
+      if (Math.abs(fr.x) > 1) b.x = Math.round(Math.min(100, Math.max(0, bx + (m.clientX - x0) / fr.x * 100)));
+      if (Math.abs(fr.y) > 1) b.y = Math.round(Math.min(100, Math.max(0, by + (m.clientY - y0) / fr.y * 100)));
+      setBgImg(sel, b); markDirty();
+    };
+    const up = () => { window.removeEventListener("pointermove", mv); lastGesture = performance.now(); buildProps(); };
+    window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up, { once: true });
+  }, true);
+  document.addEventListener("wheel", ev => {
+    if (!editing || !bgPan || !sel || !sel.contains(ev.target)) return;
+    const b = (content.ops[sel.dataset.b] || {}).bgimg; if (!b) return;
+    ev.preventDefault();
+    if (b.size !== "free") { b.w = 100; b.size = "free"; }
+    b.w = Math.min(400, Math.max(10, Math.round((Number(b.w) || 100) + (ev.deltaY < 0 ? 5 : -5))));
+    setBgImg(sel, b); markDirty(); buildProps();
+  }, { passive: false });
   document.addEventListener("wheel", ev => {
     if (!editing || !panMode || !sel || !hasImg(sel) || !sel.contains(ev.target)) return;
     ev.preventDefault();
@@ -670,6 +747,7 @@
     if (spec.s) { op(id).s = {}; Object.entries(spec.s).forEach(([p, v]) => { if (okCss(p, v)) { op(id).s[p] = v; e.style.setProperty(p, v); } }); if (!Object.keys(op(id).s).length) delete op(id).s; }
     if (spec.img) { op(id).img = spec.img; setImage(e, spec.img); }
     if (spec.bgimg) { op(id).bgimg = spec.bgimg; setBgImg(e, spec.bgimg); }
+    if (spec.sw) { op(id).sw = { label: String(spec.sw.label || "").slice(0, 60), hex: spec.sw.hex }; applySw(e, op(id).sw); }
     if (spec.fit && FITS.includes(spec.fit)) { op(id).fit = spec.fit; const im = $(":scope > .slot-img", e); if (im) im.style.objectFit = spec.fit; }
     if (spec.frame) { op(id).frame = Object.assign({}, spec.frame); setFrame(e, spec.frame); }
     syncSize(e);
@@ -677,6 +755,7 @@
     if (refEl) parentEl.insertBefore(e, refEl); else parentEl.appendChild(e);
     (spec.children || []).forEach(c => spawn(c, e, null));
     recordOrder(parentEl);
+    if (spec.sw) window.DS && window.DS.renderSwatches();
     return e;
   }
   function specOf(e) {
@@ -688,10 +767,20 @@
     if (o.fit) spec.fit = o.fit;
     if (o.frame) spec.frame = Object.assign({}, o.frame);
     if (o.bgimg) spec.bgimg = Object.assign({}, o.bgimg);
+    if (e.matches(".swatch")) {
+      const cur = swatchHex(e);
+      spec.sw = { label: ((e.dataset.label || "Cor") + (e.dataset.copy ? "" : "")).slice(0, 60), hex: cur };
+      spec.cls = "swatch"; return spec;
+    }
     const kids = dchildren(e);
     if (kids.length) spec.children = kids.map(specOf);
     else if (!isAtomic(e) && !o.img) spec.t = leafHtml(e);
     return spec;
+  }
+  function swatchHex(e) {
+    let h = e.dataset.hex || getComputedStyle(document.documentElement).getPropertyValue(e.dataset.var || "").trim();
+    if (/^#[0-9a-f]{3}$/i.test(h)) h = "#" + [...h.slice(1)].map(c => c + c).join("");
+    return HEX_RE.test(h) ? h : "#8a8a8a";
   }
   function duplicate(e) {
     if (isProtected(e)) return;
@@ -725,7 +814,8 @@
     hero: () => ({ tag: "div", cls: "ds-box ds-hero", s: { "min-height": "280px" }, children: [{ tag: "h2", t: "Título sobre a imagem", s: { position: "absolute", left: "8%", top: "38%", color: "#ffffff", margin: "0" } }] }),
     space: () => ({ tag: "div", cls: "ds-space" }),
     icon: () => ({ tag: "span", cls: "ds-icon", t: "★" }),
-    anchor: () => ({ tag: "div", cls: "ds-anchor", attrs: { id: uniqueAnchor() } })
+    anchor: () => ({ tag: "div", cls: "ds-anchor", attrs: { id: uniqueAnchor() } }),
+    swatch: () => ({ tag: "div", cls: "swatch", sw: { label: "Nova cor", hex: "#8a8a8a" } })
   };
   const mkCols = n => ({ tag: "div", cls: "ds-cols", s: { "--cols": Array(n).fill(r1(100 / n) + "fr").join(" ") }, children: Array.from({ length: n }, () => PRESETS.box()) });
   function uniqueAnchor() { let n = 1; while (document.getElementById("ancora-" + n)) n++; return "ancora-" + n; }
@@ -745,7 +835,7 @@
 
   /* ---------- painel ---------- */
   const PAGES = () => $$(".page").map(p => [p.id, pageTitle(p.id)]);
-  const currentPage = () => document.body.dataset.page || "gate";
+  const currentPage = () => document.body.dataset.page || "home";
   function rgbToHex(c) {
     const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/.exec(c || "");
     if (!m || (m[4] !== undefined && Number(m[4]) === 0)) return null;
@@ -780,7 +870,7 @@
             <button type="button" data-add="box">Caixa</button><button type="button" data-add="cols2">2 colunas</button>
             <button type="button" data-add="cols3">3 colunas</button><button type="button" data-add="cols4">4 colunas</button>
             <button type="button" data-add="hero">Imagem + texto</button><button type="button" data-add="icon">Ícone</button>
-            <button type="button" data-add="space">Espaço</button><button type="button" data-add="anchor">⚓ Âncora</button>
+            <button type="button" data-add="space">Espaço</button><button type="button" data-add="anchor">⚓ Âncora</button><button type="button" data-add="swatch">🎨 Caixa de cor</button>
           </div></details>
         </div>
         <div class="adm-pane" data-pane="tree"><p class="adm-small">Todos os itens da página. Clique para selecionar, duplo clique para editar, arraste para reorganizar (solte no meio de uma caixa para colocar dentro) e use 👁 para ocultar.</p><div id="adm-tree" class="adm-tree"></div></div>
@@ -1225,6 +1315,14 @@
     box.appendChild(mk("div", "adm-sel-name", esc(label(e))));
     box.appendChild(mk("p", "adm-note", ""));
     box.lastChild.id = "adm-note";
+    if (!isProtected(e)) {
+      const lk = mk("div", "adm-link");
+      if (linked.size) {
+        lk.appendChild(mk("span", "", "🔗 " + linked.size + " item(ns) copiam o estilo deste (tamanho, fundo, borda, cores)."));
+        lk.appendChild(btn("Desvincular", "", () => { clearLinks(); buildProps(); }));
+      } else lk.appendChild(mk("span", "adm-small", "Dica: Shift+clique em outros itens para eles copiarem o estilo deste."));
+      box.appendChild(lk);
+    }
 
     if (e.tagName === "BUTTON" && isLeaf(e)) {
       const i = mk("input"); i.type = "text"; i.value = leafText(e);
@@ -1251,6 +1349,26 @@
     }
     if (e.hasAttribute("data-go")) {
       box.appendChild(row("Leva para", selInput(PAGES().concat([["section:next", "→ Próxima seção"], ["section:previous", "← Seção anterior"], ["section:first", "Primeira seção"], ["section:last", "Última seção"], ["scrollpoint:next", "↓ Próxima âncora"], ["scrollpoint:previous", "↑ Âncora anterior"]]), e.getAttribute("data-go"), v => { e.setAttribute("data-go", v); op(id).go = v; markDirty(); })));
+    }
+
+    if (e.matches(".swatch")) {
+      const s = section("Caixa de cor", true);
+      const nm = mk("input"); nm.type = "text"; nm.value = e.dataset.label || "";
+      nm.addEventListener("input", () => { const sw = op(id).sw = Object.assign({ hex: swatchHex(e) }, op(id).sw, { label: nm.value }); applySw(e, sw); markDirty(); });
+      s.appendChild(row("Nome", nm));
+      const hx = mk("input"); hx.type = "text"; hx.value = swatchHex(e).toUpperCase(); hx.maxLength = 7;
+      const co = mk("input"); co.type = "color"; co.value = swatchHex(e);
+      const setHex = v => {
+        if (!HEX_RE.test(v)) return;
+        if (e.dataset.var && !e.dataset.hex) { content.vars[e.dataset.var] = v; applyVars(); syncColors(); }
+        else { const sw = op(id).sw = Object.assign({ label: e.dataset.label || "" }, op(id).sw, { hex: v }); applySw(e, sw); }
+        markDirty();
+      };
+      hx.addEventListener("input", () => { let v = hx.value.trim(); if (v[0] !== "#") v = "#" + v; if (HEX_RE.test(v)) { co.value = v; setHex(v); } });
+      co.addEventListener("input", () => { hx.value = co.value.toUpperCase(); setHex(co.value); });
+      s.appendChild(row("Cor (hex)", hx)); s.appendChild(row("Seletor", co));
+      s.appendChild(mk("p", "adm-small", "Use Ctrl+D (ou Duplicar) para criar mais caixas, p.ex. Fase 2, Fase 3."));
+      box.appendChild(s);
     }
 
     if (e.matches(".ds-cols")) box.appendChild(colsSection(e));
@@ -1317,7 +1435,11 @@
         const dim = mk("input"); dim.type = "range"; dim.min = 0; dim.max = 90; dim.value = Math.round((o.bgimg.dim || 0) * 100);
         dim.addEventListener("input", () => { o.bgimg.dim = dim.value / 100; setBgImg(e, o.bgimg); markDirty(); });
         s.appendChild(row("Escurecer", dim));
-        s.appendChild(row("Tamanho", selInput([["stretch", "Esticar (arte do botão)"], ["cover", "Preencher (corta)"], ["contain", "Caber inteira"], ["auto", "Original"]], o.bgimg.size || "cover", v => { o.bgimg.size = v; setBgImg(e, o.bgimg); markDirty(); })));
+        s.appendChild(row("Tamanho", selInput([["stretch", "Esticar (arte do botão)"], ["free", "Livre (zoom e posição)"], ["cover", "Preencher (corta)"], ["contain", "Caber inteira"], ["auto", "Original"]], o.bgimg.size || "cover", v => { o.bgimg.size = v; setBgImg(e, o.bgimg); markDirty(); })));
+        const pos = (k, lab, mn, mx, def) => { const i = mk("input"); i.type = "range"; i.min = mn; i.max = mx; i.value = o.bgimg[k] === undefined ? def : o.bgimg[k]; i.addEventListener("input", () => { o.bgimg[k] = Number(i.value); setBgImg(e, o.bgimg); markDirty(); }); s.appendChild(row(lab, i)); };
+        if (o.bgimg.size === "free") pos("w", "Zoom (%)", 10, 400, 100);
+        pos("x", "Posição ←→", 0, 100, 50); pos("y", "Posição ↑↓", 0, 100, 50);
+        s.appendChild(btn(bgPan ? "✋ Arrastando a imagem de fundo (clique p/ parar)" : "✋ Arrastar a imagem de fundo", "Ligue e arraste sobre o botão; a roda do mouse dá zoom", () => { bgPan = !bgPan; document.body.classList.toggle("ds-pan", bgPan); buildProps(); }, bgPan ? "primary" : ""));
         const art = mk("input"); art.type = "checkbox"; art.checked = !!o.bgimg.art;
         art.addEventListener("change", () => { o.bgimg.art = art.checked; setBgImg(e, o.bgimg); markDirty(); placeBar(); });
         s.appendChild(row("A imagem é o botão", art));
@@ -1554,7 +1676,7 @@
     const meta = content.pages[id]; if (!meta || !meta.page) return;
     if (!confirm("Excluir a seção “" + pageTitle(id) + "” e tudo que está nela?")) return;
     const pe = nodes.get(meta.page), ne = nodes.get(meta.nav);
-    if (currentPage() === id) location.hash = (content.site.home && document.getElementById(content.site.home)) ? content.site.home : "gate";
+    if (currentPage() === id) location.hash = (content.site.home && document.getElementById(content.site.home)) ? content.site.home : "home";
     if (pe) removeAdded(pe); if (ne) removeAdded(ne);
     delete content.pages[id]; Object.keys(content.bg).forEach(k => { if (k === id) delete content.bg[k]; });
     markDirty(); refreshSections();
@@ -1563,7 +1685,7 @@
     if (!panel || curTab !== "sections") return;
     const box = $("#adm-sections", panel); if (!box) return;
     box.innerHTML = "";
-    const home = content.site.home || "gate";
+    const home = content.site.home || "home";
     pageList().forEach(p => {
       const id = p.id, meta = content.pages[id] || {}, added = !!meta.page, link = navLinkOf(id);
       const hidden = link ? !!(content.ops[link.dataset.b] || {}).hide : false;

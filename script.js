@@ -10,7 +10,7 @@
   const nav = document.getElementById("nav");
   const burger = document.getElementById("burger");
   const pagesNow = () => Array.from(document.querySelectorAll(".page"));
-  let HOME = "gate";
+  let HOME = "home";
 
   function show(id, keepScroll) {
     const pages = pagesNow();
@@ -104,7 +104,7 @@
   }
   function renderSwatches() {
   document.querySelectorAll(".swatch").forEach(el => {
-    let hex = rootStyle.getPropertyValue(el.dataset.var).trim();
+    let hex = (el.dataset.hex || rootStyle.getPropertyValue(el.dataset.var || "")).trim();
     if (/^#[0-9a-f]{3}$/i.test(hex)) hex = "#" + [...hex.slice(1)].map(c => c + c).join("");
     if (!/^#[0-9a-f]{6}$/i.test(hex)) return;
     el.style.background = hex;
@@ -112,7 +112,8 @@
     el.innerHTML = `<b>${el.dataset.label}</b>${hex.toUpperCase()}<br>${toRgb(hex)}`;
     el.title = "Clique para copiar";
     el.onclick = () => {
-      navigator.clipboard && navigator.clipboard.writeText(hex.toUpperCase());
+      if (document.body.classList.contains("editing")) return;
+      navigator.clipboard && navigator.clipboard.writeText(hex.toUpperCase()).catch(() => {});
       const old = el.innerHTML;
       el.innerHTML = "<b>Copiado!</b>" + hex.toUpperCase();
       setTimeout(() => (el.innerHTML = old), 900);
