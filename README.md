@@ -43,3 +43,4 @@ Na aba **＋ Adicionar**, use **Vídeo / YouTube** para criar um bloco com minia
 - **Imagem de fundo:** Tamanho "Livre" (zoom %), posição ←→ ↑↓, e "✋ Arrastar a imagem de fundo" (arraste + roda do mouse).
 - **Vincular itens:** selecione um item e Shift+clique em outros; eles copiam estilo e fundo do selecionado. Clique normal desfaz.
 - Página inicial: `#home` (Design System Início). O seletor antigo continua existindo em `#gate`, sem link.
+- eai parca
