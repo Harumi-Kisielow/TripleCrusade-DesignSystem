@@ -179,14 +179,12 @@
       if (FITS.includes(o.fit)) i.style.objectFit = o.fit;
       e.insertBefore(i, e.firstChild);
       e.classList.add("has-img");
-      if (o.zoom) e.dataset.zoom = "true"; else e.removeAttribute("data-zoom");
       e.removeAttribute("contenteditable");
       if (o.frame) setFrame(e, o.frame);
       syncSize(e);
     } else {
       unwrapOrig(e);
       e.classList.remove("has-img");
-      e.removeAttribute("data-zoom");
       syncSize(e);
     }
   }
@@ -1595,7 +1593,7 @@
     }
     const r = mk("div", "adm-row");
     r.appendChild(btn("📷 " + (o.img ? "Trocar imagem" : "Enviar imagem"), "", () => chooseImageFor(e), "primary"));
-    if (o.img) r.appendChild(btn("Remover", "", () => { delete op(id).img; delete op(id).frame; delete op(id).zoom; cleanOp(id); setImage(e, null); refreshEditable(); buildProps(); markDirty(); }, "danger"));
+    if (o.img) r.appendChild(btn("Remover", "", () => { delete op(id).img; delete op(id).frame; cleanOp(id); setImage(e, null); refreshEditable(); buildProps(); markDirty(); }, "danger"));
     s.appendChild(r);
     if (!o.img) {
       s.appendChild(mk("p", "adm-small", o.thumbnail === "youtube"
@@ -1603,14 +1601,6 @@
         : "Envie uma imagem para liberar tamanho, cantos, zoom e enquadramento."));
       return s;
     }
-    const zoom = mk("input"); zoom.type = "checkbox"; zoom.checked = !!o.zoom;
-    zoom.addEventListener("change", () => {
-      const settings = op(id);
-      if (zoom.checked) { settings.zoom = 1; e.dataset.zoom = "true"; }
-      else { delete settings.zoom; e.removeAttribute("data-zoom"); cleanOp(id); }
-      markDirty();
-    });
-    s.appendChild(row("Ampliar ao clicar", zoom));
     s.appendChild(mk("b", "adm-sub", "Tamanho"));
     s.appendChild(row("Largura", dimInput(e, "width", "w")));
     s.appendChild(row("Altura", dimInput(e, "height", "h")));
