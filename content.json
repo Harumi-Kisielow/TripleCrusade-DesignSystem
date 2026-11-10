@@ -1855,12 +1855,12 @@
         "y": 18
       }
     },
-    "nmw9vfo30r55s": {
+    "nmwao61gvzbbk": {
       "s": {
         "--cols": "33.3fr 33.3fr 33.3fr"
       }
     },
-    "nmw9vfo30kwfk": {
+    "nmwao61gvkf8i": {
       "bgimg": {
         "path": "imgs/componentes/axel-1x9q.png",
         "dim": 0,
@@ -1869,25 +1869,31 @@
         "y": 100
       },
       "s": {
-        "height": "191px"
+        "height": "192px"
       }
     },
-    "nmw9vfo31g4cv": {
+    "nmwao61gw4vph": {
       "bgimg": {
         "path": "imgs/componentes/chizuru-1c86.png",
         "dim": 0,
         "size": "cover",
         "art": true,
         "y": 100
+      },
+      "s": {
+        "height": "192px"
       }
     },
-    "nmw9vfo31x6sh": {
+    "nmwao61gwftq5": {
       "bgimg": {
         "path": "imgs/componentes/harry-ncfk.png",
         "dim": 0,
         "size": "cover",
         "art": true,
-        "y": 93
+        "y": 100
+      },
+      "s": {
+        "height": "192px"
       }
     },
     "b248": {
@@ -2064,7 +2070,7 @@
       "b230",
       "b246",
       "b247",
-      "nmw9vfo30r55s",
+      "nmwao61gvzbbk",
       "b248",
       "b270",
       "nmw9nlnu0jsa5",
@@ -2167,14 +2173,14 @@
       "b390",
       "b391"
     ],
-    "nmw9vfo30kwfk": [],
-    "nmw9vfo30r55s": [
-      "nmw9vfo30kwfk",
-      "nmw9vfo31g4cv",
-      "nmw9vfo31x6sh"
+    "nmwao61gvkf8i": [],
+    "nmwao61gvzbbk": [
+      "nmwao61gvkf8i",
+      "nmwao61gw4vph",
+      "nmwao61gwftq5"
     ],
-    "nmw9vfo31g4cv": [],
-    "nmw9vfo31x6sh": []
+    "nmwao61gw4vph": [],
+    "nmwao61gwftq5": []
   },
   "add": {
     "nmw761gvpn71s": {
@@ -2493,29 +2499,29 @@
       "attrs": {},
       "parent": "b205"
     },
-    "nmw9vfo30r55s": {
+    "nmwao61gvzbbk": {
       "tag": "div",
       "cls": "ds-cols",
       "attrs": {},
       "parent": "b205"
     },
-    "nmw9vfo30kwfk": {
+    "nmwao61gvkf8i": {
       "tag": "div",
       "cls": "ds-box",
       "attrs": {},
-      "parent": "nmw9vfo30r55s"
+      "parent": "nmwao61gvzbbk"
     },
-    "nmw9vfo31g4cv": {
+    "nmwao61gw4vph": {
       "tag": "div",
       "cls": "ds-box",
       "attrs": {},
-      "parent": "nmw9vfo30r55s"
+      "parent": "nmwao61gvzbbk"
     },
-    "nmw9vfo31x6sh": {
+    "nmwao61gwftq5": {
       "tag": "div",
       "cls": "ds-box",
       "attrs": {},
-      "parent": "nmw9vfo30r55s"
+      "parent": "nmwao61gvzbbk"
     }
   },
   "pages": {},
