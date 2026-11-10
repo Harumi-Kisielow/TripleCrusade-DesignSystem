@@ -38,6 +38,91 @@
   }
   window.addEventListener("hashchange", route);
 
+  /* ---------- screenshots ampliáveis do press kit ---------- */
+  const screenshotViewer = document.createElement("dialog");
+  screenshotViewer.id = "screenshot-viewer";
+  screenshotViewer.setAttribute("aria-label", "Screenshot ampliado");
+  const viewerClose = document.createElement("button");
+  viewerClose.type = "button";
+  viewerClose.textContent = "×";
+  viewerClose.setAttribute("aria-label", "Fechar screenshot ampliado");
+  const viewerImage = document.createElement("img");
+  let screenshotScrollX = 0;
+  let screenshotScrollY = 0;
+  function restoreScreenshotScroll() {
+    const root = document.documentElement;
+    const scrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    window.scrollTo(screenshotScrollX, screenshotScrollY);
+    root.style.scrollBehavior = scrollBehavior;
+  }
+  screenshotViewer.append(viewerClose, viewerImage);
+  document.body.appendChild(screenshotViewer);
+
+  const zoomTriggers = new Set();
+  function syncZoomTriggers() {
+    const enabled = new Set(document.querySelectorAll(".pk-shot.has-img, .has-img[data-zoom='true']"));
+    zoomTriggers.forEach(slot => {
+      if (!enabled.has(slot)) {
+        slot.removeAttribute("role");
+        slot.removeAttribute("tabindex");
+        slot.removeAttribute("aria-label");
+        slot.classList.remove("ds-zoom-trigger");
+        zoomTriggers.delete(slot);
+      }
+    });
+    enabled.forEach(slot => {
+      const image = slot.querySelector(":scope > .slot-img");
+      const label = (image && image.alt) || (slot.textContent || "imagem").trim().replace(/\s+/g, " ");
+      slot.setAttribute("role", "button");
+      slot.setAttribute("tabindex", "0");
+      slot.setAttribute("aria-label", "Ampliar " + label);
+      slot.classList.add("ds-zoom-trigger");
+      zoomTriggers.add(slot);
+    });
+  }
+  function openScreenshot(slot) {
+    if (document.body.classList.contains("editing") || screenshotViewer.open) return;
+    const image = slot.querySelector(":scope > .slot-img");
+    if (!image) return;
+    screenshotScrollX = window.scrollX;
+    screenshotScrollY = window.scrollY;
+    viewerImage.src = image.currentSrc || image.src;
+    viewerImage.alt = image.alt || slot.getAttribute("aria-label") || "Screenshot ampliado";
+    screenshotViewer.showModal();
+    requestAnimationFrame(restoreScreenshotScroll);
+  }
+  syncZoomTriggers();
+  new MutationObserver(syncZoomTriggers).observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class", "data-zoom"]
+  });
+  document.addEventListener("click", event => {
+    const slot = event.target.closest && event.target.closest(".ds-zoom-trigger");
+    if (slot) openScreenshot(slot);
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && screenshotViewer.open) {
+      screenshotViewer.close();
+      return;
+    }
+    const slot = event.target.closest && event.target.closest(".ds-zoom-trigger");
+    if (slot && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      openScreenshot(slot);
+    }
+  });
+  viewerClose.addEventListener("click", () => screenshotViewer.close());
+  screenshotViewer.addEventListener("click", event => {
+    if (event.target === screenshotViewer) screenshotViewer.close();
+  });
+  screenshotViewer.addEventListener("close", () => {
+    viewerImage.removeAttribute("src");
+    requestAnimationFrame(restoreScreenshotScroll);
+  });
+
   /* destinos especiais: section:next, scrollpoint:first, browser:back, copy:texto … */
   const anchorsNow = () => Array.from(document.querySelectorAll(".page.active .ds-anchor[id]"));
   function toast(msg) {
