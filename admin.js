@@ -679,7 +679,13 @@
   window.addEventListener("beforeunload", ev => { if (editing && countChanges() > 0) { ev.preventDefault(); ev.returnValue = ""; } });
   document.addEventListener("keydown", ev => {
     if (globalKeys(ev)) return;
-    if (!editing || !sel) return;
+    if (!editing) return;
+    if (ev.key === "Delete" || ev.key === "Backspace") {
+      const image = ev.target.closest && ev.target.closest(".slot-img");
+      const item = image && image.closest("[data-b]");
+      if (item) select(item);
+    }
+    if (!sel) return;
     const typing = ev.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(ev.target.tagName);
     if (typing) { if (ev.key === "Escape" && ev.target.isContentEditable) ev.target.blur(); return; }
     if (ev.key === "Escape") { select(null); return; }
