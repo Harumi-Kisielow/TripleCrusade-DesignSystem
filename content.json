@@ -106,7 +106,8 @@
     "b480": {
       "img": {
         "path": "imgs/presskit/triple-rusade-logo-quase-final-7yb6.png",
-        "h": "yjxkqe"
+        "h": "yjxkqe",
+        "spotlight": true
       },
       "s": {
         "background-color": "#ffffff",
@@ -146,7 +147,8 @@
     "b485": {
       "img": {
         "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
-        "h": "10zcvo5"
+        "h": "10zcvo5",
+        "spotlight": true
       },
       "s": {
         "height": "151px"
@@ -256,13 +258,15 @@
     "b506": {
       "img": {
         "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
-        "h": "1avcnqz"
+        "h": "1avcnqz",
+        "spotlight": true
       }
     },
     "b501": {
       "img": {
         "path": "imgs/presskit/capa-jogo-remaster-hdc0.jpg",
-        "h": "kluag0"
+        "h": "kluag0",
+        "spotlight": true
       }
     },
     "b505": {
@@ -1293,11 +1297,7 @@
       }
     },
     "b494": {
-      "img": {
-        "path": "imgs/presskit/captura-de-tela-2026-11-09-105713-10u1.png",
-        "spotlight": true,
-        "h": "1ssrvqv"
-      }
+      "hide": 1
     },
     "b495": {
       "img": {
@@ -1315,7 +1315,8 @@
     },
     "nmw9buj8mlq0l": {
       "img": {
-        "path": "imgs/presskit/captura-de-tela-2026-09-20-204450-xe5z.png"
+        "path": "imgs/presskit/captura-de-tela-2026-09-20-204450-xe5z.png",
+        "spotlight": true
       }
     },
     "b512": {
@@ -1904,6 +1905,18 @@
     },
     "b248": {
       "hide": 1
+    },
+    "nmwc7rxiaybne": {
+      "img": {
+        "path": "imgs/presskit/captura-de-tela-2026-09-20-204540-1cm6.png",
+        "spotlight": true
+      }
+    },
+    "nmwc7ryeoe3k1": {
+      "img": {
+        "path": "imgs/presskit/captura-de-tela-2026-09-20-204511-t2k2.png",
+        "spotlight": true
+      }
     }
   },
   "order": {
@@ -2124,7 +2137,9 @@
       "b494",
       "b495",
       "b496",
-      "nmw9buj8mlq0l"
+      "nmw9buj8mlq0l",
+      "nmwc7rxiaybne",
+      "nmwc7ryeoe3k1"
     ],
     "b6": [
       "b7",
@@ -2528,6 +2543,18 @@
       "cls": "ds-box",
       "attrs": {},
       "parent": "nmwao61gvzbbk"
+    },
+    "nmwc7rxiaybne": {
+      "tag": "div",
+      "cls": "img-slot pk-shot",
+      "attrs": {},
+      "parent": "b490"
+    },
+    "nmwc7ryeoe3k1": {
+      "tag": "div",
+      "cls": "img-slot pk-shot",
+      "attrs": {},
+      "parent": "b490"
     }
   },
   "pages": {},
