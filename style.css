@@ -341,6 +341,15 @@ b.adm-sub { display: block; margin-top: .6rem; }
 .has-img.ds-h, .has-img.ds-frame { display: block !important; }
 .ds-icon.has-img { display: inline-block !important; }
 
+.ds-spotlight { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; padding: 2rem; background: rgba(0,0,0,.94); }
+.ds-spotlight[hidden] { display: none; }
+.ds-spotlight-image { display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; margin: 0; object-fit: contain; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+.ds-spotlight-close { position: absolute; top: max(1rem, env(safe-area-inset-top)); right: max(1rem, env(safe-area-inset-right)); width: 46px; height: 46px; padding: 0; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; background: rgba(0,0,0,.72); color: #fff; font: 2rem/1 var(--font-ui); cursor: pointer; }
+.ds-spotlight-close:hover, .ds-spotlight-close:focus-visible { background: #222; border-color: #fff; outline: 2px solid #fff; outline-offset: 3px; }
+body.ds-spotlight-open { overflow: hidden; }
+.slot-img[data-spotlight="true"] { cursor: zoom-in; }
+@media (max-width: 640px) { .ds-spotlight { padding: 1rem; } .ds-spotlight-close { width: 42px; height: 42px; } }
+
 .adm-handles { position: fixed; z-index: 900; display: none; pointer-events: none; }
 .adm-h { position: absolute; width: 11px; height: 11px; margin: -6px 0 0 -6px; background: #fff; border: 2px solid #4aa8ff; border-radius: 3px; pointer-events: auto; box-shadow: 0 1px 4px rgba(0,0,0,.5); touch-action: none; }
 .adm-h:hover { background: #4aa8ff; }

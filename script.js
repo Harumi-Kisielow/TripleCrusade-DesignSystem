@@ -123,6 +123,65 @@
   renderSwatches();
   window.DS = { renderSwatches, show, route, special, setHome: id => { HOME = id; } };
 
+  /* ---------- 2.1 Zoom spotlight de imagens ---------- */
+  const spotlight = document.createElement("div");
+  spotlight.className = "ds-spotlight";
+  spotlight.hidden = true;
+  spotlight.setAttribute("role", "dialog");
+  spotlight.setAttribute("aria-modal", "true");
+  spotlight.setAttribute("aria-label", "Imagem ampliada");
+  const spotlightClose = document.createElement("button");
+  spotlightClose.className = "ds-spotlight-close";
+  spotlightClose.type = "button";
+  spotlightClose.setAttribute("aria-label", "Fechar imagem ampliada");
+  spotlightClose.textContent = "×";
+  const spotlightImage = document.createElement("img");
+  spotlightImage.className = "ds-spotlight-image";
+  spotlight.append(spotlightImage, spotlightClose);
+  document.body.appendChild(spotlight);
+  let spotlightTrigger = null;
+
+  function closeSpotlight() {
+    if (spotlight.hidden) return;
+    spotlight.hidden = true;
+    spotlightImage.removeAttribute("src");
+    document.body.classList.remove("ds-spotlight-open");
+    if (spotlightTrigger && spotlightTrigger.isConnected) spotlightTrigger.focus();
+    spotlightTrigger = null;
+  }
+  function openSpotlight(image) {
+    spotlightTrigger = image;
+    spotlightImage.src = image.currentSrc || image.src;
+    spotlightImage.alt = image.alt;
+    spotlight.hidden = false;
+    document.body.classList.add("ds-spotlight-open");
+    spotlightClose.focus();
+  }
+  spotlightClose.addEventListener("click", closeSpotlight);
+  document.addEventListener("click", event => {
+    const image = event.target.closest && event.target.closest(".slot-img[data-spotlight='true']");
+    if (!image || document.body.classList.contains("editing")) return;
+    event.preventDefault();
+    openSpotlight(image);
+  });
+  document.addEventListener("keydown", event => {
+    if (!spotlight.hidden) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeSpotlight();
+      } else if (event.key === "Tab") {
+        event.preventDefault();
+        spotlightClose.focus();
+      }
+      return;
+    }
+    const image = event.target.closest && event.target.closest(".slot-img[data-spotlight='true']");
+    if (image && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      openSpotlight(image);
+    }
+  });
+
   /* ---------- 3. Menus de pedra: foco ao clicar ---------- */
   function focusGroup(containerId) {
     const c = document.getElementById(containerId);

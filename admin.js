@@ -170,11 +170,26 @@
     const w = e.querySelector(":scope > .slot-orig");
     if (w) w.replaceWith(...Array.from(w.childNodes));
   }
+  function setSpotlight(img, enabled) {
+    if (!img) return;
+    if (enabled) {
+      img.dataset.spotlight = "true";
+      img.tabIndex = 0;
+      img.setAttribute("role", "button");
+      img.setAttribute("aria-label", img.alt ? `Ampliar imagem: ${img.alt}` : "Ampliar imagem");
+    } else {
+      delete img.dataset.spotlight;
+      img.removeAttribute("tabindex");
+      img.removeAttribute("role");
+      img.removeAttribute("aria-label");
+    }
+  }
   function setImage(e, img) {
     $$(":scope > .slot-img", e).forEach(x => x.remove());
     if (img && safePath(img.path)) {
       wrapOrig(e);
       const i = mk("img", "slot-img"); i.src = previews.get(img.path) || img.path; i.alt = img.alt || ""; i.draggable = false;
+      setSpotlight(i, img.spotlight === true);
       const o = content.ops[e.dataset.b] || {};
       if (FITS.includes(o.fit)) i.style.objectFit = o.fit;
       e.insertBefore(i, e.firstChild);
@@ -1601,6 +1616,18 @@
         : "Envie uma imagem para liberar tamanho, cantos, zoom e enquadramento."));
       return s;
     }
+    const spotlight = mk("input");
+    spotlight.type = "checkbox";
+    spotlight.checked = o.img.spotlight === true;
+    spotlight.addEventListener("change", () => {
+      const image = op(id).img;
+      if (spotlight.checked) image.spotlight = true;
+      else delete image.spotlight;
+      setSpotlight($(":scope > .slot-img", e), spotlight.checked);
+      markDirty();
+    });
+    s.appendChild(row("Zoom spotlight ao clicar", spotlight));
+    s.appendChild(mk("p", "adm-small", "Abre a imagem ampliada em tela cheia, sem moldura. Desative para impedir o zoom."));
     s.appendChild(mk("b", "adm-sub", "Tamanho"));
     s.appendChild(row("Largura", dimInput(e, "width", "w")));
     s.appendChild(row("Altura", dimInput(e, "height", "h")));

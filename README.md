@@ -15,7 +15,7 @@
    - **Colunas:** botões "2/3/4 colunas". No painel, escolha de 1 a 6 colunas e a largura de cada uma em % (as outras se ajustam), proporções prontas, espaço entre colunas e alinhamento. No celular elas empilham sozinhas.
    - **Posição livre:** liga no painel (Tamanho e posição). Arraste com ✥, use as setas do teclado (Shift = passo maior). Guias rosa ajudam a centralizar e encostar nas bordas (Alt desliga o encaixe). Botões de alinhar (esquerda, centro, direita, topo, meio, base), girar em graus, camada e "para frente/para trás".
    - **Margens e espaço interno** separados por lado; arraste o nome de qualquer campo numérico para ajustar o valor.
-   - **Imagens:** cantos por controle deslizante/número (px ou %), botões Reto/Suave/Redondo/Círculo e cada canto separado; moldura (1:1, 4:3, 16:9…), zoom, posição e o botão ✋ para arrastar a imagem dentro da moldura (a roda do mouse dá zoom); "Voltar ao tamanho original".
+   - **Imagens:** cantos por controle deslizante/número (px ou %), botões Reto/Suave/Redondo/Círculo e cada canto separado; moldura (1:1, 4:3, 16:9…), zoom, posição e o botão ✋ para arrastar a imagem dentro da moldura (a roda do mouse dá zoom); "Voltar ao tamanho original". Em "Zoom spotlight ao clicar", habilite a ampliação em tela cheia para cada imagem (os screenshots do Press Kit já vêm habilitados; as demais imagens começam desabilitadas).
    - **Painel:** arraste pelo cabeçalho, encaixe à esquerda/direita (⇄) ou minimize. A posição fica lembrada.
    - **Atalhos:** Ctrl+D duplica · Delete exclui · Esc sai do texto e depois desmarca · Alt+↑/↓ move na ordem.
    - Texto: clique de novo e digite. Ao arrastar, segure Alt para soltar DENTRO de uma caixa.
