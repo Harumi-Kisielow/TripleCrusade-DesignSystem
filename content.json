@@ -1681,7 +1681,8 @@
         "duration": 500,
         "delay": 0,
         "effect": "rise"
-      }
+      },
+      "hide": 1
     },
     "b499": {
       "animation": {
@@ -2201,7 +2202,14 @@
       "nmwao61gwftq5"
     ],
     "nmwao61gw4vph": [],
-    "nmwao61gwftq5": []
+    "nmwao61gwftq5": [],
+    "b477": [
+      "b478",
+      "b483",
+      "b499",
+      "b504",
+      "b488"
+    ]
   },
   "add": {
     "nmw761gvpn71s": {
