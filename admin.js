@@ -408,9 +408,17 @@
     });
     responsiveStyle.textContent = `@media(max-width:720px){${css.join("")}}`;
   }
+  const ANIM_EFFECTS = [
+    ["", "Nenhum"], ["fade", "Aparecer"], ["rise", "Subir"],
+    ["slide", "Deslizar"], ["zoom", "Zoom"], ["flip", "Virar"],
+    ["bounce", "Pular"], ["spin", "Girar"], ["scale-x", "Expandir"],
+    ["blur", "Desfocar"]
+  ];
+  const ANIM_KEYS = ["fade", "rise", "slide", "zoom", "flip", "bounce", "spin", "scale-x", "blur"];
+
   function applyAnimations() {
     if (!animationStyle) { animationStyle = mk("style"); animationStyle.id = "ds-element-animations"; document.head.appendChild(animationStyle); }
-    const effects = { fade: "ds-fade", rise: "ds-rise", slide: "ds-slide", zoom: "ds-zoom" };
+    const effects = { fade: "ds-fade", rise: "ds-rise", slide: "ds-slide", zoom: "ds-zoom", flip: "ds-flip", bounce: "ds-bounce", spin: "ds-spin", "scale-x": "ds-scale-x", blur: "ds-blur" };
     const rules = [];
     Object.entries(content.ops).forEach(([id, op]) => {
       const animation = op.animation;
@@ -421,7 +429,27 @@
       rules.push(`${selector}{animation:${effects[animation.effect]} ${duration}ms ease ${delay}ms both}`);
       rules.push(`@media(prefers-reduced-motion:reduce){${selector}{animation:none!important}}`);
     });
-    animationStyle.textContent = `@keyframes ds-fade{from{opacity:0}to{opacity:1}}@keyframes ds-rise{from{opacity:0;translate:0 20px}to{opacity:1;translate:0 0}}@keyframes ds-slide{from{opacity:0;translate:-20px 0}to{opacity:1;translate:0 0}}@keyframes ds-zoom{from{opacity:0;scale:.92}to{opacity:1;scale:1}}${rules.join("")}`;
+    animationStyle.textContent = `@keyframes ds-fade{from{opacity:0}to{opacity:1}}@keyframes ds-rise{from{opacity:0;translate:0 20px}to{opacity:1;translate:0 0}}@keyframes ds-slide{from{opacity:0;translate:-20px 0}to{opacity:1;translate:0 0}}@keyframes ds-zoom{from{opacity:0;scale:.92}to{opacity:1;scale:1}}@keyframes ds-flip{from{opacity:0;transform:perspective(600px) rotateY(-15deg)}to{opacity:1;transform:none}}@keyframes ds-bounce{0%{opacity:0;translate:0 -20px}60%{opacity:1;translate:0 6px}100%{translate:0 0}}@keyframes ds-spin{from{opacity:0;rotate:-90deg}to{opacity:1;rotate:0deg}}@keyframes ds-scale-x{from{opacity:0;scale:0 1}to{opacity:1;scale:1 1}}@keyframes ds-blur{from{opacity:0;filter:blur(8px)}to{opacity:1;filter:none}}${rules.join("")}`;
+  }
+  function setupScrollAnimations() {
+    if (!('IntersectionObserver' in window)) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.remove('ds-anim-pending');
+          entry.target.classList.add('ds-anim-triggered');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+    
+    Object.entries(content.ops).forEach(([id, op]) => {
+      if (!op.animation || !op.animation.effect) return;
+      const el = nodes.get(id);
+      if (!el || editing) return;
+      el.classList.add('ds-anim-pending');
+      observer.observe(el);
+    });
   }
   function applySharedStyle(styleId) {
     const style = content.styles[styleId];
@@ -443,7 +471,7 @@
         delete current.bgimg;
         setBgImg(e, null);
       }
-      if (style.animation && ["fade", "rise", "slide", "zoom"].includes(style.animation.effect)) current.animation = Object.assign({}, style.animation);
+      if (style.animation && ANIM_KEYS.includes(style.animation.effect)) current.animation = Object.assign({}, style.animation);
       else delete current.animation;
       cleanOp(e.dataset.b);
       syncSize(e);
@@ -456,7 +484,7 @@
     style.s = Object.fromEntries(Object.entries(current.s || {}).filter(([prop]) => !STYLE_LAYOUT_PROPS.has(prop)));
     if (current.bgimg && safePath(current.bgimg.path)) style.bgimg = Object.assign({}, current.bgimg);
     else delete style.bgimg;
-    if (current.animation && ["fade", "rise", "slide", "zoom"].includes(current.animation.effect)) style.animation = Object.assign({}, current.animation);
+    if (current.animation && ANIM_KEYS.includes(current.animation.effect)) style.animation = Object.assign({}, current.animation);
     else delete style.animation;
     applySharedStyle(styleId);
   }
@@ -509,7 +537,7 @@
       if (n && !n.parentNode) { const p = nodes.get(spec.parent) || $(".page.active") || $(".page"); p && p.appendChild(n); }
     });
     Object.keys(content.styles).forEach(applySharedStyle);
-    fixFree(); applyVars(); applyBg(); applySiteSettings(); applyResponsiveStyles(); applyAnimations(); refreshYouTubeThumbnails();
+    fixFree(); applyVars(); applyBg(); applySiteSettings(); applyResponsiveStyles(); applyAnimations(); refreshYouTubeThumbnails(); setupScrollAnimations();
   }
 
   /* ---------- migração do formato antigo ---------- */
@@ -1095,14 +1123,18 @@
   function buildPanel() {
     panel = mk("aside", "adm-panel");
     panel.innerHTML = `
-      <div class="adm-head" title="Arraste para mover o painel"><b>🛠 Editor visual</b><span class="adm-head-btns"><button type="button" id="adm-dock" title="Encostar na esquerda / direita (Alt+← / Alt+→)">⇄</button><button type="button" id="adm-min" title="Minimizar">–</button></span></div>
+      <div class="adm-head"><b>🛠 Editor</b><span class="adm-head-btns"><button type="button" id="adm-min" title="Minimizar painel">◁</button></span></div>
       <div class="adm-toolbar">
         <button type="button" id="adm-undo" title="Desfazer (Ctrl+Z)">↶</button><button type="button" id="adm-redo" title="Refazer (Ctrl+Shift+Z)">↷</button><i></i>
         <button type="button" id="adm-viewsite" title="Abrir o site em outra aba (Alt+V)">↗</button>
       </div>
       <div class="adm-tabs" id="adm-tabs">
-        <button type="button" data-tab="item" class="on">Item</button><button type="button" data-tab="add">Build</button><button type="button" data-tab="tree" title="Alt+E">Elementos</button>
-        <button type="button" data-tab="sections" title="Alt+S">Seções</button><button type="button" data-tab="page">Página</button><button type="button" data-tab="site">Sites</button>
+        <button type="button" data-tab="item" class="on"><span class="tab-icon">⬡</span>Elemento</button>
+        <button type="button" data-tab="add"><span class="tab-icon">＋</span>Adicionar</button>
+        <button type="button" data-tab="tree"><span class="tab-icon">☰</span>Camadas</button>
+        <button type="button" data-tab="sections"><span class="tab-icon">◫</span>Páginas</button>
+        <button type="button" data-tab="page"><span class="tab-icon">◻</span>Fundo</button>
+        <button type="button" data-tab="site"><span class="tab-icon">⚙</span>Config</button>
       </div>
       <div class="adm-body">
         <div class="adm-pane on" data-pane="item">
@@ -1194,9 +1226,7 @@
       Object.entries(content.ops).forEach(([id, o]) => { const e = nodes.get(id); if (o.hide && e && (pg.contains(e))) { delete o.hide; e.classList.remove("ds-hidden"); cleanOp(id); } });
       refreshPageControls(); markDirty();
     });
-    $("#adm-min", panel).addEventListener("click", () => panel.classList.toggle("min"));
-    $("#adm-dock", panel).addEventListener("click", () => { const left = panel.dataset.side !== "left"; dockPanel(left ? "left" : "right"); });
-    panelDrag();
+    $("#adm-min", panel).addEventListener("click", () => panel.classList.toggle("collapsed"));
     $("#adm-save", panel).addEventListener("click", saveAll);
     $("#adm-discard", panel).addEventListener("click", () => {
       if (!confirm("Descartar todas as alterações não salvas? A página será recarregada e você entrará de novo com a senha.")) return;
@@ -1212,34 +1242,11 @@
     curTab = name;
     $$(".adm-pane", panel).forEach(p => p.classList.toggle("on", p.dataset.pane === name));
     $$("[data-tab]", panel).forEach(b => b.classList.toggle("on", b.dataset.tab === name));
-    panel.classList.remove("min");
+    panel.classList.remove("min", "collapsed");
     if (name === "tree") refreshTree(); if (name === "sections") refreshSections(); if (name === "site" && window.buildSitePane) window.buildSitePane();
   }
-  function dockPanel(side) {
-    panel.dataset.side = side; panel.style.top = ""; panel.style.bottom = "14px";
-    if (pv) { pv.wrap.classList.remove("side-left", "side-right"); pv.wrap.classList.add("side-" + side); }
-    panel.style.left = side === "left" ? "14px" : ""; panel.style.right = side === "left" ? "" : "14px";
-    try { localStorage.setItem("ds_admin_pos", JSON.stringify({ side })); } catch (e) { /* sem storage */ }
-  }
-  function panelDrag() {
-    try { const p = JSON.parse(localStorage.getItem("ds_admin_pos")); if (p && p.side) dockPanel(p.side); if (p && p.x !== undefined) { panel.style.left = Math.min(p.x, innerWidth - 120) + "px"; panel.style.top = Math.max(0, Math.min(p.y, innerHeight - 60)) + "px"; panel.style.right = panel.style.bottom = "auto"; } } catch (e) { /* sem storage */ }
-    $(".adm-head", panel).addEventListener("pointerdown", ev => {
-      if (ev.target.closest("button") || innerWidth <= 720) return;
-      ev.preventDefault();
-      const r = panel.getBoundingClientRect(), ox = ev.clientX - r.left, oy = ev.clientY - r.top;
-      panel.classList.add("moving");
-      const mv = m => {
-        const x = Math.max(0, Math.min(innerWidth - 120, m.clientX - ox)), y = Math.max(0, Math.min(innerHeight - 50, m.clientY - oy));
-        panel.style.left = x + "px"; panel.style.top = y + "px"; panel.style.right = "auto"; panel.style.bottom = "auto";
-      };
-      const up = () => {
-        window.removeEventListener("pointermove", mv); panel.classList.remove("moving");
-        const q = panel.getBoundingClientRect();
-        try { localStorage.setItem("ds_admin_pos", JSON.stringify({ x: Math.round(q.left), y: Math.round(q.top) })); } catch (e) { /* sem storage */ }
-      };
-      window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up, { once: true });
-    });
-  }
+  function dockPanel(side) {}
+  function panelDrag() {}
   function syncColors() { $$(".adm-color input", panel).forEach(i => { i.value = content.vars[i.dataset.var] || cleanVars[i.dataset.var] || "#000000"; }); }
   function buildSiteSettings() {
     const box = $("#adm-site", panel); if (!box) return;
@@ -1347,6 +1354,19 @@
      Painel: propriedades do item (reescrito)
      ============================================================ */
   const openSecs = new Map();
+  function buildSection(title, contentFn, openByDefault = true) {
+    const isOpen = openSecs.has(title) ? openSecs.get(title) : openByDefault;
+    const section = mk("div", "adm-section" + (isOpen ? "" : " closed"));
+    const header = mk("div", "adm-section-header", `<span class="caret">▼</span> ${title}`);
+    header.addEventListener("click", () => {
+      const closed = section.classList.toggle("closed");
+      openSecs.set(title, !closed);
+    });
+    const body = mk("div", "adm-section-body");
+    contentFn(body);
+    section.append(header, body);
+    return section;
+  }
   function section(title, open) {
     const d = mk("details", "adm-sub");
     d.open = openSecs.has(title) ? openSecs.get(title) : !!open;
@@ -1544,23 +1564,23 @@
     5: [["20,20,20,20,20", "Iguais"]], 6: [["17,17,17,17,16,16", "Iguais"]]
   };
   function colsSection(e) {
-    const s = section("Colunas", true);
-    const kids = dchildren(e), n = kids.length;
-    s.appendChild(row("Quantidade", selInput([1, 2, 3, 4, 5, 6].map(k => [k, k + (k === 1 ? " coluna" : " colunas")]), n, v => { if (setColCount(e, Number(v))) buildProps(); else buildProps(); })));
-    const pcts = colFr(e), inputs = [];
-    const grid = mk("div", "adm-colgrid");
-    pcts.forEach((p, i) => {
-      const lab = mk("label", "adm-colcell", `<span>Col. ${i + 1}</span>`);
-      const inp = mk("input"); inp.type = "number"; inp.min = 5; inp.max = 95; inp.step = 1; inp.value = p; inputs.push(inp);
-      inp.addEventListener("input", () => { if (inp.value === "") return; const out = setColPct(e, i, Number(inp.value)); inputs.forEach((x, k) => { if (k !== i) x.value = out[k]; }); });
-      scrub(lab.firstChild, inp); lab.appendChild(mk("em", "", "%")); lab.insertBefore(inp, lab.lastChild); grid.appendChild(lab);
-    });
-    s.appendChild(grid);
-    s.appendChild(row("Proporção pronta", selInput([["", "Escolher…"]].concat(COL_PRESETS[n] || []), "", v => { if (v) { setCols(e, v.split(",").map(Number)); buildProps(); } })));
-    s.appendChild(row("Espaço entre (px)", (() => { const i = mk("input"); i.type = "number"; i.min = 0; i.max = 120; const g = parseFloat(e.style.getPropertyValue("--gap")); i.value = isNaN(g) ? "" : g; i.placeholder = "16"; i.addEventListener("input", () => setS(e, "--gap", i.value === "" ? null : i.value + "px")); return i; })()));
-    s.appendChild(row("Alinhar colunas", selInput([["", "Esticar (padrão)"], ["start", "Topo"], ["center", "Meio"], ["end", "Base"]], e.style.getPropertyValue("align-items"), v => setS(e, "align-items", v || null))));
-    s.appendChild(mk("p", "adm-small", "As colunas são fluidas: as larguras são proporções e se ajustam à tela. No celular elas empilham sozinhas. Selecione uma coluna para mudar fundo, borda ou espaçamento dela."));
-    return s;
+    return buildSection("Colunas", s => {
+      const kids = dchildren(e), n = kids.length;
+      s.appendChild(row("Quantidade", selInput([1, 2, 3, 4, 5, 6].map(k => [k, k + (k === 1 ? " coluna" : " colunas")]), n, v => { if (setColCount(e, Number(v))) buildProps(); else buildProps(); })));
+      const pcts = colFr(e), inputs = [];
+      const grid = mk("div", "adm-colgrid");
+      pcts.forEach((p, i) => {
+        const lab = mk("label", "adm-colcell", `<span>Col. ${i + 1}</span>`);
+        const inp = mk("input"); inp.type = "number"; inp.min = 5; inp.max = 95; inp.step = 1; inp.value = p; inputs.push(inp);
+        inp.addEventListener("input", () => { if (inp.value === "") return; const out = setColPct(e, i, Number(inp.value)); inputs.forEach((x, k) => { if (k !== i) x.value = out[k]; }); });
+        scrub(lab.firstChild, inp); lab.appendChild(mk("em", "", "%")); lab.insertBefore(inp, lab.lastChild); grid.appendChild(lab);
+      });
+      s.appendChild(grid);
+      s.appendChild(row("Proporção pronta", selInput([["", "Escolher…"]].concat(COL_PRESETS[n] || []), "", v => { if (v) { setCols(e, v.split(",").map(Number)); buildProps(); } })));
+      s.appendChild(row("Espaço entre (px)", (() => { const i = mk("input"); i.type = "number"; i.min = 0; i.max = 120; const g = parseFloat(e.style.getPropertyValue("--gap")); i.value = isNaN(g) ? "" : g; i.placeholder = "16"; i.addEventListener("input", () => setS(e, "--gap", i.value === "" ? null : i.value + "px")); return i; })()));
+      s.appendChild(row("Alinhar colunas", selInput([["", "Esticar (padrão)"], ["start", "Topo"], ["center", "Meio"], ["end", "Base"]], e.style.getPropertyValue("align-items"), v => setS(e, "align-items", v || null))));
+      s.appendChild(mk("p", "adm-small", "As colunas são fluidas: as larguras são proporções e se ajustam à tela. No celular elas empilham sozinhas. Selecione uma coluna para mudar fundo, borda ou espaçamento dela."));
+    }, true);
   }
 
   /* ---------- imagem ---------- */
@@ -1602,73 +1622,73 @@
     return box;
   }
   function imageSection(e, o, id) {
-    const s = section("Imagem", true);
-    if (e.matches(".ds-video-poster") || e.matches(".video-asset .pk-slot")) {
-      s.appendChild(row("Miniatura do vídeo", selInput([["custom", "Imagem enviada"], ["youtube", "Automática do YouTube"]],
-        o.thumbnail === "youtube" ? "youtube" : "custom", mode => {
-          const oo = op(id);
-          if (mode === "youtube") oo.thumbnail = "youtube"; else delete oo.thumbnail;
-          setImage(e, mode === "youtube" ? null : oo.img || null);
-          refreshYouTubeThumbnail(e); markDirty(); buildProps();
-        })));
-    }
-    const r = mk("div", "adm-row");
-    r.appendChild(btn("📷 " + (o.img ? "Trocar imagem" : "Enviar imagem"), "", () => chooseImageFor(e), "primary"));
-    if (o.img) r.appendChild(btn("Remover", "", () => { delete op(id).img; delete op(id).frame; cleanOp(id); setImage(e, null); refreshEditable(); buildProps(); markDirty(); }, "danger"));
-    s.appendChild(r);
-    if (!o.img) {
-      s.appendChild(mk("p", "adm-small", o.thumbnail === "youtube"
-        ? "A miniatura aparece quando houver um link válido do YouTube no mesmo bloco. Você também pode escolher uma imagem enviada."
-        : "Envie uma imagem para liberar tamanho, cantos, zoom e enquadramento."));
-      return s;
-    }
-    const spotlight = mk("input");
-    spotlight.type = "checkbox";
-    spotlight.checked = o.img.spotlight === true;
-    spotlight.addEventListener("change", () => {
-      const image = op(id).img;
-      if (spotlight.checked) image.spotlight = true;
-      else delete image.spotlight;
-      setSpotlight($(":scope > .slot-img", e), spotlight.checked);
-      markDirty();
-    });
-    s.appendChild(row("Zoom spotlight ao clicar", spotlight));
-    s.appendChild(mk("p", "adm-small", "Abre a imagem ampliada em tela cheia, sem moldura. Desative para impedir o zoom."));
-    s.appendChild(mk("b", "adm-sub", "Tamanho"));
-    s.appendChild(row("Largura", dimInput(e, "width", "w")));
-    s.appendChild(row("Altura", dimInput(e, "height", "h")));
-    s.appendChild(row("Proporção da moldura", selInput([["", "Livre / original"], ["1", "1:1 quadrada"], ["1.333", "4:3"], ["1.778", "16:9"], ["0.75", "3:4 retrato"], ["0.5625", "9:16 retrato"], ["2.333", "21:9 panorâmica"]],
-      (e.style.aspectRatio || "").replace(/\s/g, "") === "" ? "" : String(parseFloat(e.style.aspectRatio) || ""), v => {
-        if (v) { setS(e, "height", null); setS(e, "aspect-ratio", v); } else setS(e, "aspect-ratio", null);
-        syncSize(e); buildProps();
-      })));
-    s.appendChild(row("Ajuste na moldura", selInput([["", "Padrão"], ["cover", "Preencher (corta)"], ["contain", "Caber inteira"], ["fill", "Esticar (distorce)"]], o.fit || "", v => { const oo = op(id); if (v) oo.fit = v; else delete oo.fit; const i = $(":scope > .slot-img", e); if (i) i.style.objectFit = v; markDirty(); })));
-    s.appendChild(mk("p", "adm-small", "Dica: arraste as alças azuis nos cantos da imagem. Elas mantêm a proporção; segure Shift para esticar livremente."));
-    s.appendChild(btn("Voltar ao tamanho original", "", () => { ["width", "height", "aspect-ratio"].forEach(p => setS(e, p, null)); delete op(id).frame; cleanOp(id); setFrame(e, null); syncSize(e); buildProps(); }));
-    s.appendChild(mk("b", "adm-sub", "Zoom e enquadramento"));
-    const f = o.frame || { z: 1, x: 50, y: 50 };
-    const upd = () => {
-      const oo = op(id);
-      if (f.z === 1 && f.x === 50 && f.y === 50) { delete oo.frame; cleanOp(id); setFrame(e, null); }
-      else {
-        if (!e.style.height && !e.style.aspectRatio) { const im = $(":scope > .slot-img", e); if (im && im.naturalWidth) setS(e, "aspect-ratio", r1(im.naturalWidth / im.naturalHeight * 1000) / 1000 + ""); syncSize(e); }
-        oo.frame = { z: f.z, x: f.x, y: f.y }; setFrame(e, oo.frame);
+    return buildSection("🖼️ Imagem", s => {
+      if (e.matches(".ds-video-poster") || e.matches(".video-asset .pk-slot")) {
+        s.appendChild(row("Miniatura do vídeo", selInput([["custom", "Imagem enviada"], ["youtube", "Automática do YouTube"]],
+          o.thumbnail === "youtube" ? "youtube" : "custom", mode => {
+            const oo = op(id);
+            if (mode === "youtube") oo.thumbnail = "youtube"; else delete oo.thumbnail;
+            setImage(e, mode === "youtube" ? null : oo.img || null);
+            refreshYouTubeThumbnail(e); markDirty(); buildProps();
+          })));
       }
-      syncSize(e); markDirty(); placeBar();
-    };
-    const sl = (lbl, key, min, max, step, fmt) => {
-      const rg = mk("input"); rg.type = "range"; rg.min = min; rg.max = max; rg.step = step; rg.value = f[key];
-      const v = mk("em", "", fmt(f[key])); const w = mk("span", "adm-rn"); w.appendChild(rg); w.appendChild(v);
-      rg.addEventListener("input", () => { f[key] = Number(rg.value); v.textContent = fmt(f[key]); upd(); });
-      s.appendChild(row(lbl, w)); return rg;
-    };
-    sl("Zoom", "z", 1, 4, 0.05, x => Math.round(x * 100) + "%");
-    sl("Posição horizontal", "x", 0, 100, 1, x => x + "%");
-    sl("Posição vertical", "y", 0, 100, 1, x => x + "%");
-    s.appendChild(btn(panMode ? "✋ Arrastando na imagem (clique p/ parar)" : "✋ Mover a imagem na moldura", "Ligue e arraste direto sobre a imagem; a roda do mouse dá zoom", () => { panMode = !panMode; document.body.classList.toggle("ds-pan", panMode); buildProps(); }, panMode ? "primary" : ""));
-    s.appendChild(mk("b", "adm-sub", "Cantos"));
-    s.appendChild(radiusControl(e));
-    return s;
+      const r = mk("div", "adm-row");
+      r.appendChild(btn("📷 " + (o.img ? "Trocar imagem" : "Enviar imagem"), "", () => chooseImageFor(e), "primary"));
+      if (o.img) r.appendChild(btn("Remover", "", () => { delete op(id).img; delete op(id).frame; cleanOp(id); setImage(e, null); refreshEditable(); buildProps(); markDirty(); }, "danger"));
+      s.appendChild(r);
+      if (!o.img) {
+        s.appendChild(mk("p", "adm-small", o.thumbnail === "youtube"
+          ? "A miniatura aparece quando houver um link válido do YouTube no mesmo bloco. Você também pode escolher uma imagem enviada."
+          : "Envie uma imagem para liberar tamanho, cantos, zoom e enquadramento."));
+        return;
+      }
+      const spotlight = mk("input");
+      spotlight.type = "checkbox";
+      spotlight.checked = o.img.spotlight === true;
+      spotlight.addEventListener("change", () => {
+        const image = op(id).img;
+        if (spotlight.checked) image.spotlight = true;
+        else delete image.spotlight;
+        setSpotlight($(":scope > .slot-img", e), spotlight.checked);
+        markDirty();
+      });
+      s.appendChild(row("Zoom spotlight ao clicar", spotlight));
+      s.appendChild(mk("p", "adm-small", "Abre a imagem ampliada em tela cheia, sem moldura. Desative para impedir o zoom."));
+      s.appendChild(mk("b", "adm-sub", "Tamanho"));
+      s.appendChild(row("Largura", dimInput(e, "width", "w")));
+      s.appendChild(row("Altura", dimInput(e, "height", "h")));
+      s.appendChild(row("Proporção da moldura", selInput([["", "Livre / original"], ["1", "1:1 quadrada"], ["1.333", "4:3"], ["1.778", "16:9"], ["0.75", "3:4 retrato"], ["0.5625", "9:16 retrato"], ["2.333", "21:9 panorâmica"]],
+        (e.style.aspectRatio || "").replace(/\s/g, "") === "" ? "" : String(parseFloat(e.style.aspectRatio) || ""), v => {
+          if (v) { setS(e, "height", null); setS(e, "aspect-ratio", v); } else setS(e, "aspect-ratio", null);
+          syncSize(e); buildProps();
+        })));
+      s.appendChild(row("Ajuste na moldura", selInput([["", "Padrão"], ["cover", "Preencher (corta)"], ["contain", "Caber inteira"], ["fill", "Esticar (distorce)"]], o.fit || "", v => { const oo = op(id); if (v) oo.fit = v; else delete oo.fit; const i = $(":scope > .slot-img", e); if (i) i.style.objectFit = v; markDirty(); })));
+      s.appendChild(mk("p", "adm-small", "Dica: arraste as alças azuis nos cantos da imagem. Elas mantêm a proporção; segure Shift para esticar livremente."));
+      s.appendChild(btn("Voltar ao tamanho original", "", () => { ["width", "height", "aspect-ratio"].forEach(p => setS(e, p, null)); delete op(id).frame; cleanOp(id); setFrame(e, null); syncSize(e); buildProps(); }));
+      s.appendChild(mk("b", "adm-sub", "Zoom e enquadramento"));
+      const f = o.frame || { z: 1, x: 50, y: 50 };
+      const upd = () => {
+        const oo = op(id);
+        if (f.z === 1 && f.x === 50 && f.y === 50) { delete oo.frame; cleanOp(id); setFrame(e, null); }
+        else {
+          if (!e.style.height && !e.style.aspectRatio) { const im = $(":scope > .slot-img", e); if (im && im.naturalWidth) setS(e, "aspect-ratio", r1(im.naturalWidth / im.naturalHeight * 1000) / 1000 + ""); syncSize(e); }
+          oo.frame = { z: f.z, x: f.x, y: f.y }; setFrame(e, oo.frame);
+        }
+        syncSize(e); markDirty(); placeBar();
+      };
+      const sl = (lbl, key, min, max, step, fmt) => {
+        const rg = mk("input"); rg.type = "range"; rg.min = min; rg.max = max; rg.step = step; rg.value = f[key];
+        const v = mk("em", "", fmt(f[key])); const w = mk("span", "adm-rn"); w.appendChild(rg); w.appendChild(v);
+        rg.addEventListener("input", () => { f[key] = Number(rg.value); v.textContent = fmt(f[key]); upd(); });
+        s.appendChild(row(lbl, w)); return rg;
+      };
+      sl("Zoom", "z", 1, 4, 0.05, x => Math.round(x * 100) + "%");
+      sl("Posição horizontal", "x", 0, 100, 1, x => x + "%");
+      sl("Posição vertical", "y", 0, 100, 1, x => x + "%");
+      s.appendChild(btn(panMode ? "✋ Arrastando na imagem (clique p/ parar)" : "✋ Mover a imagem na moldura", "Ligue e arraste direto sobre a imagem; a roda do mouse dá zoom", () => { panMode = !panMode; document.body.classList.toggle("ds-pan", panMode); buildProps(); }, panMode ? "primary" : ""));
+      s.appendChild(mk("b", "adm-sub", "Cantos"));
+      s.appendChild(radiusControl(e));
+    }, true);
   }
 
   function buildProps() {
@@ -1676,7 +1696,8 @@
     box.innerHTML = "";
     if (!sel) { box.appendChild(mk("p", "adm-tip", "Nenhum item selecionado.")); return; }
     const e = sel, id = e.dataset.b, o = content.ops[id] || {};
-    // caminho (clique para subir de nível)
+
+    // Caminho (clique para subir de nível)
     const trail = mk("div", "adm-trail"); const chain = [];
     for (let n = e; n && chain.length < 5; n = n.parentElement && n.parentElement.closest("[data-b]")) { chain.unshift(n); if (n.classList.contains("page")) break; }
     chain.forEach((n, k) => { const b = mk("button", k === chain.length - 1 ? "on" : "", esc(label(n).split(" — ")[0])); b.type = "button"; b.addEventListener("click", () => select(n)); trail.appendChild(b); });
@@ -1693,79 +1714,41 @@
       box.appendChild(lk);
     }
 
-    if (e.tagName === "BUTTON" && isLeaf(e)) {
-      const i = mk("input"); i.type = "text"; i.value = leafText(e);
-      i.addEventListener("input", () => {
-        e.textContent = i.value; const oi = origInfo.get(id), v = esc(i.value), oo = op(id);
-        oo.t = oi ? { h: oi.h, v } : { v }; markDirty(); placeBar();
-      });
-      box.appendChild(row("Texto do botão", i));
-    }
-    if (e.tagName === "A") {
-      const i = mk("input"); i.type = "text"; i.placeholder = "https://… · #secao · mailto: · tel: · section:next · scrollpoint:next · copy:texto · file:nome.pdf (||blank = nova aba)"; i.value = op(id).href || e.getAttribute("href") || "";
-      i.addEventListener("input", () => { if (safeHref(i.value)) { setHref(e, i.value); op(id).href = i.value; refreshYouTubeThumbnails(); markDirty(); } });
-      box.appendChild(row("Link (destino)", i));
-    }
-    if (e.matches(".ds-anchor") && e.dataset.added) {
-      const i = mk("input"); i.type = "text"; i.value = e.id;
-      i.addEventListener("change", () => {
-        const v = slug(i.value);
-        if (!/^[a-z][a-z0-9\-]{0,40}$/.test(v) || (document.getElementById(v) && v !== e.id)) { note("Nome inválido ou já usado."); i.value = e.id; return; }
-        e.id = v; const sp = content.add[id]; sp.attrs = sp.attrs || {}; sp.attrs.id = v; markDirty(); buildProps();
-      });
-      box.appendChild(row("Nome da âncora", i));
-      box.appendChild(mk("p", "adm-small", "Aponte botões e links para #" + e.id + " (ou scrollpoint:next, scrollpoint:previous…) e a página rola até aqui."));
-    }
-    if (e.hasAttribute("data-go")) {
-      box.appendChild(row("Leva para", selInput(PAGES().concat([["section:next", "→ Próxima seção"], ["section:previous", "← Seção anterior"], ["section:first", "Primeira seção"], ["section:last", "Última seção"], ["scrollpoint:next", "↓ Próxima âncora"], ["scrollpoint:previous", "↑ Âncora anterior"]]), e.getAttribute("data-go"), v => { e.setAttribute("data-go", v); op(id).go = v; markDirty(); })));
-    }
-
+    // Caixa de cor especializada
     if (e.matches(".swatch")) {
-      const s = section("Caixa de cor", true);
-      const nm = mk("input"); nm.type = "text"; nm.value = e.dataset.label || "";
-      nm.addEventListener("input", () => { const sw = op(id).sw = Object.assign({ hex: swatchHex(e) }, op(id).sw, { label: nm.value }); applySw(e, sw); markDirty(); });
-      s.appendChild(row("Nome", nm));
-      const hx = mk("input"); hx.type = "text"; hx.value = swatchHex(e).toUpperCase(); hx.maxLength = 7;
-      const co = mk("input"); co.type = "color"; co.value = swatchHex(e);
-      const setHex = v => {
-        if (!HEX_RE.test(v)) return;
-        if (e.dataset.var && !e.dataset.hex) { content.vars[e.dataset.var] = v; applyVars(); syncColors(); }
-        else { const sw = op(id).sw = Object.assign({ label: e.dataset.label || "" }, op(id).sw, { hex: v }); applySw(e, sw); }
-        markDirty();
-      };
-      hx.addEventListener("input", () => { let v = hx.value.trim(); if (v[0] !== "#") v = "#" + v; if (HEX_RE.test(v)) { co.value = v; setHex(v); } });
-      co.addEventListener("input", () => { hx.value = co.value.toUpperCase(); setHex(co.value); });
-      s.appendChild(row("Cor (hex)", hx)); s.appendChild(row("Seletor", co));
-      s.appendChild(mk("p", "adm-small", "Use Ctrl+D (ou Duplicar) para criar mais caixas, p.ex. Fase 2, Fase 3."));
-      box.appendChild(s);
+      box.appendChild(buildSection("Caixa de cor", s => {
+        const nm = mk("input"); nm.type = "text"; nm.value = e.dataset.label || "";
+        nm.addEventListener("input", () => { const sw = op(id).sw = Object.assign({ hex: swatchHex(e) }, op(id).sw, { label: nm.value }); applySw(e, sw); markDirty(); });
+        s.appendChild(row("Nome", nm));
+        const hx = mk("input"); hx.type = "text"; hx.value = swatchHex(e).toUpperCase(); hx.maxLength = 7;
+        const co = mk("input"); co.type = "color"; co.value = swatchHex(e);
+        const setHex = v => {
+          if (!HEX_RE.test(v)) return;
+          if (e.dataset.var && !e.dataset.hex) { content.vars[e.dataset.var] = v; applyVars(); syncColors(); }
+          else { const sw = op(id).sw = Object.assign({ label: e.dataset.label || "" }, op(id).sw, { hex: v }); applySw(e, sw); }
+          markDirty();
+        };
+        hx.addEventListener("input", () => { let v = hx.value.trim(); if (v[0] !== "#") v = "#" + v; if (HEX_RE.test(v)) { co.value = v; setHex(v); } });
+        co.addEventListener("input", () => { hx.value = co.value.toUpperCase(); setHex(co.value); });
+        s.appendChild(row("Cor (hex)", hx)); s.appendChild(row("Seletor", co));
+        s.appendChild(mk("p", "adm-small", "Use Ctrl+D (ou Duplicar) para criar mais caixas, p.ex. Fase 2, Fase 3."));
+      }, true));
     }
 
+    // Colunas especializadas
     if (e.matches(".ds-cols")) box.appendChild(colsSection(e));
 
-    const imgItem = isSlot(e) || (isLeaf(e) && !isTextLeaf(e) && !isAtomic(e) && !NOTEXT_TAGS.has(e.tagName));
-    if (imgItem) box.appendChild(imageSection(e, o, id));
-    else if (isLeaf(e) && !isAtomic(e) && e.matches("span,div") && leafText(e).trim().length <= 4) {
-      const s = section("Imagem no lugar do ícone"); const r = mk("div", "adm-row");
-      r.appendChild(btn("📷 Usar uma imagem", "", () => chooseImageFor(e))); s.appendChild(r); box.appendChild(s);
-    }
-
-    // tamanho e posição
-    if (!isAtomic(e)) {
-      const ps = section("Tamanho e posição", !imgItem);
+    // 1. 📐 Tamanho e Posição (sempre mostrada)
+    box.appendChild(buildSection("📐 Tamanho e Posição", ps => {
       if (!isProtected(e)) {
         const al = mk("div", "adm-align");
         [["left", "⬅", "Alinhar à esquerda"], ["center", "⬌", "Centralizar na horizontal"], ["right", "➡", "Alinhar à direita"], ["top", "⬆", "Alinhar ao topo"], ["middle", "⬍", "Centralizar na vertical"], ["bottom", "⬇", "Alinhar à base"]]
           .forEach(([k, t, ti]) => al.appendChild(btn(t, ti, () => alignItem(e, k))));
         ps.appendChild(row("Alinhar", al));
       }
-      if (!imgItem) {
-        ps.appendChild(row("Largura", dimInput(e, "width", "w")));
-        ps.appendChild(row("Altura", dimInput(e, "height", "h")));
-        ps.appendChild(row("Altura mínima (px)", numInput(e, "min-height", "px", { min: 0, max: 2000, fromComputed: false })));
-      }
-      ps.appendChild(row("Girar (graus)", rotateControl(e)));
-      ps.appendChild(row("Espaço externo (px)", sidesInput(e, "margin", -300, 400)));
-      ps.appendChild(row("Espaço interno (px)", sidesInput(e, "padding", 0, 300)));
+      ps.appendChild(row("Largura", dimInput(e, "width", "w")));
+      ps.appendChild(row("Altura", dimInput(e, "height", "h")));
+      ps.appendChild(row("Altura mínima (px)", numInput(e, "min-height", "px", { min: 0, max: 2000, fromComputed: false })));
       if (!isProtected(e)) {
         const free = e.style.position === "absolute";
         const cb = mk("input"); cb.type = "checkbox"; cb.checked = free;
@@ -1783,6 +1766,10 @@
           buildProps(); placeBar();
         });
         ps.appendChild(row("Posição livre", cb));
+        if (free) {
+          ps.appendChild(row("Posição X (left)", dimInput(e, "left", "%")));
+          ps.appendChild(row("Posição Y (top)", dimInput(e, "top", "%")));
+        }
         ps.appendChild(mk("p", "adm-small", "Posição livre: arraste o item (✥) para qualquer lugar da caixa, use as setas do teclado (Shift = passo maior) e as alças para o tamanho. Guias magnéticas ajudam a centralizar; segure Alt para soltar sem encaixe."));
         ps.appendChild(row("Camada (z-index)", numInput(e, "z-index", "", { min: -5, max: 99, fromComputed: false })));
         const lay = mk("div", "adm-row");
@@ -1790,135 +1777,234 @@
         lay.appendChild(btn("⤓ Para trás", "", () => { setS(e, "z-index", "0"); buildProps(); }));
         ps.appendChild(lay);
       }
-      box.appendChild(ps);
-    }
+      ps.appendChild(row("Girar (graus)", rotateControl(e)));
+      ps.appendChild(row("Espaço externo (px)", sidesInput(e, "margin", -300, 400)));
+      ps.appendChild(row("Espaço interno (px)", sidesInput(e, "padding", 0, 300)));
+    }, true));
 
-    // imagem de fundo
-    if (!isAtomic(e)) {
-      const s = section("Imagem de fundo (texto por cima)", !!o.bgimg);
-      const r = mk("div", "adm-row");
-      r.appendChild(btn("📷 " + (o.bgimg ? "Trocar fundo" : "Escolher fundo"), "", () => chooseBgFor(e)));
-      if (o.bgimg) r.appendChild(btn("Remover", "", () => { delete op(id).bgimg; cleanOp(id); setBgImg(e, null); buildProps(); markDirty(); }, "danger"));
-      s.appendChild(r);
-      if (o.bgimg) {
-        const dim = mk("input"); dim.type = "range"; dim.min = 0; dim.max = 90; dim.value = Math.round((o.bgimg.dim || 0) * 100);
-        dim.addEventListener("input", () => { o.bgimg.dim = dim.value / 100; setBgImg(e, o.bgimg); markDirty(); });
-        s.appendChild(row("Escurecer", dim));
-        s.appendChild(row("Tamanho", selInput([["stretch", "Esticar (arte do botão)"], ["free", "Livre (zoom e posição)"], ["cover", "Preencher (corta)"], ["contain", "Caber inteira"], ["auto", "Original"]], o.bgimg.size || "cover", v => { o.bgimg.size = v; setBgImg(e, o.bgimg); markDirty(); })));
-        const pos = (k, lab, mn, mx, def) => { const i = mk("input"); i.type = "range"; i.min = mn; i.max = mx; i.value = o.bgimg[k] === undefined ? def : o.bgimg[k]; i.addEventListener("input", () => { o.bgimg[k] = Number(i.value); setBgImg(e, o.bgimg); markDirty(); }); s.appendChild(row(lab, i)); };
-        if (o.bgimg.size === "free") pos("w", "Zoom (%)", 10, 400, 100);
-        pos("x", "Posição ←→", 0, 100, 50); pos("y", "Posição ↑↓", 0, 100, 50);
-        s.appendChild(btn(bgPan ? "✋ Arrastando a imagem de fundo (clique p/ parar)" : "✋ Arrastar a imagem de fundo", "Ligue e arraste sobre o botão; a roda do mouse dá zoom", () => { bgPan = !bgPan; document.body.classList.toggle("ds-pan", bgPan); buildProps(); }, bgPan ? "primary" : ""));
-        const art = mk("input"); art.type = "checkbox"; art.checked = !!o.bgimg.art;
-        art.addEventListener("change", () => { o.bgimg.art = art.checked; setBgImg(e, o.bgimg); markDirty(); placeBar(); });
-        s.appendChild(row("A imagem é o botão", art));
-        s.appendChild(mk("p", "adm-small", "Ligado: a imagem vira o próprio botão/cartão (some a cor, a borda e a sombra originais) e continua clicável. Use as alças para ajustar o tamanho do botão e a aba Aparência para a cor do texto."));
-      }
-      box.appendChild(s);
-    }
-
-    // aparência
-    const st = section("Aparência", true);
-    if (!isProtected(e)) {
-      const styleChoices = [["", "Independente"]].concat(Object.entries(content.styles)
-        .filter(([, shared]) => shared && shared.tag === e.tagName)
-        .map(([styleId, shared]) => [styleId, shared.name || "Estilo"]));
-      st.appendChild(row("Estilo compartilhado", selInput(styleChoices, o.style || "", styleId => {
-        if (styleId) attachSharedStyle(e, styleId);
-        else { delete op(id).style; cleanOp(id); }
-        markDirty(); buildProps(); refreshStyleLibrary();
-      })));
-      const acts = mk("div", "adm-row");
-      acts.appendChild(btn("Criar estilo", "", () => {
-        const name = prompt("Nome do estilo compartilhado:", "Novo estilo");
-        if (!name || !name.trim()) return;
-        const styleId = uid();
-        content.styles[styleId] = {
-          name: name.trim().slice(0, 60),
-          tag: e.tagName,
-          s: Object.fromEntries(Object.entries(o.s || {}).filter(([prop]) => !STYLE_LAYOUT_PROPS.has(prop))),
-          ...(o.bgimg ? { bgimg: Object.assign({}, o.bgimg) } : {}),
-          ...(o.animation ? { animation: Object.assign({}, o.animation) } : {})
-        };
-        op(id).style = styleId;
-        applySharedStyle(styleId); markDirty(); buildProps(); refreshStyleLibrary();
-      }, "primary"));
-      if (o.style && content.styles[o.style]) acts.appendChild(btn("Atualizar estilo", "", () => {
-        syncSharedStyle(e); markDirty(); buildProps(); refreshStyleLibrary();
-      }));
-      st.appendChild(acts);
-    }
-    st.appendChild(row("Cor do texto", colorInput(e, "color")));
-    st.appendChild(row("Cor de fundo", colorInput(e, "background-color")));
-    st.appendChild(row("Tamanho da letra (px)", numInput(e, "font-size", "px", { min: 6, max: 200 })));
-    st.appendChild(row("Peso", selInput([["", "Padrão"], ["400", "Normal"], ["700", "Negrito"], ["900", "Extra negrito"]], e.style.fontWeight || "", v => setS(e, "font-weight", v || null))));
-    st.appendChild(row("Fonte", selInput([["", "Padrão"]].concat(FONTS.map(([l, v]) => [v, l])), e.style.fontFamily || "", v => setS(e, "font-family", v || null))));
-    const al = mk("div", "adm-seg"); [["left", "⇤"], ["center", "↔"], ["right", "⇥"]].forEach(([v, t]) => { const b = mk("button", e.style.textAlign === v ? "on" : "", t); b.type = "button"; b.title = "Texto " + v; b.addEventListener("click", () => { setS(e, "text-align", e.style.textAlign === v ? null : v); buildProps(); }); al.appendChild(b); });
-    st.appendChild(row("Alinhamento do texto", al));
-    st.appendChild(row("Borda (px)", (() => { const i = numInput(e, "border-width", "px", { min: 0, max: 30, fromComputed: false }); i.addEventListener("input", () => { if (i.value !== "") setS(e, "border-style", "solid"); }); return i; })()));
-    st.appendChild(row("Cor da borda", colorInput(e, "border-color")));
-    if (!(imgItem && o.img)) { st.appendChild(mk("b", "adm-sub", "Cantos")); st.appendChild(radiusControl(e)); }
-    st.appendChild(row("Sombra", selInput(SHADOWS, e.style.getPropertyValue("box-shadow") || "", v => setS(e, "box-shadow", v || null))));
-    st.appendChild(row("Opacidade (%)", numInput(e, "opacity", "", { min: 0, max: 100, scale: 100, fromComputed: false })));
-    st.appendChild(btn("Restaurar aparência original", "", () => { Object.keys((content.ops[id] || {}).s || {}).forEach(p => e.style.removeProperty(p)); if (content.ops[id]) delete content.ops[id].s; cleanOp(id); fixFree(); syncSize(e); buildProps(); markDirty(); placeBar(); }));
-    box.appendChild(st);
-
-    if (!isProtected(e)) {
-      const animation = section("Animação", false);
-      animation.appendChild(row("Efeito", selInput([["", "Nenhum"], ["fade", "Aparecer"], ["rise", "Subir"], ["slide", "Deslizar"], ["zoom", "Zoom"]],
-        o.animation && o.animation.effect || "", effect => {
-          if (!effect) delete op(id).animation;
-          else op(id).animation = Object.assign({ duration: 500, delay: 0 }, op(id).animation, { effect });
-          cleanOp(id); applyAnimations(); markDirty(); buildProps();
+    // 2. 🎨 Aparência (sempre mostrada)
+    box.appendChild(buildSection("🎨 Aparência", st => {
+      if (!isProtected(e)) {
+        const styleChoices = [["", "Independente"]].concat(Object.entries(content.styles)
+          .filter(([, shared]) => shared && shared.tag === e.tagName)
+          .map(([styleId, shared]) => [styleId, shared.name || "Estilo"]));
+        st.appendChild(row("Estilo compartilhado", selInput(styleChoices, o.style || "", styleId => {
+          if (styleId) attachSharedStyle(e, styleId);
+          else { delete op(id).style; cleanOp(id); }
+          markDirty(); buildProps(); refreshStyleLibrary();
         })));
-      if (o.animation && ["fade", "rise", "slide", "zoom"].includes(o.animation.effect)) {
-        [["Duração (ms)", "duration", 100, 3000], ["Atraso (ms)", "delay", 0, 3000]].forEach(([title, prop, min, max]) => {
-          const wrap = mk("span", "adm-rn");
-          const input = mk("input"); input.type = "range"; input.min = min; input.max = max; input.step = 50;
-          input.value = Math.max(min, Math.min(max, Number(o.animation[prop]) || (prop === "duration" ? 500 : 0)));
-          const output = mk("em", "", input.value + "ms"); wrap.append(input, output);
-          input.addEventListener("input", () => {
-            op(id).animation[prop] = Number(input.value); output.textContent = input.value + "ms";
-            applyAnimations(); markDirty();
-          });
-          animation.appendChild(row(title, wrap));
-        });
-        animation.appendChild(mk("p", "adm-small", "A animação respeita a preferência de movimento reduzido do dispositivo."));
+        const acts = mk("div", "adm-row");
+        acts.appendChild(btn("Criar estilo", "", () => {
+          const name = prompt("Nome do estilo compartilhado:", "Novo estilo");
+          if (!name || !name.trim()) return;
+          const styleId = uid();
+          content.styles[styleId] = {
+            name: name.trim().slice(0, 60),
+            tag: e.tagName,
+            s: Object.fromEntries(Object.entries(o.s || {}).filter(([prop]) => !STYLE_LAYOUT_PROPS.has(prop))),
+            ...(o.bgimg ? { bgimg: Object.assign({}, o.bgimg) } : {}),
+            ...(o.animation ? { animation: Object.assign({}, o.animation) } : {})
+          };
+          op(id).style = styleId;
+          applySharedStyle(styleId); markDirty(); buildProps(); refreshStyleLibrary();
+        }, "primary"));
+        if (o.style && content.styles[o.style]) acts.appendChild(btn("Atualizar estilo", "", () => {
+          syncSharedStyle(e); markDirty(); buildProps(); refreshStyleLibrary();
+        }));
+        st.appendChild(acts);
       }
-      box.appendChild(animation);
+      st.appendChild(row("Cor do texto", colorInput(e, "color")));
+      st.appendChild(row("Cor de fundo", colorInput(e, "background-color")));
 
-      const mobile = section("Mobile", false);
-      const manual = !!o.mobile || !!o.hideMobile;
-      mobile.appendChild(mk("p", "adm-small", "Substitua dimensões e alinhamento automaticamente ajustados em telas de até 720px."));
-      mobile.appendChild(row("Ajustes manuais", (() => {
-        const mode = selInput([["auto", "Automático"], ["manual", "Manual"]], manual ? "manual" : "auto", value => {
+      if (!isAtomic(e)) {
+        const r = mk("div", "adm-row");
+        r.appendChild(btn("📷 " + (o.bgimg ? "Trocar fundo" : "Escolher fundo"), "", () => chooseBgFor(e)));
+        if (o.bgimg) r.appendChild(btn("Remover", "", () => { delete op(id).bgimg; cleanOp(id); setBgImg(e, null); buildProps(); markDirty(); }, "danger"));
+        st.appendChild(r);
+        if (o.bgimg) {
+          const dim = mk("input"); dim.type = "range"; dim.min = 0; dim.max = 90; dim.value = Math.round((o.bgimg.dim || 0) * 100);
+          dim.addEventListener("input", () => { o.bgimg.dim = dim.value / 100; setBgImg(e, o.bgimg); markDirty(); });
+          st.appendChild(row("Escurecer", dim));
+          st.appendChild(row("Tamanho", selInput([["stretch", "Esticar (arte do botão)"], ["free", "Livre (zoom e posição)"], ["cover", "Preencher (corta)"], ["contain", "Caber inteira"], ["auto", "Original"]], o.bgimg.size || "cover", v => { o.bgimg.size = v; setBgImg(e, o.bgimg); markDirty(); })));
+          const pos = (k, lab, mn, mx, def) => { const i = mk("input"); i.type = "range"; i.min = mn; i.max = mx; i.value = o.bgimg[k] === undefined ? def : o.bgimg[k]; i.addEventListener("input", () => { o.bgimg[k] = Number(i.value); setBgImg(e, o.bgimg); markDirty(); }); st.appendChild(row(lab, i)); };
+          if (o.bgimg.size === "free") pos("w", "Zoom (%)", 10, 400, 100);
+          pos("x", "Posição ←→", 0, 100, 50); pos("y", "Posição ↑↓", 0, 100, 50);
+          st.appendChild(btn(bgPan ? "✋ Arrastando a imagem de fundo (clique p/ parar)" : "✋ Arrastar a imagem de fundo", "Ligue e arraste sobre o botão; a roda do mouse dá zoom", () => { bgPan = !bgPan; document.body.classList.toggle("ds-pan", bgPan); buildProps(); }, bgPan ? "primary" : ""));
+          const art = mk("input"); art.type = "checkbox"; art.checked = !!o.bgimg.art;
+          art.addEventListener("change", () => { o.bgimg.art = art.checked; setBgImg(e, o.bgimg); markDirty(); placeBar(); });
+          st.appendChild(row("A imagem é o botão", art));
+          st.appendChild(mk("p", "adm-small", "Ligado: a imagem vira o próprio botão/cartão (some a cor, a borda e a sombra originais) e continua clicável. Use as alças para ajustar o tamanho do botão e a aba Aparência para a cor do texto."));
+        }
+      }
+
+      st.appendChild(row("Borda (px)", (() => { const i = numInput(e, "border-width", "px", { min: 0, max: 30, fromComputed: false }); i.addEventListener("input", () => { if (i.value !== "") setS(e, "border-style", e.style.borderStyle || "solid"); }); return i; })()));
+      st.appendChild(row("Cor da borda", colorInput(e, "border-color")));
+      st.appendChild(row("Estilo da borda", selInput([["", "Padrão"], ["solid", "Sólida"], ["dashed", "Tracejada"], ["dotted", "Pontilhada"], ["double", "Dupla"], ["none", "Nenhuma"]], e.style.borderStyle || "", v => setS(e, "border-style", v || null))));
+      st.appendChild(mk("b", "adm-sub", "Cantos"));
+      st.appendChild(radiusControl(e));
+      st.appendChild(row("Sombra", selInput(SHADOWS, e.style.getPropertyValue("box-shadow") || "", v => setS(e, "box-shadow", v || null))));
+      st.appendChild(row("Opacidade (%)", numInput(e, "opacity", "", { min: 0, max: 100, scale: 100, fromComputed: false })));
+      st.appendChild(btn("Restaurar aparência original", "", () => { Object.keys((content.ops[id] || {}).s || {}).forEach(p => e.style.removeProperty(p)); if (content.ops[id]) delete content.ops[id].s; cleanOp(id); fixFree(); syncSize(e); buildProps(); markDirty(); placeBar(); }));
+    }, true));
+
+    // 3. 📝 Texto (mostrada se isTextLeaf(sel))
+    if (isTextLeaf(e)) {
+      box.appendChild(buildSection("📝 Texto", tx => {
+        if (e.tagName === "BUTTON" && isLeaf(e)) {
+          const i = mk("input"); i.type = "text"; i.value = leafText(e);
+          i.addEventListener("input", () => {
+            e.textContent = i.value; const oi = origInfo.get(id), v = esc(i.value), oo = op(id);
+            oo.t = oi ? { h: oi.h, v } : { v }; markDirty(); placeBar();
+          });
+          tx.appendChild(row("Texto do botão", i));
+        }
+        tx.appendChild(row("Fonte", selInput([["", "Padrão"]].concat(FONTS.map(([l, v]) => [v, l])), e.style.fontFamily || "", v => setS(e, "font-family", v || null))));
+        tx.appendChild(row("Tamanho da letra (px)", numInput(e, "font-size", "px", { min: 6, max: 200 })));
+        tx.appendChild(row("Peso", selInput([["", "Padrão"], ["400", "Normal"], ["600", "Seminegrito"], ["700", "Negrito"], ["900", "Extra negrito"]], e.style.fontWeight || "", v => setS(e, "font-weight", v || null))));
+        const al = mk("div", "adm-seg");
+        [["left", "⇤", "Esquerda"], ["center", "↔", "Centro"], ["right", "⇥", "Direita"], ["justify", "≡", "Justificado"]].forEach(([v, t, ti]) => {
+          const b = mk("button", e.style.textAlign === v ? "on" : "", t);
+          b.type = "button"; b.title = ti;
+          b.addEventListener("click", () => { setS(e, "text-align", e.style.textAlign === v ? null : v); buildProps(); });
+          al.appendChild(b);
+        });
+        tx.appendChild(row("Alinhamento", al));
+        tx.appendChild(row("Espaço entre letras (px)", numInput(e, "letter-spacing", "px", { min: -5, max: 20, step: 0.5, fromComputed: false })));
+        tx.appendChild(row("Altura da linha", numInput(e, "line-height", "", { min: 0.8, max: 3, step: 0.1, fromComputed: false })));
+        tx.appendChild(row("Transformação", selInput([["", "Padrão"], ["none", "Normal"], ["uppercase", "MAIÚSCULAS"], ["lowercase", "minúsculas"], ["capitalize", "Primeira Maiúscula"]], e.style.textTransform || "", v => setS(e, "text-transform", v || null))));
+      }, true));
+    }
+
+    // 4. 🖼️ Imagem (mostrada se isSlot(sel) || hasImg(sel))
+    const isImgEligible = isSlot(e) || hasImg(e) || (isLeaf(e) && !isTextLeaf(e) && !isAtomic(e) && !NOTEXT_TAGS.has(e.tagName));
+    if (isImgEligible) {
+      box.appendChild(imageSection(e, o, id));
+    } else if (isLeaf(e) && !isAtomic(e) && e.matches("span,div") && leafText(e).trim().length <= 4) {
+      box.appendChild(buildSection("🖼️ Imagem no lugar do ícone", s => {
+        const r = mk("div", "adm-row");
+        r.appendChild(btn("📷 Usar uma imagem", "", () => chooseImageFor(e))); s.appendChild(r);
+      }, false));
+    }
+
+    // 5. 🎬 Animação (sempre mostrada)
+    if (!isProtected(e)) {
+      box.appendChild(buildSection("🎬 Animação", an => {
+        an.appendChild(row("Efeito", selInput(ANIM_EFFECTS,
+          o.animation && o.animation.effect || "", effect => {
+            if (!effect) delete op(id).animation;
+            else op(id).animation = Object.assign({ duration: 500, delay: 0 }, op(id).animation, { effect });
+            cleanOp(id); applyAnimations(); markDirty(); buildProps();
+          })));
+        if (o.animation && o.animation.effect) {
+          [["Duração (ms)", "duration", 100, 3000], ["Atraso (ms)", "delay", 0, 3000]].forEach(([title, prop, min, max]) => {
+            const wrap = mk("span", "adm-rn");
+            const input = mk("input"); input.type = "range"; input.min = min; input.max = max; input.step = 50;
+            input.value = Math.max(min, Math.min(max, Number(o.animation[prop]) || (prop === "duration" ? 500 : 0)));
+            const output = mk("em", "", input.value + "ms"); wrap.append(input, output);
+            input.addEventListener("input", () => {
+              op(id).animation[prop] = Number(input.value); output.textContent = input.value + "ms";
+              applyAnimations(); markDirty();
+            });
+            an.appendChild(row(title, wrap));
+          });
+          const prevBtn = btn("▶ Pré-visualizar", "", () => {
+            if (!sel) return;
+            sel.style.animation = 'none';
+            sel.offsetHeight;
+            const a = (content.ops[sel.dataset.b] || {}).animation;
+            if (a && a.effect) sel.style.animation = `ds-${a.effect} ${a.duration || 500}ms ease ${a.delay || 0}ms both`;
+          });
+          an.appendChild(prevBtn);
+          an.appendChild(mk("p", "adm-small", "A animação respeita a preferência de movimento reduzido do dispositivo."));
+        }
+      }, true));
+    }
+
+    // 6. 📱 Mobile (sempre mostrada, fechada por padrão)
+    if (!isProtected(e)) {
+      box.appendChild(buildSection("📱 Mobile", mb => {
+        const manual = !!o.mobile || !!o.hideMobile;
+        mb.appendChild(mk("p", "adm-small", "Substitua dimensões e alinhamento automaticamente ajustados em telas de até 720px."));
+        const hidden = mk("input"); hidden.type = "checkbox"; hidden.checked = !!o.hideMobile;
+        hidden.addEventListener("change", () => { const settings = op(id); if (hidden.checked) settings.hideMobile = 1; else delete settings.hideMobile; cleanOp(id); applyResponsiveStyles(); markDirty(); });
+        mb.appendChild(row("Ocultar em telas pequenas", hidden));
+
+        mb.appendChild(row("Ajustes manuais", selInput([["auto", "Automático"], ["manual", "Manual"]], manual ? "manual" : "auto", value => {
           if (value === "manual") op(id).mobile = op(id).mobile || {};
           else { delete op(id).mobile; delete op(id).hideMobile; cleanOp(id); }
           applyResponsiveStyles(); markDirty(); buildProps();
+        })));
+        if (manual) {
+          const mobileOptions = [
+            ["width", "Largura", [["", "Automático"], ["100%", "100%"], ["90%", "90%"], ["80%", "80%"], ["75%", "75%"], ["50%", "50%"]]],
+            ["font-size", "Tamanho do texto", [["", "Automático"], ["14px", "14px"], ["16px", "16px"], ["18px", "18px"], ["20px", "20px"], ["24px", "24px"], ["28px", "28px"]]],
+            ["padding", "Espaço interno", [["", "Automático"], ["0px", "0px"], ["8px", "8px"], ["12px", "12px"], ["16px", "16px"], ["24px", "24px"], ["32px", "32px"]]],
+            ["text-align", "Alinhamento", [["", "Automático"], ["left", "Esquerda"], ["center", "Centro"], ["right", "Direita"]]]
+          ];
+          mobileOptions.forEach(([prop, title, choices]) => {
+            const value = o.mobile && o.mobile[prop] || "";
+            mb.appendChild(row(title, selInput(choices, value, next => {
+              const settings = op(id).mobile || (op(id).mobile = {});
+              if (next) settings[prop] = next; else delete settings[prop];
+              if (!Object.keys(settings).length) delete op(id).mobile;
+              cleanOp(id); applyResponsiveStyles(); markDirty();
+            })));
+          });
+        }
+      }, false));
+    }
+
+    // 7. 🔗 Link (mostrada se aplicável)
+    const hasLink = e.tagName === "A" || e.hasAttribute("data-go") || o.go || o.href || (e.matches(".ds-anchor") && e.dataset.added) || e.tagName === "BUTTON";
+    if (hasLink) {
+      box.appendChild(buildSection("🔗 Link", lk => {
+        const curHref = op(id).href || e.getAttribute("href") || "";
+        const [urlPart, flags] = curHref.split("||");
+        const i = mk("input"); i.type = "text";
+        i.placeholder = "https://… · #secao · mailto: · section:next";
+        i.value = curHref;
+        i.addEventListener("input", () => {
+          if (safeHref(i.value) || i.value === "") {
+            if (i.value) { setHref(e, i.value); op(id).href = i.value; }
+            else { e.removeAttribute("href"); e.removeAttribute("target"); e.removeAttribute("rel"); delete op(id).href; }
+            refreshYouTubeThumbnails(); markDirty();
+          }
         });
-        return mode;
-      })()));
-      if (manual) {
-        const mobileOptions = [
-          ["width", "Largura", [["", "Automático"], ["100%", "100%"], ["90%", "90%"], ["80%", "80%"], ["75%", "75%"], ["50%", "50%"]]],
-          ["font-size", "Tamanho do texto", [["", "Automático"], ["14px", "14px"], ["16px", "16px"], ["18px", "18px"], ["20px", "20px"], ["24px", "24px"], ["28px", "28px"]]],
-          ["padding", "Espaço interno", [["", "Automático"], ["0px", "0px"], ["8px", "8px"], ["12px", "12px"], ["16px", "16px"], ["24px", "24px"], ["32px", "32px"]]],
-          ["text-align", "Alinhamento", [["", "Automático"], ["left", "Esquerda"], ["center", "Centro"], ["right", "Direita"]]]
-        ];
-        mobileOptions.forEach(([prop, title, choices]) => {
-          const value = o.mobile && o.mobile[prop] || "";
-          mobile.appendChild(row(title, selInput(choices, value, next => {
-            const settings = op(id).mobile || (op(id).mobile = {});
-            if (next) settings[prop] = next; else delete settings[prop];
-            if (!Object.keys(settings).length) delete op(id).mobile;
-            cleanOp(id); applyResponsiveStyles(); markDirty();
-          })));
+        lk.appendChild(row("Link (destino)", i));
+
+        const targetCb = mk("input"); targetCb.type = "checkbox";
+        targetCb.checked = (e.getAttribute("target") === "_blank") || (flags && /\bblank\b/.test(flags));
+        targetCb.addEventListener("change", () => {
+          let raw = op(id).href || e.getAttribute("href") || "";
+          let [u] = raw.split("||");
+          if (targetCb.checked) {
+            if (u) { raw = u + "||blank"; setHref(e, raw); op(id).href = raw; }
+          } else {
+            if (u) { raw = u; setHref(e, raw); op(id).href = raw; }
+          }
+          i.value = raw;
+          markDirty();
         });
-        const hidden = mk("input"); hidden.type = "checkbox"; hidden.checked = !!o.hideMobile;
-        hidden.addEventListener("change", () => { const settings = op(id); if (hidden.checked) settings.hideMobile = 1; else delete settings.hideMobile; cleanOp(id); applyResponsiveStyles(); markDirty(); });
-        mobile.appendChild(row("Ocultar em telas pequenas", hidden));
-      }
-      box.appendChild(mobile);
+        lk.appendChild(row("Abrir em nova aba", targetCb));
+
+        const curGo = op(id).go || e.getAttribute("data-go") || "";
+        lk.appendChild(row("Leva para", selInput([["", "Nenhum"]].concat(PAGES().concat([["section:next", "→ Próxima seção"], ["section:previous", "← Seção anterior"], ["section:first", "Primeira seção"], ["section:last", "Última seção"], ["scrollpoint:next", "↓ Próxima âncora"], ["scrollpoint:previous", "↑ Âncora anterior"]])), curGo, v => {
+          if (v) { e.setAttribute("data-go", v); op(id).go = v; }
+          else { e.removeAttribute("data-go"); delete op(id).go; }
+          markDirty();
+        })));
+
+        if (e.matches(".ds-anchor") && e.dataset.added) {
+          const ai = mk("input"); ai.type = "text"; ai.value = e.id;
+          ai.addEventListener("change", () => {
+            const v = slug(ai.value);
+            if (!/^[a-z][a-z0-9\-]{0,40}$/.test(v) || (document.getElementById(v) && v !== e.id)) { note("Nome inválido ou já usado."); ai.value = e.id; return; }
+            e.id = v; const sp = content.add[id]; sp.attrs = sp.attrs || {}; sp.attrs.id = v; markDirty(); buildProps();
+          });
+          lk.appendChild(row("Nome da âncora", ai));
+          lk.appendChild(mk("p", "adm-small", "Aponte botões e links para #" + e.id + " (ou scrollpoint:next, scrollpoint:previous…) e a página rola até aqui."));
+        }
+      }, true));
     }
   }
 
@@ -2336,7 +2422,7 @@
     return { bd, m, close: () => bd.remove() };
   }
   function openLogin() {
-    if (panel) { panel.classList.remove("min"); return; }
+    if (panel) { panel.classList.remove("min", "collapsed"); return; }
     const vault = readVault();
     if (vault) {
       const { m, close } = modal(`<h3>Entrar no editor</h3>
