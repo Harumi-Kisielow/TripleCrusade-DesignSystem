@@ -13,18 +13,18 @@
 3. Clique em qualquer coisa para selecionar. Aparecem a barrinha (✥ arrastar · ▲▼ mover · 📷 imagem · ⧉ duplicar · ↰ item pai · 🗑 apagar) e as alças azuis nos cantos e laterais.
    - **Tamanho:** arraste as alças. Em imagens elas mantêm a proporção; Shift estica livremente. Também há largura/altura em % ou px no painel.
    - **Colunas:** botões "2/3/4 colunas". No painel, escolha de 1 a 6 colunas e a largura de cada uma em % (as outras se ajustam), proporções prontas, espaço entre colunas e alinhamento. No celular elas empilham sozinhas.
-   - **Posição livre:** liga no painel (Tamanho e posição). Arraste com ✥, use as setas do teclado (Shift = passo maior). Guias rosa ajudam a centralizar e encostar nas bordas (Alt desliga o encaixe). Botões de alinhar (esquerda, centro, direita, topo, meio, base), girar em graus, camada e "para frente/para trás".
+   - **Posição livre:** ative **Mover** na barra superior e arraste o item diretamente no canvas; também é possível habilitar "Posição livre" em Tamanho e Posição. Use as setas do teclado (Shift = passo maior). Guias ajudam a centralizar e encostar nas bordas (Alt desliga o encaixe). Há controles para alinhar, girar e ajustar camadas.
    - **Margens e espaço interno** separados por lado; arraste o nome de qualquer campo numérico para ajustar o valor.
    - **Imagens:** cantos por controle deslizante/número (px ou %), botões Reto/Suave/Redondo/Círculo e cada canto separado; moldura (1:1, 4:3, 16:9…), zoom, posição e o botão ✋ para arrastar a imagem dentro da moldura (a roda do mouse dá zoom); "Voltar ao tamanho original". Em "Zoom spotlight ao clicar", habilite a ampliação em tela cheia para cada imagem (os screenshots do Press Kit já vêm habilitados; as demais imagens começam desabilitadas).
-   - **Painel:** arraste pelo cabeçalho, encaixe à esquerda/direita (⇄) ou minimize. A posição fica lembrada.
+   - **Painel:** minimize pela barra superior e reabra pelo botão flutuante. A barra também oferece desfazer/refazer, mover livremente, efeitos/animações e prévias para desktop, tablet e celular.
    - **Atalhos:** Ctrl+D duplica · Delete exclui · Esc sai do texto e depois desmarca · Alt+↑/↓ move na ordem.
    - Texto: clique de novo e digite. Ao arrastar, segure Alt para soltar DENTRO de uma caixa.
    - Itens originais apagados ficam escondidos e podem ser restaurados em "Página". Não existe desfazer: "Descartar" volta ao último salvo.
-   - **Build:** adicione textos, imagens/GIFs, links, vídeos do YouTube, listas, destaques, divisores, caixas e colunas. Arraste os itens na página ou na árvore de Elementos para reorganizar; use 👁 para ocultar.
+   - **Adicionar:** adicione textos, imagens/GIFs, links, vídeos do YouTube, listas, destaques, divisores, caixas e colunas. Arraste os itens na página ou na árvore de Camadas para reorganizar; use 👁 para ocultar.
    - **Estilos compartilhados:** em Item → Aparência, salve a aparência e o fundo como estilo. Reutilize em outros itens do mesmo tipo; edições de aparência atualizam os itens vinculados.
    - **Mobile:** em Item → Mobile, altere largura, texto, espaçamento e alinhamento em telas pequenas ou oculte o item no celular. A prévia de celular/tablet ajuda a conferir o resultado.
    - **Sites:** configure título, descrição para SEO/compartilhamento, idioma, nome e símbolo do cabeçalho, favicon, imagem de compartilhamento, página inicial, largura, fontes, espaçamento e cabeçalho fixo.
-   - **Abas do painel:** Item · Build · Elementos (árvore com todos os itens: clique seleciona, arraste reorganiza, 👁 oculta) · Seções (criar, renomear, duplicar, excluir páginas e escolher a página inicial) · Página (fundo e cores) · Sites (configurações gerais).
+   - **Abas do painel:** Elemento · Adicionar · Camadas (árvore com todos os itens: clique seleciona, arraste reorganiza, 👁 oculta) · Seções (criar, renomear, duplicar, excluir páginas e escolher a página inicial) · Página (fundo e cores) · Site (configurações gerais).
    - **Desfazer/refazer:** Ctrl+Z / Ctrl+Shift+Z. Copiar/recortar/colar itens: Ctrl+C / Ctrl+X / Ctrl+V. Salvar: Ctrl+S.
    - **Âncoras:** bloco ⚓ Âncora; links aceitam #nome, section:next, scrollpoint:next, copy:texto, tel:, mailto:, file:nome.pdf e ||blank (nova aba).
 4. Clique em Salvar. Tudo vai para o GitHub (imagens em imgs/<página>/ e o layout em content.json). O site atualiza em 1–2 minutos.

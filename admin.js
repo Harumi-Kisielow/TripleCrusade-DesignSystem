@@ -74,6 +74,7 @@
   const cleanVars = {};
   const bound = new WeakSet();
   let editing = false, sel = null, session = null, panel = null, bar = null, dropLine = null, bgStyle = null, siteStyle = null, responsiveStyle = null, animationStyle = null, drag = null;
+  let moveMode = false;
   let lastGesture = 0, handles = null, guideV = null, guideH = null, rs = null, panMode = false, bgPan = false, ro = null;
 
   /* ---------- utilidades de DOM ---------- */
@@ -677,6 +678,39 @@
     if (panMode && !(sel && hasImg(sel))) { panMode = false; document.body.classList.remove("ds-pan"); }
     if (bgPan && !(sel && (content.ops[sel.dataset.b] || {}).bgimg)) { bgPan = false; document.body.classList.remove("ds-pan"); }
     buildProps(); placeBar(); updateAddHint(); refreshTree();
+    const previewButton = panel && $("#adm-anim-preview", panel);
+    if (previewButton) previewButton.disabled = !sel || isProtected(sel);
+  }
+  function makeFree(e) {
+    if (!e || isProtected(e) || e.style.position === "absolute") return;
+    const parent = e.parentElement;
+    if (!parent) return;
+    const parentRect = parent.getBoundingClientRect(), rect = e.getBoundingClientRect();
+    const width = Math.max(1, parent.clientWidth), height = Math.max(1, parent.clientHeight);
+    if (getComputedStyle(parent).position === "static") parent.style.position = "relative";
+    if (parent.dataset.b && !dchildren(parent).some(child => child !== e && !child.classList.contains("ds-hidden"))) {
+      const parentStyles = op(parent.dataset.b).s || (op(parent.dataset.b).s = {});
+      parentStyles["min-height"] = Math.max(1, Math.ceil(parentRect.height)) + "px";
+      parent.style.minHeight = parentStyles["min-height"];
+    }
+    const styles = op(e.dataset.b).s || (op(e.dataset.b).s = {});
+    styles.position = "absolute";
+    styles.left = r1((rect.left - parentRect.left - parent.clientLeft) / width * 100) + "%";
+    styles.top = r1((rect.top - parentRect.top - parent.clientTop) / height * 100) + "%";
+    if (!e.style.width) styles.width = r1(Math.min(100, rect.width / width * 100)) + "%";
+    ["margin", "margin-left", "margin-right", "margin-top", "margin-bottom"].forEach(prop => {
+      delete styles[prop];
+      e.style.removeProperty(prop);
+    });
+    Object.entries(styles).forEach(([prop, value]) => e.style.setProperty(prop, value));
+    return true;
+  }
+  function startCanvasMove(ev, target) {
+    if (!target || target === document.querySelector("main")) return;
+    select(target);
+    if (curTab !== "item") showTab("item");
+    if (!makeFree(target) && target.style.position !== "absolute") return;
+    startDrag(ev);
   }
   function updateAddHint() {
     const h = panel && $("#adm-add-target", panel); if (!h) return;
@@ -692,6 +726,15 @@
     if (ev.target.closest("a,button,[data-go],[data-cmd],label,select,input")) { ev.preventDefault(); ev.stopImmediatePropagation(); }
     if (ev.shiftKey && sel && t !== sel) { ev.preventDefault(); ev.stopImmediatePropagation(); toggleLink(t); return; }
     select(t); if (curTab !== "item" && curTab !== "add") showTab("item");
+  }, true);
+  document.addEventListener("pointerdown", ev => {
+    if (!editing || !moveMode || ev.button !== 0 ||
+      ev.target.closest(".adm-panel,.adm-modal,.adm-backdrop,.adm-bar,.adm-handles,a,button,input,select,textarea")) return;
+    const target = ev.target.closest("[data-b]");
+    if (!target || target.tagName === "MAIN" || isProtected(target)) return;
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+    startCanvasMove(ev, target);
   }, true);
   let hov = null;
   document.addEventListener("mouseover", ev => {
@@ -1123,27 +1166,36 @@
   function buildPanel() {
     panel = mk("aside", "adm-panel");
     panel.innerHTML = `
-      <div class="adm-head"><b>🛠 Editor</b><span class="adm-head-btns"><button type="button" id="adm-min" title="Minimizar painel">◁</button></span></div>
+      <div class="adm-head">
+        <div class="adm-brand"><span class="adm-brand-mark">✦</span><span><b>Triple Crusade</b><small>EDITOR VISUAL</small></span></div>
+        <span class="adm-head-btns"><button type="button" id="adm-min" title="Minimizar painel">−</button></span>
+      </div>
       <div class="adm-toolbar">
-        <button type="button" id="adm-undo" title="Desfazer (Ctrl+Z)">↶</button><button type="button" id="adm-redo" title="Refazer (Ctrl+Shift+Z)">↷</button><i></i>
+        <div class="adm-toolgroup"><button type="button" id="adm-undo" title="Desfazer (Ctrl+Z)">↶</button><button type="button" id="adm-redo" title="Refazer (Ctrl+Shift+Z)">↷</button></div>
+        <div class="adm-toolgroup"><button type="button" id="adm-move-mode" title="Ativar para arrastar elementos diretamente no canvas">↔ <span>Mover</span></button><button type="button" id="adm-anim-open" title="Abrir os efeitos do elemento selecionado">✧</button><button type="button" id="adm-anim-preview" title="Reproduzir a animação do elemento selecionado">▶</button></div>
+        <div class="adm-toolgroup adm-view-tools" aria-label="Pré-visualização">
+          <button type="button" data-view="desktop" title="Visualização desktop">▭</button>
+          <button type="button" data-view="tablet" title="Prévia tablet">▯</button>
+          <button type="button" data-view="mobile" title="Prévia celular">▯</button>
+        </div>
         <button type="button" id="adm-viewsite" title="Abrir o site em outra aba (Alt+V)">↗</button>
       </div>
+      <label class="adm-pagebar"><span>PÁGINA</span><select id="adm-goto"></select></label>
       <div class="adm-tabs" id="adm-tabs">
-        <button type="button" data-tab="item" class="on"><span class="tab-icon">⬡</span>Elemento</button>
+        <button type="button" data-tab="item" class="on"><span class="tab-icon">◇</span>Elemento</button>
         <button type="button" data-tab="add"><span class="tab-icon">＋</span>Adicionar</button>
-        <button type="button" data-tab="tree"><span class="tab-icon">☰</span>Camadas</button>
-        <button type="button" data-tab="sections"><span class="tab-icon">◫</span>Páginas</button>
-        <button type="button" data-tab="page"><span class="tab-icon">◻</span>Fundo</button>
-        <button type="button" data-tab="site"><span class="tab-icon">⚙</span>Config</button>
+        <button type="button" data-tab="tree"><span class="tab-icon">☷</span>Camadas</button>
+        <button type="button" data-tab="sections"><span class="tab-icon">▤</span>Seções</button>
+        <button type="button" data-tab="page"><span class="tab-icon">◫</span>Página</button>
+        <button type="button" data-tab="site"><span class="tab-icon">⚙</span>Site</button>
       </div>
       <div class="adm-body">
         <div class="adm-pane on" data-pane="item">
-          <label class="adm-lbl adm-top"><b>Página</b> <select id="adm-goto"></select></label>
-          <p class="adm-tip">Clique em qualquer item da página para selecioná-lo. Texto: clique e digite. Ao arrastar, segure Alt para soltar DENTRO de uma caixa. Atalhos: Ctrl+Z/Ctrl+Shift+Z desfaz/refaz · Ctrl+C/X/V copia/recorta/cola · Ctrl+D duplica · Delete exclui · Ctrl+S salva · Esc sai do texto / desmarca · setas movem itens de posição livre.</p>
-          <details open><summary>Item selecionado</summary><div id="adm-props"></div></details>
+          <p class="adm-tip">Selecione no canvas para editar. Ative <b>Mover</b> para posicionar livremente; desative para editar texto e reorganizar itens.</p>
+          <div id="adm-props"></div>
         </div>
         <div class="adm-pane" data-pane="add">
-          <details open><summary>Adicionar à página</summary>
+          <div class="adm-pane-heading"><b>Adicionar elemento</b><span>Monte sua página em blocos</span></div>
           <p id="adm-add-target" class="adm-small"></p>
           <label class="adm-lbl">Onde
             <select id="adm-where"><option value="after">Logo depois do item selecionado</option><option value="inside">Dentro do item selecionado</option></select></label>
@@ -1157,13 +1209,14 @@
             <button type="button" data-add="cols3">3 colunas</button><button type="button" data-add="cols4">4 colunas</button>
             <button type="button" data-add="hero">Imagem + texto</button><button type="button" data-add="icon">Ícone</button>
             <button type="button" data-add="space">Espaço</button><button type="button" data-add="anchor">⚓ Âncora</button><button type="button" data-add="swatch">🎨 Caixa de cor</button>
-          </div></details>
+          </div>
           <details open><summary>Estilos compartilhados</summary><div id="adm-styles"></div></details>
         </div>
         <div class="adm-pane" data-pane="tree"><p class="adm-small">Todos os itens da página. Clique para selecionar, duplo clique para editar, arraste para reorganizar (solte no meio de uma caixa para colocar dentro) e use 👁 para ocultar.</p><div id="adm-tree" class="adm-tree"></div></div>
         <div class="adm-pane" data-pane="sections"><div id="adm-sections" class="adm-sections"></div></div>
         <div class="adm-pane" data-pane="page">
-          <details open><summary>Página</summary>
+          <div class="adm-pane-heading"><b>Fundo e tema</b><span>Personalize a página atual</span></div>
+          <details open><summary>Fundo da página</summary>
           <div id="adm-bgbox"><b class="adm-sub">Fundo desta página</b>
             <div class="adm-row"><button type="button" id="adm-bg-up">📷 Escolher imagem</button><button type="button" id="adm-bg-rm" class="danger">Remover</button></div>
             <div class="adm-row"><button type="button" id="adm-bg-share">Aplicar em outras páginas…</button></div>
@@ -1177,16 +1230,39 @@
       <div class="adm-foot">
         <div id="adm-changes" class="adm-changes"></div>
         <div id="adm-status" class="adm-status"></div>
-        <div class="adm-row"><button type="button" id="adm-save" class="primary" title="Ctrl+S">💾 Salvar no GitHub</button><button type="button" id="adm-discard">Descartar</button></div>
+        <div class="adm-row"><button type="button" id="adm-save" class="primary" title="Ctrl+S">Salvar alterações</button><button type="button" id="adm-discard">Descartar</button></div>
         <button type="button" id="adm-exit" class="adm-exit">Sair do modo admin</button>
       </div>`;
     document.body.appendChild(panel);
+    const reopen = mk("button", "adm-reopen", "✦ Editor");
+    reopen.type = "button";
+    reopen.addEventListener("click", () => panel.classList.remove("collapsed"));
+    document.body.appendChild(reopen);
 
     refreshPageSelect();
     $("#adm-tabs", panel).addEventListener("click", ev => { const b = ev.target.closest("[data-tab]"); if (b) { showTab(b.dataset.tab); if (b.dataset.tab === "site") buildSiteSettings(); if (b.dataset.tab === "add") refreshStyleLibrary(); } });
     $("#adm-undo", panel).addEventListener("click", undo);
     $("#adm-redo", panel).addEventListener("click", redo);
     $("#adm-viewsite", panel).addEventListener("click", viewSite);
+    $("#adm-move-mode", panel).addEventListener("click", () => {
+      moveMode = !moveMode;
+      $("#adm-move-mode", panel).classList.toggle("on", moveMode);
+      document.body.classList.toggle("ds-move-mode", moveMode);
+      note(moveMode ? "Mover ativado: arraste um item diretamente no canvas." : "Mover desativado: clique para selecionar ou editar texto.");
+    });
+    $("#adm-anim-preview", panel).disabled = true;
+    $("#adm-anim-open", panel).addEventListener("click", () => {
+      if (!sel) { note("Selecione um elemento para configurar a animação."); return; }
+      showTab("item");
+      const animation = Array.from($$(".adm-section", panel)).find(section => $(".adm-section-header", section).textContent.includes("Animação"));
+      if (animation) {
+        animation.classList.remove("closed");
+        openSecs.set("🎬 Animação", true);
+        animation.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    });
+    $("#adm-anim-preview", panel).addEventListener("click", previewSelectedAnimation);
+    $$(".adm-view-tools [data-view]", panel).forEach(button => button.addEventListener("click", () => openPreview(button.dataset.view)));
     $("#adm-goto", panel).addEventListener("change", e => { location.hash = e.target.value; });
     $("#adm-add", panel).addEventListener("click", ev => { const b = ev.target.closest("[data-add]"); if (b) addBlock(b.dataset.add); });
 
@@ -1502,7 +1578,7 @@
   }
 
   /* ---------- alinhar ---------- */
-  function note(msg) { const h = panel && $("#adm-note", panel); if (!h) return; h.textContent = msg; clearTimeout(note.t); note.t = setTimeout(() => { h.textContent = ""; }, 4500); }
+  function note(msg) { const h = panel && ($("#adm-note", panel) || $("#adm-status", panel)); if (!h) return; h.textContent = msg; clearTimeout(note.t); note.t = setTimeout(() => { h.textContent = ""; }, 4500); }
   function alignItem(e, how) {
     if (isProtected(e)) return;
     const free = e.style.position === "absolute";
@@ -2328,6 +2404,22 @@
     return false;
   }
   function viewSite() { window.open(location.href.split("#")[0].split("?")[0] + location.hash, "_blank"); }
+  function previewSelectedAnimation() {
+    const element = sel;
+    const animation = element && (content.ops[element.dataset.b] || {}).animation;
+    if (!element || !animation || !ANIM_KEYS.includes(animation.effect)) {
+      note("Escolha um efeito em Animação antes de pré-visualizar.");
+      return;
+    }
+    const duration = Math.max(100, Math.min(3000, Number(animation.duration) || 500));
+    const delay = Math.max(0, Math.min(3000, Number(animation.delay) || 0));
+    element.style.animation = "none";
+    element.offsetWidth;
+    requestAnimationFrame(() => {
+      element.style.animation = `ds-${animation.effect} ${duration}ms ease ${delay}ms both`;
+      setTimeout(() => { if (element.isConnected) element.style.animation = ""; }, duration + delay + 100);
+    });
+  }
   function playAnims() { if (window.DS_ANIM) window.DS_ANIM.play(); }
 
   /* ---------- cripto / GitHub / login (mantidos) ---------- */
