@@ -1,8 +1,11 @@
 # Triple Crusade — Design System + Press Kit (editável)
 
 ## Arquivos (suba TODOS no GitHub, na raiz do repositório)
-- index.html, style.css, script.js, admin.js, content.json, robots.txt
+- index.html, style.css, experience.css, admin.css, script.js, admin-elements.js, admin.js, content.json, robots.txt
 - pasta imgs/ (as imagens que você enviar pelo editor são salvas aqui sozinhas)
+
+## Experiência do site
+O site mantém páginas independentes, com navegação principal entre áreas e um índice lateral recolhido para os tópicos da página atual. A página inicial apresenta um carrossel dos seis atalhos, com arte e descrição sincronizadas; personagens e cenários também podem ser navegados em carrosséis. Na página de Componentes, party, elementos, afinidades e status têm navegação própria, e a arte da Visual Novel aparece sem moldura ou recorte. Em telas pequenas, o índice passa para o fluxo da página e os componentes se adaptam sem comprimir o conteúdo. As animações de entrada respeitam a preferência por movimento reduzido. O editor e o conteúdo continuam compatíveis com o formato existente.
 
 ## Não indexável
 `<meta name="robots" content="noindex">` + `robots.txt` com `Disallow: /`.
@@ -20,7 +23,9 @@
    - **Atalhos:** Ctrl+D duplica · Delete exclui · Esc sai do texto e depois desmarca · Alt+↑/↓ move na ordem.
    - Texto: clique de novo e digite. Ao arrastar, segure Alt para soltar DENTRO de uma caixa.
    - Itens originais apagados ficam escondidos e podem ser restaurados em "Página". Não existe desfazer: "Descartar" volta ao último salvo.
-   - **Adicionar:** adicione textos, imagens/GIFs, links, vídeos do YouTube, listas, destaques, divisores, caixas e colunas. Arraste os itens na página ou na árvore de Camadas para reorganizar; use 👁 para ocultar.
+   - **Adicionar:** adicione textos, imagens, galerias, áudio, vídeos do YouTube, links/botões, ícones e marcas sociais, tabelas, listas, contagens regressivas, destaques, divisores, caixas e colunas. Os tipos ficam agrupados por categoria. Arquivos de áudio (até 20 MB) são enviados para `audio/<página>/`; imagens e GIFs continuam em `imgs/<página>/`.
+   - **Ícones:** escolha símbolos de interface ou marcas (Instagram, X, YouTube, Discord, TikTok, Facebook, Twitch e Steam), estilo de traço, cor normal e cor ao passar o mouse. Edite o destino na seção Link.
+   - **Interações:** configure efeitos de hover em itens compatíveis e escolha data/hora final para uma contagem regressiva. O editor também oferece alinhamento de texto e mantém a prévia móvel alternável na barra superior.
    - **Estilos compartilhados:** em Item → Aparência, salve a aparência e o fundo como estilo. Reutilize em outros itens do mesmo tipo; edições de aparência atualizam os itens vinculados.
    - **Mobile:** em Item → Mobile, altere largura, texto, espaçamento e alinhamento em telas pequenas ou oculte o item no celular. A prévia de celular/tablet ajuda a conferir o resultado.
    - **Sites:** configure título, descrição para SEO/compartilhamento, idioma, nome e símbolo do cabeçalho, favicon, imagem de compartilhamento, página inicial, largura, fontes, espaçamento e cabeçalho fixo.
@@ -42,5 +47,5 @@ Na aba **＋ Adicionar**, use **Vídeo / YouTube** para criar um bloco com minia
 - **Caixas de cor:** duplicáveis (Ctrl+D) e criáveis em ＋ Adicionar → Caixa de cor; nome e hex editáveis no painel Item.
 - **Imagem de fundo:** Tamanho "Livre" (zoom %), posição ←→ ↑↓, e "✋ Arrastar a imagem de fundo" (arraste + roda do mouse).
 - **Vincular itens:** selecione um item e Shift+clique em outros; eles copiam estilo e fundo do selecionado. Clique normal desfaz.
-- Página inicial: `#home` (Design System Início). O seletor antigo continua existindo em `#gate`, sem link.
+- Página inicial: `#home` (Design System Início). Os links `#<seção>` abrem páginas independentes; links para tópicos direcionam à seção correspondente dentro da página.
 - eai parca

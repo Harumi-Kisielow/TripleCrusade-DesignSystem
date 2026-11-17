@@ -24,7 +24,7 @@
     ["--world-umber", "Mundo: cinza-terra"], ["--world-black", "Mundo: preto"]
   ];
   const TEXT_TAGS_OK = new Set(["B", "STRONG", "I", "EM", "BR", "CODE", "KBD", "SMALL", "A", "SPAN"]);
-  const ADD_TAGS = new Set(["DIV", "P", "H1", "H2", "H3", "H4", "SPAN", "A", "UL", "LI", "FIGURE", "STRONG", "EM", "SECTION", "TABLE", "TBODY", "TR", "TD", "TH", "HR"]);
+  const ADD_TAGS = new Set(["DIV", "P", "H1", "H2", "H3", "H4", "SPAN", "A", "UL", "LI", "FIGURE", "STRONG", "EM", "SECTION", "TABLE", "TBODY", "TR", "TD", "TH", "HR", "AUDIO"]);
   const ATTR_OK = ["href", "alt", "role", "tabindex", "data-go", "data-nav"];
   const CSS_OK = new Set(["color", "background-color", "font-size", "font-weight", "font-style", "font-family", "text-align",
     "width", "max-width", "height", "min-height", "padding", "margin", "border-width", "border-color", "border-style",
@@ -34,7 +34,7 @@
     "border-top-left-radius", "border-top-right-radius", "border-bottom-right-radius", "border-bottom-left-radius",
     "aspect-ratio", "align-self", "justify-self", "align-items", "justify-content", "min-width", "max-height",
     "--cols", "--gap", "object-position"]);
-  const NOTEXT_TAGS = new Set(["BUTTON", "IMG", "INPUT", "SELECT", "TEXTAREA", "HR", "BR", "TABLE", "TBODY", "TR", "UL", "OL"]);
+  const NOTEXT_TAGS = new Set(["BUTTON", "IMG", "INPUT", "SELECT", "TEXTAREA", "HR", "BR", "TABLE", "TBODY", "TR", "UL", "OL", "AUDIO"]);
   const FONTS = [["Padrão", "var(--font-ui)"], ["Título (serifada)", "var(--font-display)"], ["Código", "monospace"]];
   const VAULT_KEY = "ds_admin_vault";
   const SHORT = new Set(["margin", "padding", "border-radius", "border-width", "gap"]);
@@ -43,9 +43,13 @@
 
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const ELEMENTS = window.TCEditorElements;
+  if (!ELEMENTS) throw new Error("O catálogo do editor não foi carregado.");
   const hash = str => { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
   const slug = n => n.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   const safePath = p => typeof p === "string" && /^imgs\/[A-Za-z0-9_\-./]+$/.test(p) && !p.includes("..");
+  const safeAudioPath = p => typeof p === "string" && /^audio\/[A-Za-z0-9_\-./]+$/.test(p) && !p.includes("..");
+  const safeAssetPath = p => safePath(p) || safeAudioPath(p);
   const HREF_RE = /^(https?:\/\/|#|mailto:|tel:|sms:|skype:|browser:|section:|scrollpoint:|file:)[^\s"'<>]*$|^(copy|clipboard):[^"'<>]*$/i;
   const safeHref = h => typeof h === "string" && h.length < 700 && HREF_RE.test(h) && !/javascript:/i.test(h);
   const GO_RE = /^((section|scrollpoint):(next|previous|first|last)|[a-z0-9\-]+)$/;
@@ -71,9 +75,11 @@
   const origInfo = new Map();       // id -> {html, h} (original, só folhas)
   const pending = new Map();        // path -> {b64, mime}
   const previews = new Map();       // path -> dataURL
+  const mediaPreviews = new Map();  // path -> object URL for local audio previews
   const cleanVars = {};
   const bound = new WeakSet();
   let editing = false, sel = null, session = null, panel = null, bar = null, dropLine = null, bgStyle = null, siteStyle = null, responsiveStyle = null, animationStyle = null, drag = null;
+  let timerTicker = null;
   let moveMode = false;
   let lastGesture = 0, handles = null, guideV = null, guideH = null, rs = null, panMode = false, bgPan = false, ro = null;
 
@@ -85,7 +91,7 @@
   const hasImg = e => !!(content.ops[e.dataset.b] || {}).img;
   const isProtected = e => e.classList.contains("page") || e.tagName === "HEADER" || e.tagName === "FOOTER" || e.tagName === "MAIN";
   const pageOf = e => { const p = e.closest(".page"); return p ? p.id : "site"; };
-  const isTextLeaf = e => !e.matches(".swatch") && !isAtomic(e) && !NOTEXT_TAGS.has(e.tagName) && !hasImg(e) && isLeaf(e) && leafText(e).trim() !== "";
+  const isTextLeaf = e => !e.matches(".swatch,.ds-timer,.ds-icon") && !isAtomic(e) && !NOTEXT_TAGS.has(e.tagName) && !hasImg(e) && isLeaf(e) && leafText(e).trim() !== "";
   const canContain = e => {
     if (isAtomic(e)) return false;
     if (e.tagName === "TBODY" || e.tagName === "UL") return true;
@@ -143,6 +149,27 @@
     return CSS_OK.has(prop) && typeof val === "string" && val.length <= 100 &&
       /^[#%.,()\w\s\-+]+$/.test(val) && !/url\s*\(|expression|javascript|@/i.test(val);
   }
+  function renderTimer(e, timer) {
+    const target = timer && Date.parse(timer.target);
+    if (!Number.isFinite(target)) {
+      e.textContent = "Defina a data final nas opções do elemento.";
+      return;
+    }
+    const remaining = Math.max(0, target - Date.now());
+    const days = Math.floor(remaining / 86400000);
+    const hours = Math.floor((remaining % 86400000) / 3600000);
+    const minutes = Math.floor((remaining % 3600000) / 60000);
+    const seconds = Math.floor((remaining % 60000) / 1000);
+    e.textContent = `${String(days).padStart(2, "0")} d  ${String(hours).padStart(2, "0")} h  ${String(minutes).padStart(2, "0")} min  ${String(seconds).padStart(2, "0")} s`;
+    e.setAttribute("aria-label", `Faltam ${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos`);
+  }
+  function applyHover(e, hover) {
+    ["lift", "scale", "glow"].forEach(effect => e.classList.remove("ds-effect-" + effect));
+    e.style.removeProperty("--ds-hover-color");
+    if (!hover || !["lift", "scale", "glow"].includes(hover.effect)) return;
+    e.classList.add("ds-effect-" + hover.effect);
+    if (/^#[0-9a-f]{6}$/i.test(hover.color || "")) e.style.setProperty("--ds-hover-color", hover.color);
+  }
 
   /* ---------- aplicar conteúdo ---------- */
   function createNode(id, spec) {
@@ -156,6 +183,11 @@
     if (/^[a-z][a-z0-9\-]{0,40}$/.test(at.id || "") && !document.getElementById(at.id)) e.id = at.id;
     if (/^[a-z0-9\-]+$/.test(at["data-nav"] || "")) e.setAttribute("data-nav", at["data-nav"]);
     if (typeof at.alt === "string") e.setAttribute("alt", at.alt.slice(0, 200));
+    if (tag === "AUDIO") {
+      e.controls = true;
+      e.preload = "metadata";
+      if (safeAudioPath(at.src)) e.src = mediaPreviews.get(at.src) || at.src;
+    }
     if (at.role === "button") e.setAttribute("role", "button");
     if (/^-?\d{1,2}$/.test(String(at.tabindex || ""))) e.setAttribute("tabindex", at.tabindex);
     if (GO_RE.test(at["data-go"] || "")) e.setAttribute("data-go", at["data-go"]);
@@ -309,6 +341,9 @@
     if (o.bgimg) setBgImg(e, o.bgimg);
     if (o.sw) applySw(e, o.sw);
     if (o.frame) setFrame(e, o.frame);
+    if (o.icon && e.matches(".ds-icon")) ELEMENTS.renderIcon(e, o.icon);
+    if (o.hover) applyHover(e, o.hover);
+    if (e.matches(".ds-timer")) renderTimer(e, o.timer);
     syncSize(e);
     if (o.href && safeHref(o.href) && e.tagName === "A") setHref(e, o.href);
     if (o.go && GO_RE.test(o.go)) e.setAttribute("data-go", o.go);
@@ -630,17 +665,24 @@
 
   /* ---------- imagens ---------- */
   const fileInput = mk("input"); fileInput.type = "file"; fileInput.accept = "image/*"; fileInput.hidden = true;
-  let fileCb = null;
+  let fileCb = null, fileKind = "image";
   fileInput.addEventListener("change", () => {
-    const f = fileInput.files[0]; fileInput.value = "";
-    if (!f || !fileCb) return;
-    if (f.size > 20 * 1024 * 1024) { alert("Imagem acima de 20 MB. Reduza o arquivo antes de enviar."); return; }
+    const f = fileInput.files[0], cb = fileCb, kind = fileKind;
+    fileInput.value = ""; fileCb = null;
+    if (!f || !cb) return;
+    if (f.size > 20 * 1024 * 1024) { alert("Arquivo acima de 20 MB. Reduza o arquivo antes de enviar."); return; }
+    if (kind === "image" ? !f.type.startsWith("image/") : !f.type.startsWith("audio/")) {
+      alert(kind === "image" ? "Escolha um arquivo de imagem." : "Escolha um arquivo de áudio.");
+      return;
+    }
     const r = new FileReader();
-    r.onload = () => fileCb({ name: f.name, url: r.result, b64: r.result.split(",")[1], mime: f.type });
+    r.onload = () => cb({ name: f.name, url: kind === "audio" ? URL.createObjectURL(f) : r.result, b64: r.result.split(",")[1], mime: f.type });
+    r.onerror = () => alert("Não foi possível ler o arquivo selecionado.");
     r.readAsDataURL(f);
   });
   document.body.appendChild(fileInput);
-  function pickImage(cb) { fileCb = cb; fileInput.click(); }
+  function pickFile(kind, cb) { fileKind = kind; fileCb = cb; fileInput.accept = kind === "audio" ? "audio/*" : "image/*"; fileInput.click(); }
+  function pickImage(cb) { pickFile("image", cb); }
   function registerImage(f, folder) {
     const ext = (f.name.match(/\.[a-z0-9]+$/i) || [".png"])[0].toLowerCase();
     const base = slug(f.name.replace(/\.[^.]+$/, "")) || "imagem";
@@ -648,6 +690,28 @@
     pending.set(path, { b64: f.b64, mime: f.mime }); previews.set(path, f.url);
     return path;
   }
+  function registerAudio(f, folder) {
+    const ext = (f.name.match(/\.[a-z0-9]+$/i) || [".mp3"])[0].toLowerCase();
+    const base = slug(f.name.replace(/\.[^.]+$/, "")) || "audio";
+    const path = `audio/${folder}/${base}-${hash(f.b64.slice(0, 4000) + f.b64.length).slice(0, 4)}${ext}`;
+    pending.set(path, { b64: f.b64, mime: f.mime }); mediaPreviews.set(path, f.url);
+    return path;
+  }
+  function chooseAudioFor(e) {
+    pickFile("audio", f => {
+      const spec = content.add[e.dataset.b];
+      if (!spec || e.tagName !== "AUDIO") { alert("O bloco de áudio não está configurado corretamente."); return; }
+      const previous = spec.attrs && spec.attrs.src;
+      if (previous && mediaPreviews.has(previous)) {
+        URL.revokeObjectURL(mediaPreviews.get(previous));
+        mediaPreviews.delete(previous);
+      }
+      const path = registerAudio(f, pageOf(e));
+      spec.attrs = Object.assign({}, spec.attrs, { src: path });
+      e.src = f.url; e.load(); markDirty(); buildProps(); placeBar();
+    });
+  }
+  window.addEventListener("beforeunload", () => mediaPreviews.forEach(url => URL.revokeObjectURL(url)));
   function chooseImageFor(e) {
     pickImage(f => {
       const path = registerImage(f, pageOf(e));
@@ -1047,6 +1111,7 @@
     if (spec.s) { op(id).s = {}; Object.entries(spec.s).forEach(([p, v]) => { if (okCss(p, v)) { op(id).s[p] = v; e.style.setProperty(p, v); } }); if (!Object.keys(op(id).s).length) delete op(id).s; }
     if (spec.img) { op(id).img = spec.img; setImage(e, spec.img); }
     if (spec.thumbnail === "youtube") op(id).thumbnail = "youtube";
+    if (spec.icon) { op(id).icon = Object.assign({}, spec.icon); ELEMENTS.renderIcon(e, op(id).icon); }
     if (spec.bgimg) { op(id).bgimg = spec.bgimg; setBgImg(e, spec.bgimg); }
     if (spec.sw) { op(id).sw = { label: String(spec.sw.label || "").slice(0, 60), hex: spec.sw.hex }; applySw(e, op(id).sw); }
     if (typeof spec.style === "string" && content.styles[spec.style] && content.styles[spec.style].tag === e.tagName) op(id).style = spec.style;
@@ -1066,7 +1131,13 @@
     ATTR_OK.forEach(a => { if (e.hasAttribute(a)) spec.attrs[a] = e.getAttribute(a); });
     CSS_OK.forEach(p => { const v = e.style.getPropertyValue(p); if (v) spec.s[p] = v; });
     const o = content.ops[e.dataset.b] || {};
+    if (e.tagName === "AUDIO") {
+      const source = content.add[e.dataset.b] && content.add[e.dataset.b].attrs && content.add[e.dataset.b].attrs.src;
+      if (safeAudioPath(source)) spec.attrs.src = source;
+      else delete spec.attrs.src;
+    }
     if (o.img) spec.img = { path: o.img.path };
+    if (o.icon) spec.icon = Object.assign({}, o.icon);
     if (o.thumbnail === "youtube") spec.thumbnail = "youtube";
     if (o.style) spec.style = o.style;
     if (o.fit) spec.fit = o.fit;
@@ -1108,34 +1179,9 @@
     else { op(e.dataset.b).hide = 1; e.classList.add("ds-hidden"); }
     select(null); refreshPageControls(); markDirty();
   }
-  const PRESETS = {
-    text: () => ({ tag: "p", t: "Novo texto. Clique para editar." }),
-    title: () => ({ tag: "h2", t: "Novo título" }),
-    image: () => ({ tag: "div", cls: "img-slot", t: "Clique em 📷 para enviar a imagem", s: { "min-height": "180px" } }),
-    animation: () => ({ tag: "div", cls: "img-slot ds-animation", t: "Envie um GIF animado para mostrar a animação", s: { "min-height": "180px" } }),
-    divider: () => ({ tag: "hr", cls: "ds-divider" }),
-    list: () => ({ tag: "ul", cls: "ds-list", children: [
-      { tag: "li", t: "Primeiro item da lista" },
-      { tag: "li", t: "Segundo item da lista" },
-      { tag: "li", t: "Terceiro item da lista" }
-    ] }),
-    callout: () => ({ tag: "div", cls: "callout", children: [{ tag: "p", t: "Destaque ou observação importante." }] }),
-    video: () => ({ tag: "div", cls: "ds-video-block", children: [
-      { tag: "div", cls: "img-slot ds-video-poster", t: "Miniatura do YouTube (adicione o link)", s: { "aspect-ratio": "16 / 9", "min-height": "180px" } },
-      { tag: "a", cls: "ds-video-link", attrs: { href: "#" }, t: "Assistir no YouTube" }
-    ] }),
-    button: () => ({ tag: "a", cls: "btn btn-primary", attrs: { href: "#" }, t: "Botão" }),
-    box: () => ({ tag: "div", cls: "ds-box", children: [{ tag: "p", t: "Texto da caixa" }] }),
-    cols: () => PRESETS.cols2(),
-    cols2: () => mkCols(2), cols3: () => mkCols(3), cols4: () => mkCols(4),
-    hero: () => ({ tag: "div", cls: "ds-box ds-hero", s: { "min-height": "280px" }, children: [{ tag: "h2", t: "Título sobre a imagem", s: { position: "absolute", left: "8%", top: "38%", color: "#ffffff", margin: "0" } }] }),
-    space: () => ({ tag: "div", cls: "ds-space" }),
-    icon: () => ({ tag: "span", cls: "ds-icon", t: "★" }),
-    anchor: () => ({ tag: "div", cls: "ds-anchor", attrs: { id: uniqueAnchor() } }),
-    swatch: () => ({ tag: "div", cls: "swatch", sw: { label: "Nova cor", hex: "#8a8a8a" } })
-  };
   const mkCols = n => ({ tag: "div", cls: "ds-cols", s: { "--cols": Array(n).fill(r1(100 / n) + "fr").join(" ") }, children: Array.from({ length: n }, () => PRESETS.box()) });
   function uniqueAnchor() { let n = 1; while (document.getElementById("ancora-" + n)) n++; return "ancora-" + n; }
+  const PRESETS = ELEMENTS.createPresets(uniqueAnchor, n => mkCols(n));
   function addBlock(type) {
     let parent, ref = null;
     const where = $("#adm-where", panel).value;
@@ -1148,10 +1194,15 @@
       const poster = $(".ds-video-poster", e);
       if (poster) { op(poster.dataset.b).thumbnail = "youtube"; target = poster; }
     }
+    if (type === "timer") {
+      op(e.dataset.b).timer = { target: new Date(Date.now() + 7 * 86400000).toISOString() };
+      renderTimer(e, op(e.dataset.b).timer);
+    }
     fixFree(); refreshEditable(); refreshYouTubeThumbnails(); select(target); markDirty();
     e.scrollIntoView({ block: "nearest", behavior: "smooth" });
     showTab("item");
     if (type === "image" || type === "animation") chooseImageFor(e);
+    if (type === "audio") chooseAudioFor(e);
     if (type === "hero") chooseBgFor(e);
   }
 
@@ -1176,7 +1227,7 @@
         <div class="adm-toolgroup adm-view-tools" aria-label="Pré-visualização">
           <button type="button" data-view="desktop" title="Visualização desktop">▭</button>
           <button type="button" data-view="tablet" title="Prévia tablet">▯</button>
-          <button type="button" data-view="mobile" title="Prévia celular">▯</button>
+          <button type="button" data-view="mobile" class="adm-mobile-switch" role="switch" aria-checked="false" title="Alternar prévia de celular">▯ Mobile</button>
         </div>
         <button type="button" id="adm-viewsite" title="Abrir o site em outra aba (Alt+V)">↗</button>
       </div>
@@ -1199,17 +1250,7 @@
           <p id="adm-add-target" class="adm-small"></p>
           <label class="adm-lbl">Onde
             <select id="adm-where"><option value="after">Logo depois do item selecionado</option><option value="inside">Dentro do item selecionado</option></select></label>
-          <div class="adm-grid" id="adm-add">
-            <button type="button" data-add="text">Texto</button><button type="button" data-add="title">Título</button>
-            <button type="button" data-add="image">Imagem</button><button type="button" data-add="button">Botão/link</button>
-            <button type="button" data-add="video">Vídeo / YouTube</button><button type="button" data-add="animation">Animação (GIF)</button>
-            <button type="button" data-add="divider">Divisor</button><button type="button" data-add="list">Lista</button>
-            <button type="button" data-add="callout">Destaque</button>
-            <button type="button" data-add="box">Caixa</button><button type="button" data-add="cols2">2 colunas</button>
-            <button type="button" data-add="cols3">3 colunas</button><button type="button" data-add="cols4">4 colunas</button>
-            <button type="button" data-add="hero">Imagem + texto</button><button type="button" data-add="icon">Ícone</button>
-            <button type="button" data-add="space">Espaço</button><button type="button" data-add="anchor">⚓ Âncora</button><button type="button" data-add="swatch">🎨 Caixa de cor</button>
-          </div>
+          <div id="adm-add"></div>
           <details open><summary>Estilos compartilhados</summary><div id="adm-styles"></div></details>
         </div>
         <div class="adm-pane" data-pane="tree"><p class="adm-small">Todos os itens da página. Clique para selecionar, duplo clique para editar, arraste para reorganizar (solte no meio de uma caixa para colocar dentro) e use 👁 para ocultar.</p><div id="adm-tree" class="adm-tree"></div></div>
@@ -1234,6 +1275,19 @@
         <button type="button" id="adm-exit" class="adm-exit">Sair do modo admin</button>
       </div>`;
     document.body.appendChild(panel);
+    const palette = $("#adm-add", panel);
+    ELEMENTS.categories.forEach((category, index) => {
+      const group = mk("details", "adm-add-group");
+      group.open = index < 2;
+      group.appendChild(mk("summary", "", category.title));
+      const grid = mk("div", "adm-grid");
+      category.types.forEach(type => {
+        const item = mk("button", "", ELEMENTS.labels[type]);
+        item.type = "button"; item.dataset.add = type;
+        grid.appendChild(item);
+      });
+      group.appendChild(grid); palette.appendChild(group);
+    });
     const reopen = mk("button", "adm-reopen", "✦ Editor");
     reopen.type = "button";
     reopen.addEventListener("click", () => panel.classList.remove("collapsed"));
@@ -1262,7 +1316,10 @@
       }
     });
     $("#adm-anim-preview", panel).addEventListener("click", previewSelectedAnimation);
-    $$(".adm-view-tools [data-view]", panel).forEach(button => button.addEventListener("click", () => openPreview(button.dataset.view)));
+    $$(".adm-view-tools [data-view]", panel).forEach(button => button.addEventListener("click", () => {
+      if (button.dataset.view === "mobile" && pv && pv.mode === "mobile") closePreview();
+      else openPreview(button.dataset.view);
+    }));
     $("#adm-goto", panel).addEventListener("change", e => { location.hash = e.target.value; });
     $("#adm-add", panel).addEventListener("click", ev => { const b = ev.target.closest("[data-add]"); if (b) addBlock(b.dataset.add); });
 
@@ -1790,6 +1847,75 @@
       box.appendChild(lk);
     }
 
+    if (e.matches(".ds-icon")) {
+      box.appendChild(buildSection("Ícone", s => {
+        const current = Object.assign({ name: "sparkles" }, o.icon || {});
+        const choices = Object.entries(ELEMENTS.iconNames).map(([name, title]) => [name, title]);
+        s.appendChild(row("Símbolo", selInput(choices, current.name, value => {
+          op(id).icon = Object.assign({}, current, { name: value });
+          ELEMENTS.renderIcon(e, op(id).icon); markDirty();
+        })));
+        const outline = mk("input"); outline.type = "checkbox"; outline.checked = current.outline === true;
+        outline.addEventListener("change", () => {
+          op(id).icon = Object.assign({}, op(id).icon || current, { outline: outline.checked });
+          ELEMENTS.renderIcon(e, op(id).icon); markDirty();
+        });
+        s.appendChild(row("Traço outline", outline));
+        [["Cor", "color", "#e8b93c"], ["Cor no hover", "hover", "#ffffff"]].forEach(([title, key, fallback]) => {
+          const input = mk("input"); input.type = "color"; input.value = /^#[0-9a-f]{6}$/i.test(current[key] || "") ? current[key] : fallback;
+          input.addEventListener("input", () => {
+            op(id).icon = Object.assign({}, op(id).icon || current, { [key]: input.value });
+            ELEMENTS.renderIcon(e, op(id).icon); markDirty();
+          });
+          s.appendChild(row(title, input));
+        });
+        s.appendChild(mk("p", "adm-small", "Escolha um ícone de interface ou uma marca social. Defina o destino na seção Link."));
+      }, true));
+    }
+
+    if (e.matches(".ds-timer")) {
+      box.appendChild(buildSection("Contagem regressiva", s => {
+        const input = mk("input"); input.type = "datetime-local";
+        const target = o.timer && Date.parse(o.timer.target);
+        if (Number.isFinite(target)) {
+          const local = new Date(target - new Date(target).getTimezoneOffset() * 60000);
+          input.value = local.toISOString().slice(0, 16);
+        }
+        input.addEventListener("input", () => {
+          const targetDate = input.value ? new Date(input.value) : null;
+          op(id).timer = { target: targetDate && Number.isFinite(targetDate.getTime()) ? targetDate.toISOString() : "" };
+          renderTimer(e, op(id).timer); markDirty();
+        });
+        s.appendChild(row("Data e hora finais", input));
+        s.appendChild(mk("p", "adm-small", "A contagem usa o fuso horário local e atualiza automaticamente."));
+      }, true));
+    }
+
+    if (e.tagName === "AUDIO") {
+      box.appendChild(buildSection("Áudio", s => {
+        const source = content.add[id] && content.add[id].attrs && content.add[id].attrs.src;
+        s.appendChild(mk("p", "adm-small", source ? source.split("/").pop() : "Nenhum arquivo selecionado."));
+        s.appendChild(btn(source ? "Trocar arquivo de áudio" : "Enviar arquivo de áudio", "MP3, OGG, WAV ou outro formato aceito pelo navegador (máx. 20 MB)", () => chooseAudioFor(e), "primary"));
+      }, true));
+    }
+
+    if (!isProtected(e) && !e.matches(".ds-icon")) {
+      box.appendChild(buildSection("Ao passar o mouse", s => {
+        const current = o.hover || {};
+        s.appendChild(row("Efeito", selInput([["", "Nenhum"], ["lift", "Elevar"], ["scale", "Ampliar suavemente"], ["glow", "Brilho"]], current.effect || "", value => {
+          if (!value) { delete op(id).hover; applyHover(e, null); }
+          else { op(id).hover = Object.assign({}, current, { effect: value }); applyHover(e, op(id).hover); }
+          markDirty();
+        })));
+        const color = mk("input"); color.type = "color"; color.value = /^#[0-9a-f]{6}$/i.test(current.color || "") ? current.color : "#e8b93c";
+        color.addEventListener("input", () => {
+          if (!op(id).hover) op(id).hover = { effect: "glow" };
+          op(id).hover.color = color.value; applyHover(e, op(id).hover); markDirty();
+        });
+        s.appendChild(row("Cor do efeito", color));
+      }, false));
+    }
+
     // Caixa de cor especializada
     if (e.matches(".swatch")) {
       box.appendChild(buildSection("Caixa de cor", s => {
@@ -1891,6 +2017,9 @@
       }
       st.appendChild(row("Cor do texto", colorInput(e, "color")));
       st.appendChild(row("Cor de fundo", colorInput(e, "background-color")));
+      if (!e.matches(".ds-icon") && e.matches("h1,h2,h3,h4,p,li,td,th,a,button,.callout,.ds-box")) {
+        st.appendChild(row("Alinhamento do texto", selInput([["", "Padrão"], ["left", "Esquerda"], ["center", "Centro"], ["right", "Direita"]], e.style.textAlign || "", value => setS(e, "text-align", value || null))));
+      }
 
       if (!isAtomic(e)) {
         const r = mk("div", "adm-row");
@@ -2184,17 +2313,26 @@
     setViewButtons(mode);
   }
   function closePreview() { if (pv) { pv.wrap.remove(); pv = null; } setViewButtons("desktop"); }
-  function setViewButtons(mode) { if (panel) $$("[data-view]", panel).forEach(b => b.classList.toggle("on", b.dataset.view === mode)); }
+  function setViewButtons(mode) {
+    if (!panel) return;
+    $$("[data-view]", panel).forEach(b => {
+      const active = b.dataset.view === mode;
+      b.classList.toggle("on", active);
+      if (b.matches(".adm-mobile-switch")) b.setAttribute("aria-checked", String(active));
+    });
+  }
   function syncPreview() {
     if (!pv || !pv.ready || !pv.fr.contentWindow) return;
     const pr = {}; previews.forEach((v, k) => { pr[k] = v; });
-    pv.fr.contentWindow.postMessage({ ds: "content", content, previews: pr, page: currentPage() }, location.origin);
+    const media = {}; mediaPreviews.forEach((v, k) => { media[k] = v; });
+    pv.fr.contentWindow.postMessage({ ds: "content", content, previews: pr, mediaPreviews: media, page: currentPage() }, location.origin);
   }
   window.addEventListener("message", ev => {
     if (ev.origin !== location.origin || !ev.data) return;
     if (ev.data.ds === "ready" && pv && ev.source === pv.fr.contentWindow) { pv.ready = true; syncPreview(); }
     if (ev.data.ds === "content" && PREVIEW && ev.source === parent) {          // somos o iframe da prévia
       if (ev.data.previews) Object.entries(ev.data.previews).forEach(([k, v]) => { if (safePath(k) && typeof v === "string" && /^data:image\//.test(v)) previews.set(k, v); });
+      if (ev.data.mediaPreviews) Object.entries(ev.data.mediaPreviews).forEach(([k, v]) => { if (safeAudioPath(k) && typeof v === "string" && /^blob:/.test(v)) mediaPreviews.set(k, v); });
       loadSnapshot(JSON.stringify(ev.data.content), false);
       if (ev.data.page && location.hash.slice(1) !== ev.data.page && !location.hash.slice(1).startsWith("x")) { location.hash = ev.data.page; }
     }
@@ -2206,7 +2344,7 @@
   const treeOpen = new Set();
   let treeDrag = null;
   function pageTitle(id) { return (content.pages[id] && content.pages[id].title) || BASE_TITLES[id] || id; }
-  const BASE_TITLES = { gate: "Seletor inicial", home: "Design System: início", fundamentos: "Fundamentos", identidade: "Identidade", ilustracao: "Ilustração", componentes: "Componentes", interacoes: "Interações", presskit: "Press Kit" };
+  const BASE_TITLES = { home: "Design System: início", fundamentos: "Fundamentos", identidade: "Identidade", ilustracao: "Ilustração", componentes: "Componentes", interacoes: "Interações", presskit: "Press Kit" };
   function moveNode(el, container, ref) {
     if (container === el || el.contains(container)) return false;
     const old = el.parentElement && el.parentElement.closest("[data-b]");
@@ -2336,7 +2474,7 @@
     const add = mk("div", "adm-row");
     add.appendChild(btn("＋ Nova seção", "", () => { const t = prompt("Nome da nova seção (aparece no menu):", "Nova seção"); if (t) newSection(t); }, "primary"));
     box.appendChild(add);
-    box.appendChild(mk("p", "adm-small", "Cada seção funciona como uma página do site (endereço #nome). O Seletor inicial é a página que abre primeiro; troque com 🏠. Seções originais não podem ser excluídas, apenas ocultadas do menu."));
+    box.appendChild(mk("p", "adm-small", "Cada seção funciona como uma página do site (endereço #nome). A página inicial pode ser escolhida com 🏠. Seções originais não podem ser excluídas, apenas ocultadas do menu."));
   }
   /* pergunta em quais páginas aplicar uma ação de fundo: só esta, todas, ou uma lista */
   function askBgScope(title, apply, removing) {
@@ -2472,6 +2610,10 @@
     const u = new Set();
     Object.values(content.ops).forEach(o => { if (o.img) u.add(o.img.path); if (o.bgimg) u.add(o.bgimg.path); });
     Object.values(content.bg).forEach(b => u.add(b.path));
+    Object.values(content.add).forEach(spec => {
+      const source = spec && spec.attrs && spec.attrs.src;
+      if (safeAssetPath(source)) u.add(source);
+    });
     return u;
   }
   async function saveAll() {
@@ -2480,7 +2622,7 @@
       const used = usedImages();
       const toSend = Array.from(pending.entries()).filter(([p]) => used.has(p));
       let n = 0;
-      for (const [path, f] of toSend) { status.textContent = `Enviando imagem ${++n}/${toSend.length}…`; await putFile(path, f.b64, "Admin: envia " + path); }
+      for (const [path, f] of toSend) { status.textContent = `Enviando arquivo ${++n}/${toSend.length}…`; await putFile(path, f.b64, "Admin: envia " + path); }
       status.textContent = "Salvando o layout…";
       content.vars = Object.fromEntries(Object.entries(content.vars).filter(([k, v]) => cleanVars[k] !== v));
       content.v = 2;
@@ -2574,6 +2716,13 @@
       if (r.ok) content = migrate(await r.json(), legacyText, legacySlots);
     } catch (e) { /* sem content.json */ }
     applyAll();
+    document.dispatchEvent(new CustomEvent("ds:content-applied"));
+    if (timerTicker === null) timerTicker = window.setInterval(() => {
+      Object.entries(content.ops).forEach(([id, item]) => {
+        const element = nodes.get(id);
+        if (element && element.matches(".ds-timer")) renderTimer(element, item.timer);
+      });
+    }, 1000);
     hist.last = JSON.stringify(content);
     const home = content.site && content.site.home;
     if (home && document.getElementById(home) && !location.hash && window.DS) { window.DS.setHome(home); location.replace("#" + home); }

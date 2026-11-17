@@ -6,10 +6,6 @@
       "path": "imgs/fundos/fundo-madeira-19j2.png",
       "dim": 0.9
     },
-    "gate": {
-      "path": "imgs/fundos/capa-jogo-remaster-hdc0.jpg",
-      "dim": 0.9
-    },
     "home": {
       "path": "imgs/fundos/capa-jogo-remaster-hdc0.jpg",
       "dim": 0.9
@@ -128,7 +124,7 @@
     "b3": {
       "t": {
         "h": "40qz",
-        "v": "<a href=\"https://harumi-kisielow.github.io/TripleCrusade-DesignSystem/#gate\">\n      <span><br></span>\n      <span>Triple Crusade</span>\n    </a>✦"
+        "v": "<a href=\"https://harumi-kisielow.github.io/TripleCrusade-DesignSystem/#home\">\n      <span><br></span>\n      <span>Triple Crusade</span>\n    </a>✦"
       },
       "hide": 1
     },
@@ -223,12 +219,6 @@
     "b18": {
       "hide": 1
     },
-    "b21": {
-      "img": {
-        "path": "imgs/gate/atk-up-exse.png",
-        "h": "40h7"
-      }
-    },
     "b26": {
       "img": {
         "path": "imgs/gate/aura-qamv.png",
@@ -245,9 +235,21 @@
         "height": "239px"
       }
     },
-    "b14": {
+    "b25": {
+      "bgimg": {
+        "path": "imgs/home/artes-apresentacao-1x6t.png",
+        "dim": 0.79,
+        "size": "cover",
+        "x": 72
+      },
       "s": {
-        "width": "100%"
+        "height": "214px"
+      },
+      "go": "presskit",
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "slide"
       }
     },
     "b448": {
@@ -653,41 +655,6 @@
     "b38": {
       "hide": 1
     },
-    "nmw8otxk3eaos": {
-      "bgimg": {
-        "path": "imgs/home/artes-apresentacao-1x6t.png",
-        "dim": 0.79,
-        "size": "cover",
-        "x": 72
-      },
-      "s": {
-        "height": "214px"
-      },
-      "go": "presskit",
-      "animation": {
-        "duration": 500,
-        "delay": 0,
-        "effect": "slide"
-      }
-    },
-    "nmw8otxk3wspu": {
-      "t": {
-        "v": "PressKit"
-      }
-    },
-    "nmw8otxk4ndwn": {
-      "t": {
-        "v": "Movimentação, combate, cliques e sons."
-      },
-      "s": {
-        "width": "58.6%"
-      }
-    },
-    "nmw8otxk40y4u": {
-      "t": {
-        "v": "Saiba mais"
-      }
-    },
     "b85": {
       "hide": 1
     },
@@ -1006,18 +973,17 @@
       "bgimg": {
         "path": "imgs/componentes/diagboxmain-15fd.png",
         "dim": 0,
-        "size": "cover",
+        "size": "stretch",
         "art": true
       },
       "s": {
-        "height": "176px"
+        "height": "240px"
       },
       "animation": {
         "duration": 500,
         "delay": 0,
         "effect": "rise"
-      },
-      "hide": 1
+      }
     },
     "b275": {
       "s": {
@@ -1028,20 +994,21 @@
     },
     "b273": {
       "s": {
-        "padding": "62px",
-        "height": "185px"
+        "padding": "32px",
+        "height": "auto",
+        "min-height": "120px"
       }
     },
     "b272": {
       "bgimg": {
         "path": "imgs/componentes/moldura-foto-rbn2.png",
         "dim": 0,
-        "size": "cover",
+        "size": "contain",
         "art": true
       },
       "s": {
-        "height": "164px",
-        "width": "13%"
+        "height": "158px",
+        "width": "120px"
       },
       "t": {
         "h": "hjl9xi",
@@ -1904,9 +1871,6 @@
         "height": "192px"
       }
     },
-    "b248": {
-      "hide": 1
-    },
     "nmwc7rxiaybne": {
       "img": {
         "path": "imgs/presskit/captura-de-tela-2026-09-20-204540-1cm6.png",
@@ -1961,16 +1925,6 @@
     "b15": [
       "b16"
     ],
-    "b14": [
-      "b15",
-      "b18",
-      "b17",
-      "b19"
-    ],
-    "b19": [
-      "b20",
-      "b25"
-    ],
     "b1": [
       "nmw761gvpn71s",
       "b2",
@@ -1983,12 +1937,7 @@
       "b48",
       "b52",
       "b56",
-      "nmw8otxk3eaos"
-    ],
-    "nmw8otxk3eaos": [
-      "nmw8otxk3wspu",
-      "nmw8otxk4ndwn",
-      "nmw8otxk40y4u"
+      "b25"
     ],
     "b111": [],
     "b101": [
@@ -2035,13 +1984,11 @@
       "b164",
       "b165",
       "b166",
-      "b167",
       "b171",
       "b172",
       "b173",
-      "b177",
-      "b178",
       "b188",
+      "b167",
       "b189",
       "b193",
       "b194",
@@ -2217,34 +2164,6 @@
       "cls": "ds-icon",
       "attrs": {},
       "parent": "b1"
-    },
-    "nmw8otxk3eaos": {
-      "tag": "div",
-      "cls": "card",
-      "attrs": {
-        "role": "button",
-        "tabindex": "0",
-        "data-go": "interacoes"
-      },
-      "parent": "b39"
-    },
-    "nmw8otxk3wspu": {
-      "tag": "h3",
-      "cls": "",
-      "attrs": {},
-      "parent": "nmw8otxk3eaos"
-    },
-    "nmw8otxk4ndwn": {
-      "tag": "p",
-      "cls": "",
-      "attrs": {},
-      "parent": "nmw8otxk3eaos"
-    },
-    "nmw8otxk40y4u": {
-      "tag": "strong",
-      "cls": "",
-      "attrs": {},
-      "parent": "nmw8otxk3eaos"
     },
     "nmw9acgr7uif6": {
       "tag": "ul",

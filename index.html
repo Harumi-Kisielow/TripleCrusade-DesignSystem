@@ -11,6 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Libre+Bodoni:wght@400;500;700&family=Marcellus+SC&display=swap">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="experience.css">
+  <link rel="stylesheet" href="admin.css">
 </head>
 <body>
 
@@ -33,29 +35,6 @@
   </header>
 
   <main>
-
-    <!-- ===== SELETOR INICIAL ===== -->
-    <section class="page" id="gate" data-b="b14">
-      <div class="hero" data-b="b15">
-        <div class="logo-placeholder" data-b="b16">TRIPLE CRUSADE<br><small>(coloque aqui o logo)</small></div>
-        <p class="lead" data-b="b17">Escolha o que você quer ver.</p>
-      </div>
-      <div class="img-slot banner" data-b="b18">Banner do jogo</div>
-      <div class="gate-grid" data-b="b19">
-        <div class="gate-card" data-go="home" role="button" tabindex="0" data-b="b20">
-          <span class="gate-icon" data-b="b21">◆</span>
-          <h2 data-b="b22">Design System</h2>
-          <p data-b="b23">Identidade, ilustração, componentes e interações do jogo.</p>
-          <strong data-b="b24">Entrar</strong>
-        </div>
-        <div class="gate-card" data-go="presskit" role="button" tabindex="0" data-b="b25">
-          <span class="gate-icon" data-b="b26">✦</span>
-          <h2 data-b="b27">Press Kit</h2>
-          <p data-b="b28">Informações, imagens e materiais para imprensa e divulgação.</p>
-          <strong data-b="b29">Entrar</strong>
-        </div>
-      </div>
-    </section>
 
     <!-- ===== PRESS KIT ===== -->
     <section class="page" id="presskit" data-b="b396">
@@ -143,6 +122,12 @@
         <div class="card" data-go="ilustracao" role="button" tabindex="0" data-b="b48"><h3 data-b="b49">Ilustração</h3><p data-b="b50">Estilo de arte, personagens e cenários.</p><strong data-b="b51">Saiba mais</strong></div>
         <div class="card" data-go="componentes" role="button" tabindex="0" data-b="b52"><h3 data-b="b53">Componentes</h3><p data-b="b54">Botões, painéis, barras e telas do jogo.</p><strong data-b="b55">Saiba mais</strong></div>
         <div class="card" data-go="interacoes" role="button" tabindex="0" data-b="b56"><h3 data-b="b57">Interações</h3><p data-b="b58">Movimentação, combate, cliques e sons.</p><strong data-b="b59">Saiba mais</strong></div>
+        <div class="gate-card" data-go="presskit" role="button" tabindex="0" data-b="b25">
+          <span class="gate-icon" data-b="b26">✦</span>
+          <h2 data-b="b27">Press Kit</h2>
+          <p data-b="b28">Informações, imagens e materiais para imprensa e divulgação.</p>
+          <strong data-b="b29">Entrar</strong>
+        </div>
       </div>
     </section>
 
@@ -268,16 +253,11 @@
       <p class="lead" data-b="b164">Diretrizes para estilo de arte, personagens e cenários.</p>
 
       <h2 data-b="b165">Estilo</h2>
-      <p data-b="b166">Estética de anime dos anos 2000. Os personagens aparecem em retratos 2D (busto) nas telas de batalha e de diálogo, e em arte de corpo inteiro na visual novel.</p>
-      <div class="img-grid" data-b="b167">
-        <div class="img-slot" data-b="b168">Exemplo de estilo 1</div>
-        <div class="img-slot" data-b="b169">Exemplo de estilo 2</div>
-        <div class="img-slot" data-b="b170">Exemplo de estilo 3</div>
-      </div>
+      <p data-b="b166">Estética de anime dos anos 2000.</p>
 
       <h2 data-b="b171">Concept art e cenários</h2>
       <p data-b="b172">Os conceitos iniciais usam coloração monocromática, com luz forte e pontos de contraste, para definir atmosfera e ambientação (cidade, castelo, ruínas).</p>
-      <div class="img-grid" data-b="b173">
+      <div class="tc-scene-gallery" data-b="b173">
         <div class="img-slot" data-b="b174">Concept: ruínas</div>
         <div class="img-slot" data-b="b175">Concept: cidade</div>
         <div class="img-slot" data-b="b176">Concept: castelo</div>
@@ -290,6 +270,11 @@
       </div>
 
       <h2 data-b="b188">Diretrizes para personagens</h2>
+      <div class="img-grid" data-b="b167">
+        <div class="img-slot" data-b="b168">Exemplo de estilo 1</div>
+        <div class="img-slot" data-b="b169">Exemplo de estilo 2</div>
+        <div class="img-slot" data-b="b170">Exemplo de estilo 3</div>
+      </div>
       <div class="img-grid" data-b="b189">
         <div class="img-slot" data-b="b190">Protagonista 1</div>
         <div class="img-slot" data-b="b191">Protagonista 2</div>
@@ -481,6 +466,7 @@
   </footer>
 
   <script src="script.js"></script>
+  <script src="admin-elements.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>
