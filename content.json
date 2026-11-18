@@ -55,7 +55,8 @@
         "h": "yjsyot"
       },
       "s": {
-        "aspect-ratio": "1"
+        "aspect-ratio": "1",
+        "border-radius": "50%"
       },
       "frame": {
         "z": 1.05,
@@ -68,7 +69,10 @@
         "path": "imgs/presskit/post-1-apresentando-o-estudio-3-10bw.png",
         "h": "yjsyot"
       },
-      "s": {},
+      "s": {
+        "border-radius": "50%",
+        "aspect-ratio": "1"
+      },
       "frame": {
         "z": 1.3,
         "x": 76,
@@ -80,7 +84,10 @@
         "path": "imgs/presskit/post-1-apresentando-o-estudio-1-1jl9.png",
         "h": "yjsyot"
       },
-      "s": {},
+      "s": {
+        "border-radius": "50%",
+        "aspect-ratio": "1"
+      },
       "frame": {
         "z": 1,
         "x": 78,
@@ -91,12 +98,20 @@
       "img": {
         "path": "imgs/presskit/post-1-apresentando-o-estudio-2-geb5.png",
         "h": "yjsyot"
+      },
+      "s": {
+        "border-radius": "50%",
+        "aspect-ratio": "1"
       }
     },
     "b472": {
       "img": {
         "path": "imgs/presskit/post-1-apresentando-o-estudio-3pk6.png",
         "h": "yjsyot"
+      },
+      "s": {
+        "border-radius": "50%",
+        "aspect-ratio": "1"
       }
     },
     "b480": {
