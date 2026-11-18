@@ -1833,8 +1833,8 @@
       },
       "s": {
         "min-height": "180px",
-        "height": "497px",
-        "width": "100%"
+        "width": "86.2%",
+        "aspect-ratio": "1.778"
       },
       "img": {
         "path": "imgs/componentes/pitching-de-conceito-tvjh.png"
