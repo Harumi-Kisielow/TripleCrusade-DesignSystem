@@ -497,19 +497,19 @@ body.ds-preview .adm-panel, body.ds-preview #admin-link { display: none; }
 @font-face { font-family: "LT Carpet"; src: local("LT Carpet"), url("fonts/LTCarpet.ttf") format("truetype"), url("fonts/LTCarpet.otf") format("opentype"); font-display: swap; }
 
 /* ---------- linguagem editorial inspirada em ZZZ, mantendo a identidade do jogo ---------- */
-body:not(.editing) {
+body {
   background-color: #101013;
   background-image: radial-gradient(ellipse at 85% 4%, rgba(61,147,230,.12), transparent 34rem), linear-gradient(135deg, transparent 0 72%, rgba(232,185,60,.045) 72% 72.2%, transparent 72.2%);
 }
-body:not(.editing) .topbar {
+body .topbar {
   background: rgba(15,15,18,.94);
   border-bottom: 1px solid rgba(232,185,60,.58);
   backdrop-filter: blur(14px);
 }
-body:not(.editing) .nav a { font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-body:not(.editing) .page.active { animation: tc-page-in .38s cubic-bezier(.2,.8,.2,1); }
+body .nav a { font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+body .page.active { animation: tc-page-in .38s cubic-bezier(.2,.8,.2,1); }
 @keyframes tc-page-in { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
-body:not(.editing) .page > h1 {
+body .page > h1 {
   position: relative;
   padding: .35rem 0 .65rem .8rem;
   border-bottom: 0;
@@ -518,8 +518,8 @@ body:not(.editing) .page > h1 {
   letter-spacing: .035em;
   text-transform: uppercase;
 }
-body:not(.editing) .page > h2 { padding-left: .65rem; border-left: 2px solid var(--primary); }
-body:not(.editing) .hero {
+body .page > h2 { padding-left: .65rem; border-left: 2px solid var(--primary); }
+body .hero {
   position: relative;
   isolation: isolate;
   padding: clamp(2rem, 6vw, 4.5rem) clamp(1rem, 4vw, 3rem);
@@ -530,7 +530,7 @@ body:not(.editing) .hero {
   border: 1px solid rgba(232,185,60,.35);
   clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
 }
-body:not(.editing) .hero::after {
+body .hero::after {
   content: "";
   position: absolute;
   z-index: -1;
@@ -539,32 +539,32 @@ body:not(.editing) .hero::after {
   background: repeating-linear-gradient(135deg, rgba(232,185,60,.15) 0 2px, transparent 2px 12px);
   transform: skewY(-12deg);
 }
-body:not(.editing) .hero .lead { max-width: 60rem; color: #deddd9; }
-body:not(.editing) .cards { gap: .8rem; }
-body:not(.editing) .card,
-body:not(.editing) .gate-card,
-body:not(.editing) .doc,
-body:not(.editing) .pk-asset,
-body:not(.editing) .pk-member {
+body .hero .lead { max-width: 60rem; color: #deddd9; }
+body .cards { gap: .8rem; }
+body .card,
+body .gate-card,
+body .doc,
+body .pk-asset,
+body .pk-member {
   border-radius: 2px;
   clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
 }
-body:not(.editing) .card,
-body:not(.editing) .gate-card {
+body .card,
+body .gate-card {
   position: relative;
   border-color: #55555e;
   transition: translate .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
-body:not(.editing) .card:hover,
-body:not(.editing) .gate-card:hover { translate: 0 -5px; border-color: var(--gold); box-shadow: 7px 7px 0 rgba(232,185,60,.17); }
-body:not(.editing) .img-slot { border-radius: 2px; border-color: rgba(232,185,60,.42); background: linear-gradient(135deg, rgba(255,255,255,.025), transparent 55%); }
-body:not(.editing) :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+body .card:hover,
+body .gate-card:hover { translate: 0 -5px; border-color: var(--gold); box-shadow: 7px 7px 0 rgba(232,185,60,.17); }
+body .img-slot { border-radius: 2px; border-color: rgba(232,185,60,.42); background: linear-gradient(135deg, rgba(255,255,255,.025), transparent 55%); }
+body :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
 @media (max-width: 720px) {
-  body:not(.editing) .hero { text-align: left; }
+  body .hero { text-align: left; }
 }
 @media (prefers-reduced-motion: reduce) {
-  body:not(.editing) .page.active { animation: none; }
+  body .page.active { animation: none; }
 }
 @font-face { font-family: "LT Cushion"; src: local("LT Cushion"), url("fonts/LTCushion.ttf") format("truetype"), url("fonts/LTCushion.otf") format("opentype"); font-display: swap; }
 :root {
@@ -593,7 +593,6 @@ body.editing main { margin-right: 416px; }
 body.editing .topbar { width: calc(100% - 400px); margin-right: 0; flex-wrap: wrap; row-gap: .2rem; }
 body.editing .brand { flex: none; white-space: nowrap; }
 body.editing .nav { min-width: 0; max-width: calc(100% - 180px); flex-wrap: wrap; justify-content: flex-end; }
-body.editing .nav a { padding: .35rem .45rem; font-size: .84rem; }
 .adm-head {
   min-height: 58px;
   padding: .65rem .85rem;

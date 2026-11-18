@@ -911,7 +911,6 @@
     el.innerHTML = `<b>${el.dataset.label}</b>${hex.toUpperCase()}<br>${toRgb(hex)}`;
     el.title = "Clique para copiar";
     el.onclick = () => {
-      if (document.body.classList.contains("editing")) return;
       navigator.clipboard && navigator.clipboard.writeText(hex.toUpperCase()).catch(() => {});
       const old = el.innerHTML;
       el.innerHTML = "<b>Copiado!</b>" + hex.toUpperCase();
@@ -970,7 +969,7 @@
   spotlightClose.addEventListener("click", closeSpotlight);
   document.addEventListener("click", event => {
     const image = event.target.closest && event.target.closest(".slot-img[data-spotlight='true'],img[data-spotlight='true']");
-    if (!image || document.body.classList.contains("editing")) return;
+    if (!image) return;
     event.preventDefault();
     openSpotlight(image);
   });

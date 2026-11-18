@@ -17,6 +17,11 @@
 .adm-panel { width: 400px; background: #121216; border-left-color: #35353c; }
 body.editing main { margin-right: 416px; }
 body.editing .topbar { width: calc(100% - 400px); margin-right: 0; }
+body.editing.tc-page-mode main {
+  width: min(calc(100% - 416px), 1500px);
+  max-width: 1500px;
+  margin: 0 416px 0 auto;
+}
 .adm-head { min-height: 58px; background: linear-gradient(100deg, #1d1d23, #141418); border-bottom-color: rgba(232,185,60,.55); }
 .adm-brand-mark { color: var(--gold); }
 .adm-pane-heading { display: flex; flex-direction: column; gap: .15rem; margin-bottom: .35rem; }
@@ -34,7 +39,7 @@ body.editing .topbar { width: calc(100% - 400px); margin-right: 0; }
 
 @media (max-width: 720px) {
   .adm-panel { width: 100%; }
-  body.editing main { margin-right: 0; }
+  body.editing.tc-page-mode main { width: 100%; margin: 0; }
   body.editing .topbar { width: auto; margin-right: 0; }
 }
 @media (prefers-reduced-motion: reduce) {

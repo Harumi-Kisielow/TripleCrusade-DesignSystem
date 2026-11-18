@@ -808,7 +808,6 @@
     const t = ev.target.closest("[data-b]");
     if (!t && performance.now() - lastGesture < 80) return;     // clique "fantasma" ao soltar um arraste: não desmarca
     if (!t || t.tagName === "MAIN") { select(null); return; }
-    if (ev.target.closest("a,button,[data-go],[data-cmd],label,select,input")) { ev.preventDefault(); ev.stopImmediatePropagation(); }
     if (ev.shiftKey && sel && t !== sel) { ev.preventDefault(); ev.stopImmediatePropagation(); toggleLink(t); return; }
     select(t); if (curTab !== "item" && curTab !== "add") showTab("item");
   }, true);
