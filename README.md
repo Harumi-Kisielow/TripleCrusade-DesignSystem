@@ -5,7 +5,7 @@
 - pasta imgs/ (as imagens que você enviar pelo editor são salvas aqui sozinhas)
 
 ## Experiência do site
-O site mantém páginas independentes, com navegação principal entre áreas e um índice lateral recolhido para os tópicos da página atual. A página inicial apresenta um carrossel dos seis atalhos, com arte e descrição sincronizadas; personagens e cenários também podem ser navegados em carrosséis. Na página de Componentes, party, elementos, afinidades e status têm navegação própria, e a arte da Visual Novel aparece sem moldura ou recorte. Em telas pequenas, o índice passa para o fluxo da página e os componentes se adaptam sem comprimir o conteúdo. As animações de entrada respeitam a preferência por movimento reduzido. O editor e o conteúdo continuam compatíveis com o formato existente.
+O site mantém páginas independentes, com navegação principal entre áreas e um índice lateral recolhido para os tópicos da página atual. A página inicial apresenta um carrossel dos seis atalhos, com arte e descrição sincronizadas; personagens e cenários também podem ser navegados em carrosséis. Na página de Componentes, party, elementos, afinidades e status têm navegação própria, e a arte da Visual Novel pode ser dimensionada e reenquadrada pelo editor. Em telas pequenas, o índice passa para o fluxo da página e os componentes se adaptam sem comprimir o conteúdo. As animações de entrada respeitam a preferência por movimento reduzido. O editor e o conteúdo continuam compatíveis com o formato existente.
 
 ## Não indexável
 `<meta name="robots" content="noindex">` + `robots.txt` com `Disallow: /`.

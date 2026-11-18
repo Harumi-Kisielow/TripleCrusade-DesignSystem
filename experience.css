@@ -685,32 +685,26 @@ body.tc-page-mode #componentes .skill-cols > div .stone-btn {
   box-sizing: border-box;
 }
 body.tc-page-mode #componentes [data-b="nmw9nlnu0jsa5"] {
-  display: block !important;
-  width: 100% !important;
-  height: auto !important;
-  min-height: 0 !important;
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
   margin: 1rem 0 2rem;
-  padding: 0 !important;
-  overflow: visible !important;
-  aspect-ratio: auto !important;
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  clip-path: none !important;
+  padding: 0;
+  aspect-ratio: auto;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  clip-path: none;
 }
 body.tc-page-mode #componentes [data-b="nmw9nlnu0jsa5"] > .slot-img {
   display: block;
   width: 100%;
-  height: auto !important;
   max-width: 100%;
-  max-height: none !important;
-  object-fit: contain !important;
-  object-position: center !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  transform: none !important;
+  max-height: none;
+  border: 0;
+  box-shadow: none;
 }
 body.tc-page-mode #componentes [data-b="nmw9nlnu0jsa5"] > .slot-orig { display: none !important; }
 
