@@ -242,6 +242,7 @@
     let items = [];
     const update = () => {
       items = Array.from(container.children).filter(item => !item.classList.contains("ds-hidden"));
+      controls.hidden = items.length < 2;
       if (!items.length) {
         if (count) count.textContent = "00 / 00";
         previous.disabled = true;
@@ -269,6 +270,7 @@
     container.addEventListener("scroll", update, { passive: true });
     container.querySelectorAll("img").forEach(image => image.addEventListener("load", update, { once: true }));
     container.addEventListener("keydown", event => {
+      if (event.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
       if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
         event.preventDefault();
         move(event.key === "ArrowRight" ? 1 : -1);
@@ -408,6 +410,7 @@
     previous.addEventListener("click", () => select(active - 1));
     next.addEventListener("click", () => select(active + 1));
     stage.addEventListener("keydown", event => {
+      if (event.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
       if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
         event.preventDefault();
         select(active + (event.key === "ArrowRight" ? 1 : -1));
@@ -419,8 +422,12 @@
   function buildHomeCardsCarousel() {
     const track = document.querySelector("#home .cards[data-b='b39']");
     if (!track) return;
-    const slides = Array.from(track.children).filter(item => item.matches(".card, .gate-card"));
-    if (!slides.length) return;
+    const slides = Array.from(track.children).filter(item => item.matches(".card, .gate-card") && !item.classList.contains("ds-hidden"));
+    if (!slides.length) {
+      const controls = track.querySelector(":scope > .tc-home-card-controls");
+      if (controls) controls.hidden = true;
+      return;
+    }
     slides.forEach(slide => slide.classList.add("tc-home-card-slide"));
     const originalBackgrounds = new Map(slides.map(item => [
       item,
@@ -453,6 +460,7 @@
       controls.append(previous, tabs, next);
       track.insertBefore(controls, slides[0]);
     }
+    controls.hidden = slides.length < 2;
 
     const previous = controls.querySelector(".tc-home-card-arrow:first-child");
     const next = controls.querySelector(".tc-home-card-arrow:last-child");
@@ -471,6 +479,7 @@
       previous.addEventListener("click", () => select(active - 1));
       next.addEventListener("click", () => select(active + 1));
       track.addEventListener("keydown", event => {
+        if (event.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
         if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
           event.preventDefault();
           select(active + (event.key === "ArrowRight" ? 1 : -1));
@@ -522,21 +531,38 @@
     if (heading.parentElement !== gallery) gallery.appendChild(heading);
     if (documents.parentElement !== gallery) gallery.appendChild(documents);
     documents.classList.add("tc-scene-docs");
-    const slides = Array.from(gallery.querySelectorAll(":scope > .img-slot"));
-    const articles = Array.from(documents.querySelectorAll(":scope > .doc"));
-    slides.forEach(slide => slide.classList.add("tc-scene-slide"));
+    const allSlides = Array.from(gallery.querySelectorAll(":scope > .img-slot"));
+    const allArticles = Array.from(documents.querySelectorAll(":scope > .doc"));
+    const pairs = allSlides.slice(0, allArticles.length).map((slide, index) => ({ slide, article: allArticles[index] }))
+      .filter(pair => !pair.slide.classList.contains("ds-hidden") && !pair.article.classList.contains("ds-hidden"));
+    const slides = pairs.map(pair => pair.slide);
+    const articles = pairs.map(pair => pair.article);
+    allSlides.forEach(slide => slide.classList.add("tc-scene-slide"));
     gallery.tabIndex = 0;
     gallery.setAttribute("role", "region");
     gallery.setAttribute("aria-label", "Concept art de cenários");
     if (gallery.dataset.tcSceneCarousel) {
-      gallery.querySelectorAll(".tc-scene-tab").forEach((button, index) => {
-        const title = articles[index] && articles[index].querySelector("h4");
-        button.textContent = title ? title.textContent.trim() : "Cenário " + (index + 1);
-      });
-      return;
+      const unchanged = slides.length === gallery.tcSceneSlides.length &&
+        slides.every((slide, index) => slide === gallery.tcSceneSlides[index]) &&
+        articles.every((article, index) => article === gallery.tcSceneArticles[index]);
+      if (unchanged) {
+        gallery.tcSceneControls.hidden = slides.length < 2;
+        gallery.querySelectorAll(".tc-scene-tab").forEach((button, index) => {
+          const title = articles[index] && articles[index].querySelector("h4");
+          button.textContent = title ? title.textContent.trim() : "Cenário " + (index + 1);
+        });
+        return;
+      }
+      gallery.tcSceneControls.remove();
+      gallery.querySelector(".tc-scene-tabs").remove();
+      if (gallery.tcSceneKeyHandler) gallery.removeEventListener("keydown", gallery.tcSceneKeyHandler);
+      delete gallery.dataset.tcSceneCarousel;
     }
 
-    if (!slides.length || !articles.length || slides.length !== articles.length) return;
+    if (!slides.length || !articles.length) {
+      if (gallery.tcSceneControls) gallery.tcSceneControls.hidden = true;
+      return;
+    }
     const controls = document.createElement("div");
     controls.className = "tc-scene-controls";
     controls.setAttribute("role", "group");
@@ -571,18 +597,24 @@
       return button;
     });
     gallery.append(controls, selectors);
+    gallery.tcSceneControls = controls;
+    gallery.tcSceneSlides = slides.slice();
+    gallery.tcSceneArticles = articles.slice();
+    controls.hidden = slides.length < 2;
     let active = 0;
     function select(index) {
       active = (index + slides.length) % slides.length;
-      slides.forEach((slide, i) => {
-        slide.classList.toggle("is-active", i === active);
-        slide.setAttribute("aria-hidden", String(i !== active));
-        if (i === active) slide.classList.add("tc-revealed");
+      allSlides.forEach(slide => {
+        const selected = slides[active] === slide;
+        slide.classList.toggle("is-active", selected);
+        slide.setAttribute("aria-hidden", String(!selected));
+        if (selected) slide.classList.add("tc-revealed");
       });
-      articles.forEach((article, i) => {
-        article.classList.toggle("is-active", i === active);
-        article.setAttribute("aria-hidden", String(i !== active));
-        if (i === active) article.classList.add("tc-revealed");
+      allArticles.forEach(article => {
+        const selected = articles[active] === article;
+        article.classList.toggle("is-active", selected);
+        article.setAttribute("aria-hidden", String(!selected));
+        if (selected) article.classList.add("tc-revealed");
       });
       buttons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === active)));
       count.textContent = String(active + 1).padStart(2, "0") + " / " + String(slides.length).padStart(2, "0");
@@ -591,12 +623,14 @@
     }
     previous.addEventListener("click", () => select(active - 1));
     next.addEventListener("click", () => select(active + 1));
-    gallery.addEventListener("keydown", event => {
+    gallery.tcSceneKeyHandler = event => {
+      if (event.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
       if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
         event.preventDefault();
         select(active + (event.key === "ArrowRight" ? 1 : -1));
       }
-    });
+    };
+    gallery.addEventListener("keydown", gallery.tcSceneKeyHandler);
     gallery.dataset.tcSceneCarousel = "true";
     select(0);
   }
@@ -716,41 +750,48 @@
 
     [[elementIcons, elementLabels], [statusIcons, statusLabels]].forEach(([icons, labels]) => {
       if (!icons || !labels) return;
+      let sources = labels.tcCarouselSourceItems;
+      if (!sources) sources = Array.from(labels.children);
+      sources = sources.map(source => source && source.isConnected ? source : null);
+      labels.tcCarouselSourceItems = sources;
       Array.from(icons.children).forEach((item, index) => {
-        const source = labels.children[index];
+        const source = sources[index];
         const text = source && source.textContent.trim();
         if (!text) return;
-        let caption = item.querySelector(".tc-component-item-copy");
-        if (!caption) {
-          caption = document.createElement("span");
-          caption.className = "tc-component-item-copy";
-          item.appendChild(caption);
-        }
-        let name = caption.querySelector(".tc-component-item-name");
-        if (!name) {
-          name = document.createElement("strong");
-          name.className = "tc-component-item-name";
-          caption.appendChild(name);
-        }
-        name.textContent = text.split(":")[0].trim();
-        let description = caption.querySelector(".tc-component-item-description");
-        const detail = text.includes(":") ? text.slice(text.indexOf(":") + 1).trim() : "";
-        if (detail) {
-          if (!description) {
-            description = document.createElement("span");
-            description.className = "tc-component-item-description";
-            caption.appendChild(description);
+        item.classList.add("tc-component-slide");
+        source.classList.remove("elem");
+        source.classList.add("tc-component-item-copy");
+        if (source.dataset.tcCarouselCopy !== "true") {
+          const savedName = source.querySelector(":scope > strong");
+          const savedDescription = source.querySelector(":scope > span");
+          if (savedName) {
+            savedName.classList.add("tc-component-item-name");
+            if (savedDescription) savedDescription.classList.add("tc-component-item-description");
+          } else {
+            const parts = text.split(":");
+            const name = document.createElement("strong");
+            name.className = "tc-component-item-name";
+            name.textContent = parts.shift().trim();
+            source.replaceChildren(name);
+            const detail = parts.join(":").trim();
+            if (detail) {
+              const description = document.createElement("span");
+              description.className = "tc-component-item-description";
+              description.textContent = detail;
+              source.appendChild(description);
+            }
           }
-          description.textContent = detail;
-        } else if (description) description.remove();
-        item.setAttribute("aria-label", text);
-        item.setAttribute("title", text);
+          source.dataset.tcCarouselCopy = "true";
+        }
+        item.appendChild(source);
+        item.setAttribute("aria-label", source.textContent.trim());
+        item.setAttribute("title", source.textContent.trim());
       });
       if (icons.tcCarouselSelectors) {
         Array.from(icons.tcCarouselSelectors).forEach((button, index) => {
           const item = icons.children[index];
-          const name = item && item.querySelector(".tc-component-item-name");
-          if (name) button.textContent = name.textContent;
+          const name = item && (item.querySelector(".tc-component-item-name") || item.querySelector(".tc-component-item-copy"));
+          if (name) button.textContent = name.textContent.trim().split(":")[0].trim();
         });
       }
     });

@@ -30,14 +30,14 @@
 
   const categories = [
     { title: "Texto e conteúdo", types: ["text", "title", "list", "table", "callout"] },
-    { title: "Mídia", types: ["image", "gallery", "video", "audio", "animation"] },
+    { title: "Mídia", types: ["image", "gallery", "carousel", "video", "audio", "animation"] },
     { title: "Ações e ícones", types: ["button", "icon", "timer", "anchor"] },
     { title: "Layout", types: ["box", "cols2", "cols3", "cols4", "hero", "divider", "space", "swatch"] }
   ];
 
   const labels = {
     text: "Texto", title: "Título", list: "Lista", table: "Tabela", callout: "Destaque",
-    image: "Imagem", gallery: "Galeria", video: "Vídeo / YouTube", audio: "Áudio",
+    image: "Imagem", gallery: "Galeria", carousel: "Carrossel", video: "Vídeo / YouTube", audio: "Áudio",
     animation: "GIF", button: "Botão / link", icon: "Ícone / rede social",
     timer: "Contagem regressiva", anchor: "Âncora", box: "Caixa", cols2: "2 colunas",
     cols3: "3 colunas", cols4: "4 colunas", hero: "Imagem + texto",
@@ -81,6 +81,26 @@
         { tag: "tr", children: [{ tag: "td", t: "Item 2" }, { tag: "td", t: "Descrição do item" }] }
       ] }] }),
       gallery: () => ({ tag: "div", cls: "ds-gallery", children: [imageSlot(1), imageSlot(2), imageSlot(3)] }),
+      carousel: () => ({
+        tag: "div",
+        cls: "img-grid ds-carousel",
+        children: [1, 2].map(n => ({
+          tag: "div",
+          cls: "ds-carousel-slide",
+          children: [{
+            tag: "div",
+            cls: "ds-cols",
+            s: { "--cols": "1fr 1fr", "--gap": "24px" },
+            children: [
+              imageSlot(n),
+              { tag: "div", cls: "ds-box", children: [
+                { tag: "h3", t: "Título do slide " + n },
+                { tag: "p", t: "Clique para editar este texto." }
+              ] }
+            ]
+          }]
+        }))
+      }),
       callout: () => ({ tag: "div", cls: "callout", children: [{ tag: "p", t: "Destaque ou observação importante." }] }),
       video: () => ({ tag: "div", cls: "ds-video-block", children: [
         { tag: "div", cls: "img-slot ds-video-poster", t: "Miniatura do YouTube (adicione o link)", s: { "aspect-ratio": "16 / 9", "min-height": "180px" } },

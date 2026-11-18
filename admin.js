@@ -33,13 +33,19 @@
     "margin-top", "margin-right", "margin-bottom", "margin-left", "padding-top", "padding-right", "padding-bottom", "padding-left",
     "border-top-left-radius", "border-top-right-radius", "border-bottom-right-radius", "border-bottom-left-radius",
     "aspect-ratio", "align-self", "justify-self", "align-items", "justify-content", "min-width", "max-height",
-    "--cols", "--gap", "object-position"]);
+    "--cols", "--gap", "--tc-slide-card-width", "--tc-slide-columns", "--tc-slide-gap",
+    "--tc-slide-image-column", "--tc-slide-copy-column", "--tc-slide-image-width",
+    "--tc-slide-image-max-height", "--tc-slide-copy-width", "--tc-scene-columns",
+    "--tc-scene-gap", "--tc-scene-image-left", "--tc-scene-image-width",
+    "--tc-scene-copy-column", "object-position"]);
   const NOTEXT_TAGS = new Set(["BUTTON", "IMG", "INPUT", "SELECT", "TEXTAREA", "HR", "BR", "TABLE", "TBODY", "TR", "UL", "OL", "AUDIO"]);
   const FONTS = [["Padrão", "var(--font-ui)"], ["Título (serifada)", "var(--font-display)"], ["Código", "monospace"]];
   const VAULT_KEY = "ds_admin_vault";
   const SHORT = new Set(["margin", "padding", "border-radius", "border-width", "gap"]);
   const FITS = ["cover", "contain", "fill"];
-  const STYLE_LAYOUT_PROPS = new Set(["position", "left", "top", "width", "height", "min-width", "max-width", "min-height", "max-height", "z-index", "transform", "margin", "margin-top", "margin-right", "margin-bottom", "margin-left"]);
+  const STYLE_LAYOUT_PROPS = new Set(["position", "left", "top", "width", "height", "min-width", "max-width", "min-height", "max-height", "z-index", "transform", "margin", "margin-top", "margin-right", "margin-bottom", "margin-left",
+    "--tc-slide-card-width", "--tc-slide-columns", "--tc-slide-gap", "--tc-slide-image-column", "--tc-slide-copy-column", "--tc-slide-image-width", "--tc-slide-image-max-height", "--tc-slide-copy-width",
+    "--tc-scene-columns", "--tc-scene-gap", "--tc-scene-image-left", "--tc-scene-image-width", "--tc-scene-copy-column"]);
 
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
@@ -81,7 +87,7 @@
   let editing = false, sel = null, session = null, panel = null, bar = null, dropLine = null, bgStyle = null, siteStyle = null, responsiveStyle = null, animationStyle = null, drag = null;
   let timerTicker = null;
   let siteRefreshTimer = null;
-  let moveMode = false;
+  let moveMode = false, siteInteractionsPaused = false;
   let lastGesture = 0, handles = null, guideV = null, guideH = null, rs = null, panMode = false, bgPan = false, ro = null;
 
   /* ---------- utilidades de DOM ---------- */
@@ -89,6 +95,8 @@
   const dchildren = e => Array.from(e.children).filter(c => c.dataset && c.dataset.b);
   const isLeaf = e => !e.querySelector("[data-b]");
   const isSlot = e => e.matches(SLOTCLS) || !!(content.ops[e.dataset.b] || {}).img;
+  const isComponentSlide = e => e.classList.contains("elem") && e.parentElement &&
+    e.parentElement.classList.contains("tc-carousel") && e.parentElement.classList.contains("elem-row");
   const hasImg = e => !!(content.ops[e.dataset.b] || {}).img;
   const isProtected = e => e.classList.contains("page") || e.tagName === "HEADER" || e.tagName === "FOOTER" || e.tagName === "MAIN";
   const pageOf = e => { const p = e.closest(".page"); return p ? p.id : "site"; };
@@ -646,6 +654,15 @@
     const id = e.dataset.b, o = op(id); o.s = o.s || {};
     if (val === null || val === undefined || val === "") { delete o.s[prop]; e.style.removeProperty(prop); }
     else { if (!okCss(prop, val)) return; o.s[prop] = val; e.style.setProperty(prop, val); }
+    if (isComponentSlide(e) && prop === "width") {
+      if (val === null || val === undefined || val === "") {
+        delete o.s["--tc-slide-card-width"];
+        e.style.removeProperty("--tc-slide-card-width");
+      } else {
+        o.s["--tc-slide-card-width"] = val;
+        e.style.setProperty("--tc-slide-card-width", val);
+      }
+    }
     if (!Object.keys(o.s).length) delete o.s;
     cleanOp(id); syncSharedStyle(e); fixFree(); syncSize(e); markDirty(); placeBar();
   }
@@ -811,6 +828,31 @@
     if (ev.shiftKey && sel && t !== sel) { ev.preventDefault(); ev.stopImmediatePropagation(); toggleLink(t); return; }
     select(t); if (curTab !== "item" && curTab !== "add") showTab("item");
   }, true);
+  document.addEventListener("click", ev => {
+    if (!editing || !siteInteractionsPaused || ev.target.closest(".adm-panel,.adm-modal,.adm-backdrop,.adm-bar,.adm-handles")) return;
+    if (!ev.target.isContentEditable) ev.preventDefault();
+    ev.stopImmediatePropagation();
+  }, true);
+  document.addEventListener("keydown", ev => {
+    if (!editing || !siteInteractionsPaused || ev.ctrlKey || ev.metaKey ||
+      ev.target.closest(".adm-panel,.adm-modal,.adm-backdrop,.adm-bar") ||
+      ev.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(ev.target.tagName)) return;
+    const targetItem = ev.target.closest("[data-b]");
+    if (sel && targetItem === sel && /^Arrow/.test(ev.key)) { ev.stopPropagation(); return; }
+    if (!ev.target.closest("a,button,[role='button'],[data-go],.tc-carousel,.tc-character-stage,.tc-scene-stage,#grid,#atb,#skill-pop,.pad,[data-cmd]")) return;
+    if (["Enter", " ", "ArrowLeft", "ArrowRight"].includes(ev.key)) {
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      return;
+    }
+    if (/^[wasdqe]$/i.test(ev.key)) { ev.preventDefault(); ev.stopImmediatePropagation(); }
+  }, true);
+  ["pointerdown", "mousedown"].forEach(type => document.addEventListener(type, ev => {
+    if (!editing || !siteInteractionsPaused || moveMode || panMode || bgPan ||
+      ev.target.closest(".adm-panel,.adm-modal,.adm-backdrop,.adm-bar,.adm-handles") ||
+      ev.target.isContentEditable) return;
+    ev.stopImmediatePropagation();
+  }, true));
   document.addEventListener("pointerdown", ev => {
     if (!editing || !moveMode || ev.button !== 0 ||
       ev.target.closest(".adm-panel,.adm-modal,.adm-backdrop,.adm-bar,.adm-handles,a,button,input,select,textarea")) return;
@@ -877,24 +919,26 @@
     handles = mk("div", "adm-handles");
     ["nw", "n", "ne", "e", "se", "s", "sw", "w"].forEach(h => { const d = mk("i", "adm-h adm-h-" + h); d.dataset.h = h; handles.appendChild(d); });
     document.body.appendChild(handles);
-    handles.addEventListener("pointerdown", ev => { const h = ev.target.closest("[data-h]"); if (h) startResize(ev, h.dataset.h); });
+    handles.addEventListener("pointerdown", ev => { const h = ev.target.closest("[data-h]"); if (h) startResize(ev, h.dataset.h, h); });
     guideV = mk("div", "adm-guide adm-guide-v"); guideH = mk("div", "adm-guide adm-guide-h"); document.body.append(guideV, guideH);
     if (window.ResizeObserver) ro = new ResizeObserver(() => placeBar());
   }
   const resizable = e => !isProtected(e) && !isAtomic(e) && !e.matches(".ds-anchor") && !/^(TD|TH|TR|TBODY|LI|TABLE|UL|OL)$/.test(e.tagName);
-  function startResize(ev, h) {
+  function startResize(ev, h, handle) {
     const e = sel; if (!e || !resizable(e)) return;
     ev.preventDefault(); ev.stopPropagation();
+    handle.setPointerCapture(ev.pointerId);
     const r = e.getBoundingClientRect(), par = e.parentElement, pr = par.getBoundingClientRect();
     const abs = e.style.position === "absolute";
-    rs = { el: e, h, x0: ev.clientX, y0: ev.clientY, w0: r.width, h0: r.height, pb: parentBox(e), abs,
+    rs = { el: e, h, handle, pointerId: ev.pointerId, x0: ev.clientX, y0: ev.clientY, w0: r.width, h0: r.height, pb: parentBox(e), abs,
       l0: r.left - pr.left - par.clientLeft, t0: r.top - pr.top - par.clientTop, img: hasImg(e), hasAspect: !!e.style.aspectRatio, hasH: !!e.style.height };
     document.body.classList.add("ds-moving");
     window.addEventListener("pointermove", onResizeMove);
-    window.addEventListener("pointerup", onResizeEnd, { once: true });
+    window.addEventListener("pointerup", onResizeEnd);
+    window.addEventListener("pointercancel", onResizeEnd);
   }
   function onResizeMove(ev) {
-    if (!rs) return;
+    if (!rs || ev.pointerId !== rs.pointerId) return;
     const { el: e, h, pb, abs } = rs;
     const dx = ev.clientX - rs.x0, dy = ev.clientY - rs.y0;
     const E = h.includes("e"), W = h.includes("w"), N = h.includes("n"), S = h.includes("s");
@@ -920,8 +964,12 @@
     if (abs) { if (W) setS(e, "left", r1(L / pb.w * 100) + "%"); if (N) setS(e, "top", r1(T / pb.h * 100) + "%"); }
     placeBar();
   }
-  function onResizeEnd() {
+  function onResizeEnd(ev) {
+    if (!rs || ev.pointerId !== rs.pointerId) return;
     window.removeEventListener("pointermove", onResizeMove);
+    window.removeEventListener("pointerup", onResizeEnd);
+    window.removeEventListener("pointercancel", onResizeEnd);
+    if (rs.handle.hasPointerCapture(rs.pointerId)) rs.handle.releasePointerCapture(rs.pointerId);
     document.body.classList.remove("ds-moving"); rs = null; lastGesture = performance.now(); buildProps(); placeBar();
   }
   /* mover a imagem dentro da moldura (modo ✋) */
@@ -1190,6 +1238,9 @@
   function removeAdded(e) {
     dchildren(e).forEach(removeAdded);
     const id = e.dataset.b;
+    if (e.tcCarouselControls) e.tcCarouselControls.remove();
+    if (e.tcCarouselSelectorGroup) e.tcCarouselSelectorGroup.remove();
+    if (e.tcSceneControls) e.tcSceneControls.remove();
     delete content.add[id]; delete content.ops[id]; delete content.order[id]; nodes.delete(id);
     const p = e.parentElement; e.remove(); if (p) recordOrder(p.closest("[data-b]") === p ? p : p.closest("[data-b]"));
   }
@@ -1244,7 +1295,7 @@
       </div>
       <div class="adm-toolbar">
         <div class="adm-toolgroup"><button type="button" id="adm-undo" title="Desfazer (Ctrl+Z)">↶</button><button type="button" id="adm-redo" title="Refazer (Ctrl+Shift+Z)">↷</button></div>
-        <div class="adm-toolgroup"><button type="button" id="adm-move-mode" title="Ativar para arrastar elementos diretamente no canvas">↔ <span>Mover</span></button><button type="button" id="adm-anim-open" title="Abrir os efeitos do elemento selecionado">✧</button><button type="button" id="adm-anim-preview" title="Reproduzir a animação do elemento selecionado">▶</button></div>
+        <div class="adm-toolgroup"><button type="button" id="adm-move-mode" title="Ativar para arrastar elementos diretamente no canvas">↔ <span>Mover</span></button><button type="button" id="adm-interaction-toggle" aria-pressed="false" title="Pausar interações do site para testar o layout">▶ <span>Teste</span></button><button type="button" id="adm-anim-open" title="Abrir os efeitos do elemento selecionado">✧</button><button type="button" id="adm-anim-preview" title="Reproduzir a animação do elemento selecionado">▶</button></div>
         <div class="adm-toolgroup adm-view-tools" aria-label="Pré-visualização">
           <button type="button" data-view="desktop" title="Visualização desktop">▭</button>
           <button type="button" data-view="tablet" title="Prévia tablet">▯</button>
@@ -1324,6 +1375,15 @@
       $("#adm-move-mode", panel).classList.toggle("on", moveMode);
       document.body.classList.toggle("ds-move-mode", moveMode);
       note(moveMode ? "Mover ativado: arraste um item diretamente no canvas." : "Mover desativado: clique para selecionar ou editar texto.");
+    });
+    $("#adm-interaction-toggle", panel).addEventListener("click", () => {
+      siteInteractionsPaused = !siteInteractionsPaused;
+      const toggle = $("#adm-interaction-toggle", panel);
+      toggle.classList.toggle("on", siteInteractionsPaused);
+      toggle.setAttribute("aria-pressed", String(siteInteractionsPaused));
+      toggle.innerHTML = siteInteractionsPaused ? "⏸ <span>Teste</span>" : "▶ <span>Teste</span>";
+      toggle.title = siteInteractionsPaused ? "Ativar as interações do site no canvas" : "Pausar interações do site para testar o layout";
+      note(siteInteractionsPaused ? "Interações do site pausadas. O editor continua funcionando." : "Interações do site ativadas.");
     });
     $("#adm-anim-preview", panel).disabled = true;
     $("#adm-anim-open", panel).addEventListener("click", () => {
@@ -1931,6 +1991,68 @@
         });
         s.appendChild(row("Data e hora finais", input));
         s.appendChild(mk("p", "adm-small", "A contagem usa o fuso horário local e atualiza automaticamente."));
+      }, true));
+    }
+
+    if (isComponentSlide(e)) {
+      box.appendChild(buildSection("Layout do carrossel", s => {
+        const side = e.style.getPropertyValue("--tc-slide-image-column") === "2" ? "right" : "left";
+        s.appendChild(row("Posição da imagem", selInput([["left", "Imagem à esquerda"], ["right", "Imagem à direita"]], side, value => {
+          setS(e, "--tc-slide-image-column", value === "right" ? "2" : "1");
+          setS(e, "--tc-slide-copy-column", value === "right" ? "1" : "2");
+          setS(e, "--tc-slide-columns", value === "right"
+            ? "minmax(0, 1.1fr) minmax(0, .9fr)"
+            : "minmax(0, .9fr) minmax(0, 1.1fr)");
+        })));
+        const range = (title, prop, min, max, initial, unit) => {
+          const input = mk("input");
+          input.type = "range"; input.min = min; input.max = max;
+          const parsed = Number.parseFloat(e.style.getPropertyValue(prop));
+          input.value = Number.isFinite(parsed) ? parsed : initial;
+          const value = mk("em", "", input.value + unit);
+          const wrap = mk("span", "adm-rn"); wrap.append(input, value);
+          input.addEventListener("input", () => {
+            value.textContent = input.value + unit;
+            if (prop === "--tc-slide-card-width") setS(e, "width", input.value + unit);
+            else setS(e, prop, input.value + unit);
+          });
+          s.appendChild(row(title, wrap));
+        };
+        range("Largura da imagem", "--tc-slide-image-width", 25, 100, 100, "%");
+        range("Altura máxima da imagem", "--tc-slide-image-max-height", 100, 520, 320, "px");
+        range("Espaço entre imagem e texto", "--tc-slide-gap", 8, 64, 32, "px");
+        range("Largura do cartão", "--tc-slide-card-width", 60, 100, 100, "%");
+        s.appendChild(mk("p", "adm-small", "O texto continua independente da imagem; selecione-o no canvas para editar conteúdo, fonte e aparência."));
+      }, true));
+    }
+
+    if (e.matches(".tc-scene-stage")) {
+      box.appendChild(buildSection("Layout do carrossel", s => {
+        const side = e.style.getPropertyValue("--tc-scene-copy-column") === "1" ? "left" : "right";
+        s.appendChild(row("Posição do texto", selInput([["right", "Texto à direita"], ["left", "Texto à esquerda"]], side, value => {
+          const right = value === "right";
+          setS(e, "--tc-scene-image-left", right ? "0%" : "39%");
+          setS(e, "--tc-scene-copy-column", right ? "2" : "1");
+          setS(e, "--tc-scene-columns", right
+            ? "minmax(0, 1.65fr) minmax(280px, .9fr)"
+            : "minmax(280px, .9fr) minmax(0, 1.65fr)");
+        })));
+        const range = (title, prop, min, max, initial, unit) => {
+          const input = mk("input");
+          input.type = "range"; input.min = min; input.max = max;
+          const parsed = Number.parseFloat(e.style.getPropertyValue(prop));
+          input.value = Number.isFinite(parsed) ? parsed : initial;
+          const value = mk("em", "", input.value + unit);
+          const wrap = mk("span", "adm-rn"); wrap.append(input, value);
+          input.addEventListener("input", () => {
+            value.textContent = input.value + unit;
+            setS(e, prop, input.value + unit);
+          });
+          s.appendChild(row(title, wrap));
+        };
+        range("Largura da imagem", "--tc-scene-image-width", 35, 75, 61, "%");
+        range("Espaço entre colunas", "--tc-scene-gap", 8, 64, 32, "px");
+        s.appendChild(mk("p", "adm-small", "Selecione uma imagem do cenário para ajustar corte, zoom e enquadramento; selecione o texto para editar seus campos."));
       }, true));
     }
 

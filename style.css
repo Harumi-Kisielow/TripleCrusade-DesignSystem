@@ -649,6 +649,7 @@ body.editing .nav { min-width: 0; max-width: calc(100% - 180px); flex-wrap: wrap
 }
 .adm-panel .adm-toolbar button:disabled { opacity: .38; }
 .adm-panel .adm-toolbar #adm-move-mode { white-space: nowrap; }
+.adm-panel .adm-toolbar #adm-interaction-toggle { white-space: nowrap; }
 .adm-view-tools { padding-left: 5px; border-left: 1px solid #383840; }
 .adm-panel .adm-view-tools button.on { border-color: var(--gold); background: #352e1b; color: var(--gold); }
 .adm-pagebar {
