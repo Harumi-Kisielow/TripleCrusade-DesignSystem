@@ -1841,16 +1841,17 @@
       },
       "s": {
         "min-height": "180px",
-        "width": "86.2%",
+        "width": "100%",
         "aspect-ratio": "1.778"
       },
       "img": {
-        "path": "imgs/componentes/pitching-de-conceito-tvjh.png"
+        "path": "imgs/componentes/pitching-de-conceito-tvjh.png",
+        "spotlight": true
       },
       "frame": {
         "z": 1.05,
         "x": 40,
-        "y": 18
+        "y": 7
       }
     },
     "nmwao61gvzbbk": {
