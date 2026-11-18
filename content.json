@@ -247,7 +247,7 @@
       },
       "s": {
         "width": "100%",
-        "height": "239px"
+        "height": "250px"
       }
     },
     "b25": {
@@ -309,6 +309,9 @@
         "duration": 500,
         "delay": 0,
         "effect": "slide"
+      },
+      "hover": {
+        "effect": "lift"
       }
     },
     "b44": {
@@ -389,7 +392,8 @@
         "duration": 500,
         "delay": 0,
         "effect": "rise"
-      }
+      },
+      "hide": 1
     },
     "b169": {
       "img": {
@@ -400,7 +404,8 @@
         "duration": 500,
         "delay": 0,
         "effect": "rise"
-      }
+      },
+      "hide": 1
     },
     "b170": {
       "hide": 1
@@ -442,7 +447,8 @@
         "duration": 500,
         "delay": 0,
         "effect": "rise"
-      }
+      },
+      "hide": 1
     },
     "b191": {
       "img": {
@@ -453,7 +459,8 @@
         "duration": 500,
         "delay": 0,
         "effect": "rise"
-      }
+      },
+      "hide": 1
     },
     "b192": {
       "img": {
@@ -464,7 +471,8 @@
         "duration": 500,
         "delay": 0,
         "effect": "rise"
-      }
+      },
+      "hide": 1
     },
     "b200": {
       "t": {
@@ -668,9 +676,6 @@
       }
     },
     "b38": {
-      "hide": 1
-    },
-    "b85": {
       "hide": 1
     },
     "b105": {
@@ -1833,16 +1838,17 @@
       },
       "s": {
         "min-height": "180px",
-        "width": "86.2%",
+        "width": "100%",
         "aspect-ratio": "1.778"
       },
       "img": {
-        "path": "imgs/componentes/pitching-de-conceito-tvjh.png"
+        "path": "imgs/componentes/pitching-de-conceito-tvjh.png",
+        "spotlight": true
       },
       "frame": {
         "z": 1.05,
         "x": 40,
-        "y": 18
+        "y": 7
       }
     },
     "nmwao61gvzbbk": {
@@ -1897,7 +1903,14 @@
         "path": "imgs/presskit/captura-de-tela-2026-09-20-204511-t2k2.png",
         "spotlight": true
       }
-    }
+    },
+    "b39": {
+      "s": {
+        "width": "100%",
+        "height": "403px"
+      }
+    },
+    "b9": {}
   },
   "order": {
     "b478": [
