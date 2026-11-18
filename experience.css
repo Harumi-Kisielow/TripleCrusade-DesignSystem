@@ -552,6 +552,10 @@ body.tc-page-mode .tc-carousel {
   scroll-snap-type: x mandatory;
   scrollbar-color: var(--gold) rgba(255,255,255,.08);
 }
+body.tc-page-mode .tc-carousel.tc-carousel--paused {
+  overflow-x: hidden;
+  scroll-snap-type: none;
+}
 body.tc-page-mode .tc-carousel > * { flex: 0 0 min(82%, 720px); scroll-snap-align: start; }
 body.tc-page-mode .tc-carousel .img-slot { min-height: 240px; }
 body.tc-page-mode .tc-carousel .img-slot.has-img { min-height: 0; overflow: hidden; }
@@ -836,6 +840,8 @@ body.tc-page-mode .tc-scene-stage {
   border: 1px solid rgba(232,185,60,.32);
   box-shadow: 0 24px 70px rgba(0,0,0,.32);
 }
+body.tc-page-mode .tc-scene-stage.tc-carousel--paused .tc-scene-controls,
+body.tc-page-mode .tc-scene-stage.tc-carousel--paused .tc-scene-tabs { display: none !important; }
 body.tc-page-mode .tc-scene-stage > .tc-scene-slide {
   position: absolute;
   top: 0;

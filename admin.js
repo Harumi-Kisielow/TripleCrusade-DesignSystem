@@ -110,11 +110,13 @@
   };
   function leafText(e) {
     const c = e.cloneNode(true);
+    $$(".ds-bg-layer", c).forEach(x => x.remove());
     $$(".slot-img", c).forEach(x => x.remove());
     return c.textContent;
   }
   function leafHtml(e) {
     const c = e.cloneNode(true);
+    $$(".ds-bg-layer", c).forEach(x => x.remove());
     $$(".slot-img", c).forEach(x => x.remove());
     $$(".slot-orig", c).forEach(w => w.replaceWith(...Array.from(w.childNodes)));
     c.removeAttribute("contenteditable");
@@ -331,18 +333,36 @@
   const bgDims = new Map();
   function setBgImg(e, b) {
     if (b && safePath(b.path)) {
-      const d = Math.min(0.9, Math.max(0, Number(b.dim) || 0));
+      const dim = Math.min(0.9, Math.max(0, Number(b.dim) || 0));
       const src = (previews.get(b.path) || b.path).replace(/"/g, "%22");
-      e.style.backgroundImage = `linear-gradient(rgba(0,0,0,${d}),rgba(0,0,0,${d})),url("${src}")`;
-      e.style.backgroundSize = b.size === "stretch" ? "100% 100%" : b.size === "free" ? (Math.min(400, Math.max(10, Number(b.w) || 100))) + "% auto" : ["cover", "contain", "auto"].includes(b.size) ? b.size : "cover";
-      e.classList.toggle("ds-art", !!b.art);
+      const size = b.size === "stretch" ? "100% 100%" : b.size === "free" ? (Math.min(400, Math.max(10, Number(b.w) || 100))) + "% auto" : ["cover", "contain", "auto"].includes(b.size) ? b.size : "cover";
       const px = b.x === undefined ? 50 : Math.min(100, Math.max(0, Number(b.x) || 0)), py = b.y === undefined ? 50 : Math.min(100, Math.max(0, Number(b.y) || 0));
-      e.style.backgroundPosition = px + "% " + py + "%";
+      const brightness = Math.min(2, Math.max(0.25, Number(b.brightness) || 1));
+      const blur = Math.min(24, Math.max(0, Number(b.blur) || 0));
+      const zoom = Math.min(4, Math.max(1, Number(b.zoom) || 1));
+      let layer = $(":scope > .ds-bg-layer", e);
+      if (!layer) {
+        layer = mk("span", "ds-bg-layer");
+        layer.setAttribute("aria-hidden", "true");
+        layer.contentEditable = "false";
+        e.prepend(layer);
+      }
+      layer.style.inset = blur ? "-" + (blur * 2) + "px" : "0";
+      layer.style.borderRadius = "inherit";
+      layer.style.clipPath = "inherit";
+      layer.style.backgroundImage = `linear-gradient(rgba(0,0,0,${dim}),rgba(0,0,0,${dim})),url("${src}")`;
+      layer.style.backgroundSize = "100% 100%, " + size;
+      layer.style.backgroundPosition = "center, " + px + "% " + py + "%";
+      layer.style.backgroundRepeat = "no-repeat";
+      layer.style.filter = `brightness(${brightness}) blur(${blur}px)`;
+      layer.style.transform = `scale(${zoom})`;
+      e.classList.add("ds-bgimg");
+      e.classList.toggle("ds-art", !!b.art);
       if (!bgDims.has(b.path)) { const im = new Image(); im.onload = () => bgDims.set(b.path, { w: im.naturalWidth, h: im.naturalHeight }); im.src = (previews.get(b.path) || b.path); }
-      e.style.backgroundRepeat = "no-repeat";
     } else {
-      ["backgroundImage", "backgroundSize", "backgroundPosition", "backgroundRepeat"].forEach(p => e.style[p] = "");
-      e.classList.remove("ds-art");
+      const layer = $(":scope > .ds-bg-layer", e);
+      if (layer) layer.remove();
+      e.classList.remove("ds-art", "ds-bgimg");
     }
   }
   const HEX_RE = /^#[0-9a-f]{6}$/i;
@@ -359,6 +379,8 @@
     }
     if (o.s) Object.entries(o.s).sort((a, b) => SHORT.has(b[0]) - SHORT.has(a[0])).forEach(([p, v]) => { if (okCss(p, v)) e.style.setProperty(p, v); });
     e.classList.toggle("ds-hidden", !!o.hide);
+    if (o.carouselPaused) e.dataset.tcCarouselPaused = "true";
+    else delete e.dataset.tcCarouselPaused;
     if (o.img) {
       const oi = origInfo.get(id);
       if (o.img.h === undefined || (oi && oi.h === o.img.h)) setImage(e, o.img);
@@ -673,7 +695,9 @@
 
   /* ---------- texto editável ---------- */
   function onTextInput(e) {
-    const id = e.dataset.b, oi = origInfo.get(id), v = sanitize(e.innerHTML);
+    const id = e.dataset.b, oi = origInfo.get(id), copy = e.cloneNode(true);
+    $$(".ds-bg-layer", copy).forEach(x => x.remove());
+    const v = sanitize(copy.innerHTML);
     const o = op(id);
     if (oi && v === oi.html) delete o.t;
     else o.t = oi ? { h: oi.h, v } : { v };
@@ -762,9 +786,9 @@
   function chooseBgFor(e) {
     pickImage(f => {
       const path = registerImage(f, pageOf(e));
-      const o = op(e.dataset.b); const prev = o.bgimg || {};
+      const o = op(e.dataset.b); const prev = Object.assign({}, o.bgimg || {});
       const btnLike = !prev.path && e.matches("button,[role=button],.stone-btn,.btn,.card,.gate-card,a");
-      o.bgimg = { path, dim: prev.dim || 0, size: prev.size || (btnLike ? "stretch" : "cover") };
+      o.bgimg = Object.assign({}, prev, { path, dim: prev.dim || 0, size: prev.size || (btnLike ? "stretch" : "cover") });
       if (prev.art || btnLike) o.bgimg.art = true;
       setBgImg(e, o.bgimg); syncSharedStyle(e); buildProps(); markDirty();
     });
@@ -990,12 +1014,13 @@
   function bgFree(e, b) {
     const d = bgDims.get(b.path), bw = e.clientWidth, bh = e.clientHeight; if (!d) return null;
     let iw, ih;
+    const zoom = Math.min(4, Math.max(1, Number(b.zoom) || 1));
     if (b.size === "stretch") return null;
     if (b.size === "free") { iw = bw * (Math.min(400, Math.max(10, Number(b.w) || 100)) / 100); ih = iw * d.h / d.w; }
     else if (b.size === "contain") { const k = Math.min(bw / d.w, bh / d.h); iw = d.w * k; ih = d.h * k; }
     else if (b.size === "auto") { iw = d.w; ih = d.h; }
     else { const k = Math.max(bw / d.w, bh / d.h); iw = d.w * k; ih = d.h * k; }
-    return { x: bw - iw, y: bh - ih };
+    return { x: bw - iw * zoom, y: bh - ih * zoom };
   }
   document.addEventListener("pointerdown", ev => {
     if (!editing || !bgPan || !sel || ev.target.closest(".adm-panel,.adm-bar,.adm-handles") || !sel.contains(ev.target)) return;
@@ -1013,10 +1038,9 @@
   }, true);
   document.addEventListener("wheel", ev => {
     if (!editing || !bgPan || !sel || !sel.contains(ev.target)) return;
-    const b = (content.ops[sel.dataset.b] || {}).bgimg; if (!b) return;
+    const b = op(sel.dataset.b).bgimg; if (!b) return;
     ev.preventDefault();
-    if (b.size !== "free") { b.w = 100; b.size = "free"; }
-    b.w = Math.min(400, Math.max(10, Math.round((Number(b.w) || 100) + (ev.deltaY < 0 ? 5 : -5))));
+    b.zoom = Math.min(4, Math.max(1, Math.round(((Number(b.zoom) || 1) + (ev.deltaY < 0 ? 0.05 : -0.05)) * 100) / 100));
     setBgImg(sel, b); markDirty(); buildProps();
   }, { passive: false });
   document.addEventListener("wheel", ev => {
@@ -1295,7 +1319,7 @@
       </div>
       <div class="adm-toolbar">
         <div class="adm-toolgroup"><button type="button" id="adm-undo" title="Desfazer (Ctrl+Z)">↶</button><button type="button" id="adm-redo" title="Refazer (Ctrl+Shift+Z)">↷</button></div>
-        <div class="adm-toolgroup"><button type="button" id="adm-move-mode" title="Ativar para arrastar elementos diretamente no canvas">↔ <span>Mover</span></button><button type="button" id="adm-interaction-toggle" aria-pressed="false" title="Pausar interações do site para testar o layout">▶ <span>Teste</span></button><button type="button" id="adm-anim-open" title="Abrir os efeitos do elemento selecionado">✧</button><button type="button" id="adm-anim-preview" title="Reproduzir a animação do elemento selecionado">▶</button></div>
+        <div class="adm-toolgroup"><button type="button" id="adm-move-mode" title="Ativar para arrastar elementos diretamente no canvas">↔ <span>Mover</span></button><button type="button" id="adm-interaction-toggle" aria-pressed="false" title="Pausar interações do site para testar o layout">⏸ <span>Pausar</span></button><button type="button" id="adm-anim-open" title="Abrir os efeitos do elemento selecionado">✧</button><button type="button" id="adm-anim-preview" title="Reproduzir a animação do elemento selecionado">▶</button></div>
         <div class="adm-toolgroup adm-view-tools" aria-label="Pré-visualização">
           <button type="button" data-view="desktop" title="Visualização desktop">▭</button>
           <button type="button" data-view="tablet" title="Prévia tablet">▯</button>
@@ -1381,8 +1405,8 @@
       const toggle = $("#adm-interaction-toggle", panel);
       toggle.classList.toggle("on", siteInteractionsPaused);
       toggle.setAttribute("aria-pressed", String(siteInteractionsPaused));
-      toggle.innerHTML = siteInteractionsPaused ? "⏸ <span>Teste</span>" : "▶ <span>Teste</span>";
-      toggle.title = siteInteractionsPaused ? "Ativar as interações do site no canvas" : "Pausar interações do site para testar o layout";
+      toggle.innerHTML = siteInteractionsPaused ? "▶ <span>Retomar</span>" : "⏸ <span>Pausar</span>";
+      toggle.title = siteInteractionsPaused ? "Retomar as interações do site no canvas" : "Pausar interações do site para testar o layout";
       note(siteInteractionsPaused ? "Interações do site pausadas. O editor continua funcionando." : "Interações do site ativadas.");
     });
     $("#adm-anim-preview", panel).disabled = true;
@@ -1942,6 +1966,29 @@
     box.appendChild(mk("p", "adm-note", ""));
     box.lastChild.id = "adm-note";
     if (!isProtected(e)) {
+      box.appendChild(btn("Excluir item selecionado", "Itens originais ficam ocultos e podem ser restaurados; itens adicionados são removidos.", () => removeItem(e), "danger"));
+    }
+    if (e.matches(".tc-carousel,.tc-scene-stage")) {
+      box.appendChild(buildSection("Comportamento do carrossel", s => {
+        const paused = mk("input");
+        paused.type = "checkbox";
+        paused.checked = !!o.carouselPaused;
+        paused.addEventListener("change", () => {
+          const current = op(id);
+          if (paused.checked) current.carouselPaused = true;
+          else delete current.carouselPaused;
+          if (paused.checked) e.dataset.tcCarouselPaused = "true";
+          else delete e.dataset.tcCarouselPaused;
+          e.classList.toggle("tc-carousel--paused", paused.checked);
+          cleanOp(id);
+          refreshSiteFeatures();
+          markDirty();
+        });
+        s.appendChild(row("Pausar navegação e interação", paused));
+        s.appendChild(mk("p", "adm-small", "Quando ativado, setas, seletores e teclado não mudam o slide. O slide atual continua visível."));
+      }, true));
+    }
+    if (!isProtected(e)) {
       const lk = mk("div", "adm-link");
       if (linked.size) {
         lk.appendChild(mk("span", "", "🔗 " + linked.size + " item(ns) copiam o estilo deste (tamanho, fundo, borda, cores)."));
@@ -2195,9 +2242,25 @@
           const dim = mk("input"); dim.type = "range"; dim.min = 0; dim.max = 90; dim.value = Math.round((o.bgimg.dim || 0) * 100);
           dim.addEventListener("input", () => { o.bgimg.dim = dim.value / 100; setBgImg(e, o.bgimg); markDirty(); });
           st.appendChild(row("Escurecer", dim));
+          const effectRange = (key, title, min, max, step, scale, unit) => {
+            const input = mk("input");
+            input.type = "range"; input.min = min; input.max = max; input.step = step;
+            input.value = Math.round((Number(o.bgimg[key]) || (key === "brightness" || key === "zoom" ? 1 : 0)) * scale);
+            const value = mk("em", "", input.value + unit);
+            const wrap = mk("span", "adm-rn"); wrap.append(input, value);
+            input.addEventListener("input", () => {
+              value.textContent = input.value + unit;
+              o.bgimg[key] = Number(input.value) / scale;
+              setBgImg(e, o.bgimg); markDirty();
+            });
+            st.appendChild(row(title, wrap));
+          };
+          effectRange("brightness", "Brilho", 25, 200, 5, 100, "%");
+          effectRange("blur", "Desfoque", 0, 24, 1, 1, "px");
+          effectRange("zoom", "Zoom", 100, 400, 5, 100, "%");
           st.appendChild(row("Tamanho", selInput([["stretch", "Esticar (arte do botão)"], ["free", "Livre (zoom e posição)"], ["cover", "Preencher (corta)"], ["contain", "Caber inteira"], ["auto", "Original"]], o.bgimg.size || "cover", v => { o.bgimg.size = v; setBgImg(e, o.bgimg); markDirty(); })));
           const pos = (k, lab, mn, mx, def) => { const i = mk("input"); i.type = "range"; i.min = mn; i.max = mx; i.value = o.bgimg[k] === undefined ? def : o.bgimg[k]; i.addEventListener("input", () => { o.bgimg[k] = Number(i.value); setBgImg(e, o.bgimg); markDirty(); }); st.appendChild(row(lab, i)); };
-          if (o.bgimg.size === "free") pos("w", "Zoom (%)", 10, 400, 100);
+          if (o.bgimg.size === "free") pos("w", "Largura no modo livre (%)", 10, 400, 100);
           pos("x", "Posição ←→", 0, 100, 50); pos("y", "Posição ↑↓", 0, 100, 50);
           st.appendChild(btn(bgPan ? "✋ Arrastando a imagem de fundo (clique p/ parar)" : "✋ Arrastar a imagem de fundo", "Ligue e arraste sobre o botão; a roda do mouse dá zoom", () => { bgPan = !bgPan; document.body.classList.toggle("ds-pan", bgPan); buildProps(); }, bgPan ? "primary" : ""));
           const art = mk("input"); art.type = "checkbox"; art.checked = !!o.bgimg.art;

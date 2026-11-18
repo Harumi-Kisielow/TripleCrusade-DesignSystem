@@ -199,6 +199,7 @@
   function addCarousel(container, label, showCount = true) {
     if (container.dataset.tcCarousel) {
       const existingControls = container.tcCarouselControls;
+      container.classList.toggle("tc-carousel--paused", container.dataset.tcCarouselPaused === "true");
       if (existingControls && existingControls.parentNode === container.parentNode) {
         container.parentNode.insertBefore(existingControls, container);
         existingControls.classList.toggle("tc-carousel-controls--selectable", !showCount);
@@ -209,6 +210,7 @@
     }
     container.dataset.tcCarousel = "true";
     container.classList.add("tc-carousel");
+    container.classList.toggle("tc-carousel--paused", container.dataset.tcCarouselPaused === "true");
     container.tabIndex = 0;
     container.setAttribute("role", "region");
     container.setAttribute("aria-label", label);
@@ -242,7 +244,9 @@
     let items = [];
     const update = () => {
       items = Array.from(container.children).filter(item => !item.classList.contains("ds-hidden"));
-      controls.hidden = items.length < 2;
+      const paused = container.dataset.tcCarouselPaused === "true";
+      const unavailable = paused || container.classList.contains("ds-hidden");
+      controls.hidden = unavailable || items.length < 2;
       if (!items.length) {
         if (count) count.textContent = "00 / 00";
         previous.disabled = true;
@@ -252,12 +256,12 @@
       const active = items.reduce((best, item, i) =>
         Math.abs(item.getBoundingClientRect().left - container.getBoundingClientRect().left) <
         Math.abs(items[best].getBoundingClientRect().left - container.getBoundingClientRect().left) ? i : best, 0);
-      previous.disabled = active <= 0;
-      next.disabled = active >= items.length - 1;
+      previous.disabled = unavailable || active <= 0;
+      next.disabled = unavailable || active >= items.length - 1;
       if (count) count.textContent = String(active + 1).padStart(2, "0") + " / " + String(items.length).padStart(2, "0");
     };
     const move = direction => {
-      if (!items.length) return;
+      if (!items.length || container.dataset.tcCarouselPaused === "true" || container.classList.contains("ds-hidden")) return;
       const current = items.reduce((best, item, i) =>
         Math.abs(item.getBoundingClientRect().left - container.getBoundingClientRect().left) <
         Math.abs(items[best].getBoundingClientRect().left - container.getBoundingClientRect().left) ? i : best, 0);
@@ -270,7 +274,7 @@
     container.addEventListener("scroll", update, { passive: true });
     container.querySelectorAll("img").forEach(image => image.addEventListener("load", update, { once: true }));
     container.addEventListener("keydown", event => {
-      if (event.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
+      if (container.dataset.tcCarouselPaused === "true" || event.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
       if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
         event.preventDefault();
         move(event.key === "ArrowRight" ? 1 : -1);
@@ -528,6 +532,7 @@
     if (!gallery || !heading || !documents) return;
 
     gallery.classList.add("tc-scene-stage");
+    gallery.classList.toggle("tc-carousel--paused", gallery.dataset.tcCarouselPaused === "true");
     if (heading.parentElement !== gallery) gallery.appendChild(heading);
     if (documents.parentElement !== gallery) gallery.appendChild(documents);
     documents.classList.add("tc-scene-docs");
@@ -546,7 +551,8 @@
         slides.every((slide, index) => slide === gallery.tcSceneSlides[index]) &&
         articles.every((article, index) => article === gallery.tcSceneArticles[index]);
       if (unchanged) {
-        gallery.tcSceneControls.hidden = slides.length < 2;
+        const paused = gallery.dataset.tcCarouselPaused === "true";
+        gallery.tcSceneControls.hidden = paused || slides.length < 2;
         gallery.querySelectorAll(".tc-scene-tab").forEach((button, index) => {
           const title = articles[index] && articles[index].querySelector("h4");
           button.textContent = title ? title.textContent.trim() : "Cenário " + (index + 1);
@@ -600,9 +606,10 @@
     gallery.tcSceneControls = controls;
     gallery.tcSceneSlides = slides.slice();
     gallery.tcSceneArticles = articles.slice();
-    controls.hidden = slides.length < 2;
+    controls.hidden = gallery.dataset.tcCarouselPaused === "true" || slides.length < 2;
     let active = 0;
-    function select(index) {
+    function select(index, force) {
+      if (!force && gallery.dataset.tcCarouselPaused === "true") return;
       active = (index + slides.length) % slides.length;
       allSlides.forEach(slide => {
         const selected = slides[active] === slide;
@@ -618,13 +625,13 @@
       });
       buttons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === active)));
       count.textContent = String(active + 1).padStart(2, "0") + " / " + String(slides.length).padStart(2, "0");
-      previous.disabled = active === 0;
-      next.disabled = active === slides.length - 1;
+      previous.disabled = gallery.dataset.tcCarouselPaused === "true" || active === 0;
+      next.disabled = gallery.dataset.tcCarouselPaused === "true" || active === slides.length - 1;
     }
     previous.addEventListener("click", () => select(active - 1));
     next.addEventListener("click", () => select(active + 1));
     gallery.tcSceneKeyHandler = event => {
-      if (event.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
+      if (gallery.dataset.tcCarouselPaused === "true" || event.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
       if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
         event.preventDefault();
         select(active + (event.key === "ArrowRight" ? 1 : -1));
@@ -632,7 +639,7 @@
     };
     gallery.addEventListener("keydown", gallery.tcSceneKeyHandler);
     gallery.dataset.tcSceneCarousel = "true";
-    select(0);
+    select(0, true);
   }
 
   function buildComponentCarousels() {
@@ -716,6 +723,7 @@
         });
       }
       function moveTo(index) {
+        if (container.dataset.tcCarouselPaused === "true" || container.classList.contains("ds-hidden")) return;
         const currentItems = container.tcCarouselItems || items;
         const item = currentItems[Math.max(0, Math.min(currentItems.length - 1, index))];
         if (!item) return;

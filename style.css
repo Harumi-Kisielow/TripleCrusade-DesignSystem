@@ -456,6 +456,13 @@ body.ds-preview .adm-panel, body.ds-preview #admin-link { display: none; }
 @media (max-width: 720px) { .adm-preview.side-right, .adm-preview.side-left { padding: 12px; } }
 
 /* imagem como arte do botão/cartão */
+.ds-bgimg { position: relative; isolation: isolate; }
+.ds-bg-layer {
+  position: absolute;
+  z-index: -1;
+  transform-origin: center;
+  pointer-events: none;
+}
 .ds-art { background-color: transparent !important; border-color: transparent !important; box-shadow: none !important; image-rendering: auto; }
 .ds-art:hover, .ds-art.focus { filter: brightness(1.18); }
 .ds-art:active { filter: brightness(.9); }
