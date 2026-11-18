@@ -303,12 +303,13 @@
     const existing = page.querySelector(".tc-character-stage");
     if (existing) {
       if (heading.nextElementSibling !== existing) heading.after(existing);
+      if (existing.tcCharacterRefresh) existing.tcCharacterRefresh();
       return;
     }
     const characters = [
-      { name: "Chizuru", image: "imgs/personagens/chizuru.png" },
-      { name: "Axel", image: "imgs/personagens/axel.png" },
-      { name: "Harry", image: "imgs/personagens/harry.png" }
+      { id: "chizuru", name: "Chizuru", image: "imgs/personagens/chizuru.png" },
+      { id: "axel", name: "Axel", image: "imgs/personagens/axel.png" },
+      { id: "harry", name: "Harry", image: "imgs/personagens/harry.png" }
     ];
     const stage = document.createElement("section");
     stage.className = "tc-character-stage";
@@ -332,6 +333,7 @@
     name.textContent = characters[0].name;
     const description = document.createElement("p");
     description.className = "tc-character-description";
+    description.dataset.b = "tc-character-description";
     description.textContent = "A escolha do protagonista define a rota narrativa.";
     const controls = document.createElement("div");
     controls.className = "tc-character-controls";
@@ -361,10 +363,12 @@
       button.setAttribute("aria-label", character.name);
       button.setAttribute("aria-pressed", String(index === 0));
       const thumb = document.createElement("img");
+      thumb.dataset.b = "tc-character-image-" + character.id;
       thumb.src = character.image;
       thumb.alt = "";
       thumb.setAttribute("aria-hidden", "true");
       const label = document.createElement("span");
+      label.dataset.b = "tc-character-name-" + character.id;
       label.textContent = character.name;
       button.append(thumb, label);
       button.addEventListener("click", () => select(index));
@@ -375,19 +379,32 @@
     stage.append(visual, details);
     heading.after(stage);
     let active = 0;
+    function currentCharacter(index) {
+      const button = selectors[index];
+      const thumb = button.querySelector("img");
+      const label = button.querySelector("span");
+      return {
+        image: thumb.currentSrc || thumb.src,
+        name: label.textContent.trim() || "Personagem " + (index + 1)
+      };
+    }
     function select(index) {
       active = (index + characters.length) % characters.length;
-      const character = characters[active];
+      const character = currentCharacter(active);
       stage.classList.add("is-changing");
       window.setTimeout(() => {
         image.src = character.image;
         image.alt = character.name;
         name.textContent = character.name;
         counter.textContent = String(active + 1).padStart(2, "0") + " / " + String(characters.length).padStart(2, "0");
-        selectors.forEach((button, i) => button.setAttribute("aria-pressed", String(i === active)));
+        selectors.forEach((button, i) => {
+          button.setAttribute("aria-label", currentCharacter(i).name);
+          button.setAttribute("aria-pressed", String(i === active));
+        });
         requestAnimationFrame(() => stage.classList.remove("is-changing"));
       }, reducedMotion() ? 0 : 140);
     }
+    stage.tcCharacterRefresh = () => select(active);
     previous.addEventListener("click", () => select(active - 1));
     next.addEventListener("click", () => select(active + 1));
     stage.addEventListener("keydown", event => {
@@ -506,13 +523,19 @@
     if (documents.parentElement !== gallery) gallery.appendChild(documents);
     documents.classList.add("tc-scene-docs");
     const slides = Array.from(gallery.querySelectorAll(":scope > .img-slot"));
+    const articles = Array.from(documents.querySelectorAll(":scope > .doc"));
     slides.forEach(slide => slide.classList.add("tc-scene-slide"));
     gallery.tabIndex = 0;
     gallery.setAttribute("role", "region");
     gallery.setAttribute("aria-label", "Concept art de cenários");
-    if (gallery.dataset.tcSceneCarousel) return;
+    if (gallery.dataset.tcSceneCarousel) {
+      gallery.querySelectorAll(".tc-scene-tab").forEach((button, index) => {
+        const title = articles[index] && articles[index].querySelector("h4");
+        button.textContent = title ? title.textContent.trim() : "Cenário " + (index + 1);
+      });
+      return;
+    }
 
-    const articles = Array.from(documents.querySelectorAll(":scope > .doc"));
     if (!slides.length || !articles.length || slides.length !== articles.length) return;
     const controls = document.createElement("div");
     controls.className = "tc-scene-controls";
@@ -598,15 +621,30 @@
       if (!container) return;
       addCarousel(container, label, false);
       const items = Array.from(container.children).filter(item => !item.classList.contains("ds-hidden"));
-      if (!items.length) return;
-      if (container.dataset.tcSelectable) {
-        if (container.tcCarouselSync) container.tcCarouselSync();
+      if (!items.length) {
+        if (container.tcCarouselSelectorGroup) container.tcCarouselSelectorGroup.remove();
+        container.tcCarouselSelectorGroup = null;
+        container.tcCarouselItems = [];
+        container.tcCarouselSelectors = [];
+        container.tcCarouselSync = null;
+        container.dataset.tcSelectable = "";
         return;
+      }
+      if (container.dataset.tcSelectable) {
+        const sameItems = container.tcCarouselItems &&
+          container.tcCarouselItems.length === items.length &&
+          container.tcCarouselItems.every((item, index) => item === items[index]);
+        if (sameItems) {
+          if (container.tcCarouselSync) container.tcCarouselSync();
+          return;
+        }
+        if (container.tcCarouselSelectorGroup) container.tcCarouselSelectorGroup.remove();
       }
 
       container.dataset.tcSelectable = "true";
       const controls = container.tcCarouselControls;
       const selectorGroup = document.createElement("div");
+      container.tcCarouselSelectorGroup = selectorGroup;
       selectorGroup.className = "tc-carousel-selectors";
       selectorGroup.setAttribute("role", "group");
       selectorGroup.setAttribute("aria-label", "Selecionar " + label.toLowerCase());
@@ -623,14 +661,9 @@
         item.tabIndex = 0;
         item.setAttribute("role", "button");
         item.setAttribute("aria-pressed", "false");
-        item.addEventListener("click", () => moveTo(index));
-        item.addEventListener("keydown", event => {
-          if (event.key !== "Enter" && event.key !== " ") return;
-          event.preventDefault();
-          moveTo(index);
-        });
         return button;
       });
+      container.tcCarouselItems = items.slice();
       const next = controls.querySelector(".tc-carousel-button:last-child");
       controls.insertBefore(selectorGroup, next);
       container.tcCarouselSelectors = selectors;
@@ -649,11 +682,34 @@
         });
       }
       function moveTo(index) {
-        const item = items[Math.max(0, Math.min(items.length - 1, index))];
+        const currentItems = container.tcCarouselItems || items;
+        const item = currentItems[Math.max(0, Math.min(currentItems.length - 1, index))];
+        if (!item) return;
         const delta = item.getBoundingClientRect().left - container.getBoundingClientRect().left;
         container.scrollTo({ left: container.scrollLeft + delta, behavior: reducedMotion() ? "auto" : "smooth" });
       }
-      container.addEventListener("scroll", sync, { passive: true });
+      container.tcCarouselMoveTo = moveTo;
+      if (!container.tcCarouselItemEvents) {
+        container.addEventListener("click", event => {
+          const item = event.target.closest("[data-b]");
+          if (!item || item.parentElement !== container) return;
+          const index = item && (container.tcCarouselItems || []).indexOf(item);
+          if (index >= 0) container.tcCarouselMoveTo(index);
+        });
+        container.addEventListener("keydown", event => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          const item = event.target.closest("[data-b]");
+          if (!item || item.parentElement !== container) return;
+          const index = item && (container.tcCarouselItems || []).indexOf(item);
+          if (index < 0) return;
+          event.preventDefault();
+          container.tcCarouselMoveTo(index);
+        });
+        container.addEventListener("scroll", () => {
+          if (container.tcCarouselSync) container.tcCarouselSync();
+        }, { passive: true });
+        container.tcCarouselItemEvents = true;
+      }
       container.tcCarouselSync = sync;
       sync();
     });
@@ -769,6 +825,7 @@
   buildComponentCarousels();
   setupReveals();
   document.addEventListener("ds:content-applied", enhanceSite);
+  document.addEventListener("ds:content-updated", enhanceSite);
   if ("MutationObserver" in window) {
     const main = document.querySelector("main");
     if (main) {
@@ -912,7 +969,7 @@
   }
   spotlightClose.addEventListener("click", closeSpotlight);
   document.addEventListener("click", event => {
-    const image = event.target.closest && event.target.closest(".slot-img[data-spotlight='true']");
+    const image = event.target.closest && event.target.closest(".slot-img[data-spotlight='true'],img[data-spotlight='true']");
     if (!image || document.body.classList.contains("editing")) return;
     event.preventDefault();
     openSpotlight(image);
@@ -928,7 +985,7 @@
       }
       return;
     }
-    const image = event.target.closest && event.target.closest(".slot-img[data-spotlight='true']");
+    const image = event.target.closest && event.target.closest(".slot-img[data-spotlight='true'],img[data-spotlight='true']");
     if (image && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
       openSpotlight(image);

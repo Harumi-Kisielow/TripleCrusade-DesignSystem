@@ -80,6 +80,7 @@
   const bound = new WeakSet();
   let editing = false, sel = null, session = null, panel = null, bar = null, dropLine = null, bgStyle = null, siteStyle = null, responsiveStyle = null, animationStyle = null, drag = null;
   let timerTicker = null;
+  let siteRefreshTimer = null;
   let moveMode = false;
   let lastGesture = 0, handles = null, guideV = null, guideH = null, rs = null, panMode = false, bgPan = false, ro = null;
 
@@ -218,6 +219,22 @@
     }
   }
   function setImage(e, img) {
+    if (e.tagName === "IMG") {
+      if (img && safePath(img.path)) {
+        e.src = previews.get(img.path) || img.path;
+        if (typeof img.alt === "string") e.alt = img.alt;
+        setSpotlight(e, img.spotlight === true);
+      } else {
+        const original = orig.el.get(e.dataset.b);
+        const attrs = original && original.attrs;
+        const src = attrs && attrs.find(([name]) => name === "src");
+        const alt = attrs && attrs.find(([name]) => name === "alt");
+        if (src) e.setAttribute("src", src[1]); else e.removeAttribute("src");
+        if (alt) e.setAttribute("alt", alt[1]); else e.removeAttribute("alt");
+        setSpotlight(e, false);
+      }
+      return;
+    }
     $$(":scope > .slot-img", e).forEach(x => x.remove());
     if (img && safePath(img.path)) {
       wrapOrig(e);
@@ -643,7 +660,11 @@
     const o = op(id);
     if (oi && v === oi.html) delete o.t;
     else o.t = oi ? { h: oi.h, v } : { v };
-    cleanOp(id); markDirty();
+    cleanOp(id); markDirty(); refreshSiteFeatures();
+  }
+  function refreshSiteFeatures() {
+    clearTimeout(siteRefreshTimer);
+    siteRefreshTimer = setTimeout(() => document.dispatchEvent(new CustomEvent("ds:content-updated")), 120);
   }
   function refreshEditable() {
     nodes.forEach(e => {
@@ -718,7 +739,7 @@
       const o = op(e.dataset.b), oi = origInfo.get(e.dataset.b);
       delete o.thumbnail;
       o.img = Object.assign({ path }, oi ? { h: oi.h } : {});
-      setImage(e, o.img); refreshEditable(); buildProps(); markDirty(); placeBar();
+      setImage(e, o.img); refreshEditable(); buildProps(); markDirty(); placeBar(); refreshSiteFeatures();
     });
   }
   function chooseBgFor(e) {
@@ -1097,7 +1118,7 @@
       const { container, ref } = d.target;
       if (container === d.el || d.el.contains(container)) return;
       if (ref) container.insertBefore(d.el, ref); else container.appendChild(d.el);
-      recordOrder(d.oldParent); recordOrder(container); markDirty();
+      recordOrder(d.oldParent); recordOrder(container); markDirty(); refreshSiteFeatures();
     }
     placeBar(); buildProps();
   }
@@ -1124,6 +1145,7 @@
     (spec.children || []).forEach(c => spawn(c, e, null));
     recordOrder(parentEl);
     if (spec.sw) window.DS && window.DS.renderSwatches();
+    refreshSiteFeatures();
     return e;
   }
   function specOf(e) {
@@ -1177,7 +1199,7 @@
     if (!confirm("Excluir este item?" + (e.dataset.added ? "" : "\n(Itens originais ficam só ocultos e podem ser restaurados no painel, em Página.)"))) return;
     if (e.dataset.added) removeAdded(e);
     else { op(e.dataset.b).hide = 1; e.classList.add("ds-hidden"); }
-    select(null); refreshPageControls(); markDirty();
+    select(null); refreshPageControls(); markDirty(); refreshSiteFeatures();
   }
   const mkCols = n => ({ tag: "div", cls: "ds-cols", s: { "--cols": Array(n).fill(r1(100 / n) + "fr").join(" ") }, children: Array.from({ length: n }, () => PRESETS.box()) });
   function uniqueAnchor() { let n = 1; while (document.getElementById("ancora-" + n)) n++; return "ancora-" + n; }
@@ -1772,7 +1794,29 @@
       if (!o.img) {
         s.appendChild(mk("p", "adm-small", o.thumbnail === "youtube"
           ? "A miniatura aparece quando houver um link válido do YouTube no mesmo bloco. Você também pode escolher uma imagem enviada."
-          : "Envie uma imagem para liberar tamanho, cantos, zoom e enquadramento."));
+          : e.tagName === "IMG" ? "Envie uma imagem para trocar a arte deste item." : "Envie uma imagem para liberar tamanho, cantos, zoom e enquadramento."));
+        return;
+      }
+      if (e.tagName === "IMG") {
+        const alt = mk("input");
+        alt.type = "text";
+        alt.maxLength = 200;
+        alt.value = o.img.alt || e.alt || "";
+        alt.addEventListener("input", () => {
+          op(id).img.alt = alt.value;
+          e.alt = alt.value;
+          markDirty();
+        });
+        s.appendChild(row("Texto alternativo", alt));
+        const spotlight = mk("input");
+        spotlight.type = "checkbox";
+        spotlight.checked = o.img.spotlight === true;
+        spotlight.addEventListener("change", () => {
+          op(id).img.spotlight = spotlight.checked;
+          setSpotlight(e, spotlight.checked);
+          markDirty();
+        });
+        s.appendChild(row("Zoom spotlight ao clicar", spotlight));
         return;
       }
       const spotlight = mk("input");
@@ -2081,7 +2125,7 @@
     }
 
     // 4. 🖼️ Imagem (mostrada se isSlot(sel) || hasImg(sel))
-    const isImgEligible = isSlot(e) || hasImg(e) || (isLeaf(e) && !isTextLeaf(e) && !isAtomic(e) && !NOTEXT_TAGS.has(e.tagName));
+    const isImgEligible = e.tagName === "IMG" || isSlot(e) || hasImg(e) || (isLeaf(e) && !isTextLeaf(e) && !isAtomic(e) && !NOTEXT_TAGS.has(e.tagName));
     if (isImgEligible) {
       box.appendChild(imageSection(e, o, id));
     } else if (isLeaf(e) && !isAtomic(e) && e.matches("span,div") && leafText(e).trim().length <= 4) {
@@ -2262,6 +2306,7 @@
     content = nc;
     applyAll();
     refreshEditable();
+    refreshSiteFeatures();
     if (selId && nodes.get(selId) && nodes.get(selId).isConnected) select(nodes.get(selId));
     refreshAfterChange();
   }
@@ -2303,7 +2348,12 @@
     const wrap = mk("div", "adm-preview adm-pv-" + mode);
     const dev = mk("div", "adm-pv-dev");
     const fr = mk("iframe"); fr.title = "Pré-visualização";
-    fr.src = location.href.split("#")[0].split("?")[0] + "?preview=1#" + currentPage();
+    const previewUrl = new URL(location.href);
+    previewUrl.search = "";
+    previewUrl.searchParams.set("preview", "1");
+    previewUrl.searchParams.set("preview-refresh", Date.now().toString(36));
+    previewUrl.hash = currentPage();
+    fr.src = previewUrl.href;
     dev.appendChild(fr);
     wrap.appendChild(mk("div", "adm-pv-label", { tablet: "Tablet · 820 px", mobile: "Celular · 390 px", "mobile-x": "Celular (expandido) · 390 px" }[mode] || ""));
     wrap.appendChild(dev);
@@ -2349,7 +2399,7 @@
     if (container === el || el.contains(container)) return false;
     const old = el.parentElement && el.parentElement.closest("[data-b]");
     if (ref) container.insertBefore(el, ref); else container.appendChild(el);
-    if (old) recordOrder(old); recordOrder(container); fixFree(); markDirty(); return true;
+    if (old) recordOrder(old); recordOrder(container); fixFree(); markDirty(); refreshSiteFeatures(); return true;
   }
   function refreshTree() {
     if (!panel || curTab !== "tree") return;
