@@ -433,13 +433,18 @@
         homeCardBackgrounds.set(slide, slide.style.backgroundImage || getComputedStyle(slide).backgroundImage);
       }
       slide.classList.add("tc-home-card-slide");
+      slide.setAttribute("role", "button");
+      slide.tabIndex = 0;
+      slide.setAttribute("aria-hidden", "false");
     });
     track.classList.add("tc-home-cards-carousel");
     track.setAttribute("role", "region");
     track.setAttribute("aria-label", "Seções do guia");
 
-    let controls = track.querySelector(":scope > .tc-home-card-controls");
-    if (!controls) {
+    const oldControls = track.querySelector(":scope > .tc-home-card-controls");
+    if (oldControls) oldControls.remove();
+    let controls = track.tcHomeControls;
+    if (!controls || !controls.isConnected) {
       controls = document.createElement("div");
       controls.className = "tc-home-card-controls";
       controls.setAttribute("role", "group");
@@ -449,32 +454,26 @@
       previous.className = "tc-home-card-arrow";
       previous.setAttribute("aria-label", "Seção anterior");
       previous.textContent = "←";
-      const tabs = document.createElement("div");
-      tabs.className = "tc-home-card-tabs";
-      tabs.setAttribute("role", "group");
-      tabs.setAttribute("aria-label", "Selecionar seção");
       const next = document.createElement("button");
       next.type = "button";
       next.className = "tc-home-card-arrow";
       next.setAttribute("aria-label", "Próxima seção");
       next.textContent = "→";
-      controls.append(previous, tabs, next);
-      track.insertBefore(controls, slides[0] || null);
+      controls.append(previous, next);
+      track.tcHomeControls = controls;
     }
-    controls.hidden = slides.length < 2;
-
+    if (controls.parentElement !== track.parentElement || controls.previousElementSibling !== track) track.after(controls);
     const previous = controls.querySelector(".tc-home-card-arrow:first-child");
     const next = controls.querySelector(".tc-home-card-arrow:last-child");
-    const tabs = controls.querySelector(".tc-home-card-tabs");
-    if (!previous || !next || !tabs) return;
+    if (!previous || !next) return;
     if (!controls.dataset.ready) {
-      previous.addEventListener("click", () => track.tcHomeSelect && track.tcHomeSelect(track.tcHomeIndex - 1));
-      next.addEventListener("click", () => track.tcHomeSelect && track.tcHomeSelect(track.tcHomeIndex + 1));
+      previous.addEventListener("click", () => track.tcHomeMove && track.tcHomeMove(-1));
+      next.addEventListener("click", () => track.tcHomeMove && track.tcHomeMove(1));
       track.addEventListener("keydown", event => {
         if (event.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
         if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
           event.preventDefault();
-          track.tcHomeSelect && track.tcHomeSelect(track.tcHomeIndex + (event.key === "ArrowRight" ? 1 : -1));
+          track.tcHomeMove && track.tcHomeMove(event.key === "ArrowRight" ? 1 : -1);
         }
       });
       controls.dataset.ready = "true";
@@ -490,49 +489,37 @@
       slide.style.setProperty("--tc-home-card-art-position", position || "center");
     });
 
-    tabs.replaceChildren();
-    slides.forEach((slide, index) => {
-      const title = slide.querySelector("h2, h3");
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "tc-home-card-tab";
-      button.textContent = title ? title.textContent.trim() : "Seção";
-      button.addEventListener("click", () => track.tcHomeSelect && track.tcHomeSelect(index));
-      tabs.appendChild(button);
-    });
-
-    let active = slides.indexOf(track.tcHomeActiveSlide);
-    if (active < 0) active = Math.max(0, Math.min(Number(track.dataset.tcHomeIndex) || 0, slides.length - 1));
-    let changeTimer = 0;
-    function select(index) {
-      if (!slides.length) {
-        track.tcHomeActiveSlide = null;
-        track.dataset.tcHomeIndex = "0";
-        previous.disabled = true;
-        next.disabled = true;
-        return;
-      }
-      const selectedIndex = Math.max(0, Math.min(slides.length - 1, index));
-      const changed = selectedIndex !== active || !slides[selectedIndex].classList.contains("is-active");
-      active = selectedIndex;
-      track.tcHomeActiveSlide = slides[active];
-      track.dataset.tcHomeIndex = String(active);
-      slides.forEach((slide, i) => {
-        const selected = i === active;
-        slide.classList.toggle("is-active", selected);
-        slide.classList.toggle("tc-revealed", selected);
-        slide.setAttribute("aria-hidden", String(!selected));
-        if (tabs.children[i]) tabs.children[i].setAttribute("aria-pressed", String(selected));
-      });
-      previous.disabled = active === 0;
-      next.disabled = active === slides.length - 1;
-      if (!changed) return;
-      track.classList.add("is-changing");
-      window.clearTimeout(changeTimer);
-      changeTimer = window.setTimeout(() => requestAnimationFrame(() => track.classList.remove("is-changing")), reducedMotion() ? 0 : 120);
+    track.tcHomeSlides = slides;
+    function currentIndex(items) {
+      if (!items.length) return -1;
+      const left = track.getBoundingClientRect().left;
+      return items.reduce((best, item, index) =>
+        Math.abs(item.getBoundingClientRect().left - left) <
+        Math.abs(items[best].getBoundingClientRect().left - left) ? index : best, 0);
     }
-    track.tcHomeSelect = select;
-    select(active);
+    function updateControls() {
+      const items = (track.tcHomeSlides || []).filter(item => item.isConnected && !item.classList.contains("ds-hidden"));
+      const active = currentIndex(items);
+      const overflow = track.scrollWidth > track.clientWidth + 1;
+      controls.hidden = !overflow || items.length < 2;
+      previous.disabled = !overflow || active <= 0;
+      next.disabled = !overflow || active < 0 || active >= items.length - 1;
+    }
+    track.tcHomeUpdate = updateControls;
+    track.tcHomeMove = direction => {
+      const items = (track.tcHomeSlides || []).filter(item => item.isConnected && !item.classList.contains("ds-hidden"));
+      const active = currentIndex(items);
+      const target = items[Math.max(0, Math.min(items.length - 1, active + direction))];
+      if (!target || !track.scrollWidth || track.scrollWidth <= track.clientWidth + 1) return;
+      const delta = target.getBoundingClientRect().left - track.getBoundingClientRect().left;
+      track.scrollTo({ left: track.scrollLeft + delta, behavior: reducedMotion() ? "auto" : "smooth" });
+    };
+    if (!track.tcHomeScrollBound) {
+      track.addEventListener("scroll", updateControls, { passive: true });
+      window.addEventListener("resize", updateControls);
+      track.tcHomeScrollBound = true;
+    }
+    updateControls();
   }
 
   function buildSceneCarousel() {
