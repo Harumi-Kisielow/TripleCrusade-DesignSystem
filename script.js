@@ -925,7 +925,11 @@
     const a = e.target.closest("a[href]");
     if (a && special(a.getAttribute("href"))) { e.preventDefault(); return; }
     const g = e.target.closest("[data-go]");
-    if (g) { if (!special(g.dataset.go)) location.hash = g.dataset.go; }
+    if (g) {
+      const innerAction = e.target.closest("a[href],button,[role='button']");
+      if (innerAction && innerAction !== g && g.contains(innerAction)) return;
+      if (!special(g.dataset.go)) location.hash = g.dataset.go;
+    }
   });
   document.addEventListener("keydown", e => {
     if (document.body.classList.contains("editing")) return;
