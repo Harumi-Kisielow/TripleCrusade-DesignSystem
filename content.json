@@ -1052,6 +1052,33 @@
         "h": "97elx5"
       }
     },
+    "nmw9bb9kttord": {
+      "t": {
+        "v": "Veneno: dano percentual por turno (até 45%). Não mata."
+      },
+      "s": {
+        "width": "13.9%",
+        "height": "149px"
+      }
+    },
+    "nmw9bb9ktmpmz": {
+      "t": {
+        "v": "Cegueira: reduz muito a chance de acerto."
+      },
+      "s": {
+        "width": "13.9%",
+        "height": "149px"
+      }
+    },
+    "nmw9bb9kttvtg": {
+      "t": {
+        "v": "Sangramento: dano percentual menor que o veneno e reduz STR e DEF. Não mata."
+      },
+      "s": {
+        "width": "13.9%",
+        "height": "149px"
+      }
+    },
     "nmw9bc619k970": {
       "s": {
         "width": "99.9%",
@@ -1124,6 +1151,54 @@
     "nmw9bf3b85jtw": {
       "t": {
         "v": "Escuridão"
+      }
+    },
+    "nmw9bf9bthvml": {
+      "s": {
+        "background-color": "rgb(176, 175, 157)",
+        "aspect-ratio": "1",
+        "width": "14%",
+        "border-radius": "17px"
+      },
+      "img": {
+        "path": "imgs/componentes/veneno-1vn1.png"
+      },
+      "frame": {
+        "z": 1.4,
+        "x": 50,
+        "y": 50
+      }
+    },
+    "nmw9bf9bu37e4": {
+      "s": {
+        "background-color": "rgb(176, 175, 157)",
+        "aspect-ratio": "1",
+        "width": "14%",
+        "border-radius": "17px"
+      },
+      "img": {
+        "path": "imgs/componentes/blinf-1vlt.png"
+      },
+      "frame": {
+        "z": 1.4,
+        "x": 50,
+        "y": 50
+      }
+    },
+    "nmw9bf9bubn5w": {
+      "s": {
+        "background-color": "rgb(176, 175, 157)",
+        "aspect-ratio": "1",
+        "width": "14%",
+        "border-radius": "17px"
+      },
+      "img": {
+        "path": "imgs/componentes/sangramento-1vn4.png"
+      },
+      "frame": {
+        "z": 1.4,
+        "x": 50,
+        "y": 50
       }
     },
     "nmw9bho6dtsi8": {
@@ -1714,6 +1789,13 @@
         "effect": "slide"
       }
     },
+    "nmw9bf9btt611": {
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "zoom"
+      }
+    },
     "nmw9bb9kt6zzy": {
       "animation": {
         "duration": 500,
@@ -1873,78 +1955,159 @@
         "path": "imgs/componentes/harry-ncfk.png"
       }
     },
-    "nmwoa8i1q23jq": {
-      "s": {
-        "--cols": "33.3fr 33.3fr 33.3fr",
-        "height": "131px"
-      }
-    },
-    "nmwoa8i1ra75q": {
-      "t": {
-        "v": "Veneno<br>dano percentual por turno (até 45%). Não mata."
-      },
-      "s": {
-        "text-align": "center"
-      }
-    },
-    "nmwoa8i1r0f6j": {},
-    "nmwoa8i1r4nak": {
-      "t": {
-        "v": "Sangramento<br>dano percentual menor que o veneno e reduz STR e DEF. Não mata."
-      },
-      "s": {
-        "text-align": "center"
-      }
-    },
-    "nmwoa8i1rv3qz": {},
-    "nmwoa8i1ryg56": {
-      "t": {
-        "v": "CEGUEIRA<br><br>reduz muito a chance de acerto."
-      },
+    "nmwoaccepjx64": {
       "s": {
         "margin-left": "auto",
         "margin-right": "auto",
-        "text-align": "center"
+        "width": "100%",
+        "height": "369px"
+      },
+      "animation": {
+        "duration": 500,
+        "delay": 0,
+        "effect": "rise"
       }
     },
-    "nmwoa8sjuhbua": {},
-    "nmwoa8sju8sxx": {
+    "nmwoaccepkhp2": {},
+    "nmwoacceqadyr": {
+      "s": {
+        "--cols": "20fr 20fr 20fr 20fr 20fr",
+        "--gap": "4px",
+        "width": "100%",
+        "height": "166px"
+      }
+    },
+    "nmwoacceqzpya": {
+      "bgimg": {
+        "path": "imgs/home/arte-apresentacao-1ezh.png",
+        "dim": 0,
+        "size": "cover"
+      },
+      "s": {
+        "height": "215px"
+      }
+    },
+    "nmwoacceqjqno": {
       "t": {
-        "v": "Imagem 1"
+        "v": "Título do slide 1"
       },
       "s": {
-        "min-height": "160px"
-      },
-      "img": {
-        "path": "imgs/componentes/veneno-1vn1.png"
+        "width": "50.2%"
       }
     },
-    "nmwoa8sjujwfj": {
+    "nmwoacceqkssy": {
       "t": {
-        "v": "Imagem 2"
+        "v": "Clique para editar este texto."
       },
       "s": {
-        "min-height": "160px"
-      },
-      "img": {
-        "path": "imgs/componentes/sangramento-1vn4.png"
+        "width": "43.4%"
       }
     },
-    "nmwoa8sju06r8": {
+    "nmwoae6tndisd": {
+      "s": {
+        "height": "215px"
+      },
+      "bgimg": {
+        "path": "imgs/home/arte-apresentacao-1ezh.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "nmwoae6ts7msf": {
       "t": {
-        "v": "Imagem 3"
+        "v": "Título do slide 1"
       },
       "s": {
-        "min-height": "160px"
-      },
-      "img": {
-        "path": "imgs/componentes/blinf-1vlt.png"
+        "width": "50.2%"
       }
     },
-    "nmwoa8i1qpv8w": {
+    "nmwoae6ts5qvy": {
+      "t": {
+        "v": "Clique para editar este texto."
+      },
       "s": {
-        "margin-left": "auto",
-        "margin-right": "auto"
+        "width": "43.4%"
+      }
+    },
+    "nmwoaeaexf00g": {
+      "s": {
+        "height": "215px"
+      },
+      "bgimg": {
+        "path": "imgs/home/arte-apresentacao-1ezh.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "nmwoaeaf1jodc": {
+      "t": {
+        "v": "Título do slide 1"
+      },
+      "s": {
+        "width": "50.2%"
+      }
+    },
+    "nmwoaeaf216k4": {
+      "t": {
+        "v": "Clique para editar este texto."
+      },
+      "s": {
+        "width": "43.4%"
+      }
+    },
+    "nmwoaeozpphar": {
+      "s": {
+        "height": "215px",
+        "width": "100%"
+      },
+      "bgimg": {
+        "path": "imgs/home/arte-apresentacao-1ezh.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "nmwoaeozvook5": {
+      "t": {
+        "v": "Título do slide 1"
+      },
+      "s": {
+        "width": "50.2%"
+      }
+    },
+    "nmwoaeozvq1lp": {
+      "t": {
+        "v": "Clique para editar este texto."
+      },
+      "s": {
+        "width": "43.4%"
+      }
+    },
+    "nmwoaeq4si1xi": {
+      "s": {
+        "height": "215px",
+        "width": "100%"
+      },
+      "bgimg": {
+        "path": "imgs/home/arte-apresentacao-1ezh.png",
+        "dim": 0,
+        "size": "cover"
+      }
+    },
+    "nmwoaeq4vg36h": {
+      "t": {
+        "v": "Título do slide 1"
+      },
+      "s": {
+        "width": "50.2%"
+      }
+    },
+    "nmwoaeq4wdkc8": {
+      "t": {
+        "v": "Clique para editar este texto."
+      },
+      "s": {
+        "width": "43.4%",
+        "height": "16px"
       }
     }
   },
@@ -2115,10 +2278,9 @@
       "b284",
       "b289",
       "b290",
-      "nmwoa8sjuhbua",
+      "nmw9bf9btt611",
       "nmw9bho6dtsi8",
       "nmw9bb9kt6zzy",
-      "nmwoa8i1q23jq",
       "b291",
       "b295",
       "b296",
@@ -2138,6 +2300,11 @@
       "nmw9bf3b89l62",
       "nmw9bf3b8ie0h",
       "nmw9bf3b85jtw"
+    ],
+    "nmw9bf9btt611": [
+      "nmw9bf9bthvml",
+      "nmw9bf9bu37e4",
+      "nmw9bf9bubn5w"
     ],
     "b490": [
       "b491",
@@ -2228,24 +2395,43 @@
       "nmwoa2stgyefj",
       "nmwoa2stgx17m"
     ],
-    "nmwoa8i1qpv8w": [
-      "nmwoa8i1ra75q"
+    "nmwoacceqadyr": [
+      "nmwoacceqzpya",
+      "nmwoae6tndisd",
+      "nmwoaeaexf00g",
+      "nmwoaeozpphar",
+      "nmwoaeq4si1xi"
     ],
-    "nmwoa8i1q23jq": [
-      "nmwoa8i1qpv8w",
-      "nmwoa8i1r0f6j",
-      "nmwoa8i1rv3qz"
+    "nmwoacceqzpya": [
+      "nmwoacceqjqno",
+      "nmwoacceqkssy"
     ],
-    "nmwoa8i1r0f6j": [
-      "nmwoa8i1r4nak"
+    "nmwoaccepkhp2": [
+      "nmwoacceqadyr"
     ],
-    "nmwoa8i1rv3qz": [
-      "nmwoa8i1ryg56"
+    "nmwoaccepjx64": [
+      "nmwoaccepkhp2"
     ],
-    "nmwoa8sjuhbua": [
-      "nmwoa8sju8sxx",
-      "nmwoa8sjujwfj",
-      "nmwoa8sju06r8"
+    "b34": [
+      "b35",
+      "b39",
+      "nmwoaccepjx64"
+    ],
+    "nmwoae6tndisd": [
+      "nmwoae6ts7msf",
+      "nmwoae6ts5qvy"
+    ],
+    "nmwoaeaexf00g": [
+      "nmwoaeaf1jodc",
+      "nmwoaeaf216k4"
+    ],
+    "nmwoaeozpphar": [
+      "nmwoaeozvook5",
+      "nmwoaeozvq1lp"
+    ],
+    "nmwoaeq4si1xi": [
+      "nmwoaeq4vg36h",
+      "nmwoaeq4wdkc8"
     ]
   },
   "add": {
@@ -2327,6 +2513,24 @@
       "attrs": {},
       "parent": "b205"
     },
+    "nmw9bb9kttord": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bb9kt6zzy"
+    },
+    "nmw9bb9ktmpmz": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bb9kt6zzy"
+    },
+    "nmw9bb9kttvtg": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bb9kt6zzy"
+    },
     "nmw9bc619k970": {
       "tag": "div",
       "cls": "ds-space",
@@ -2368,6 +2572,30 @@
       "cls": "elem",
       "attrs": {},
       "parent": "nmw9bf3b8dn99"
+    },
+    "nmw9bf9btt611": {
+      "tag": "div",
+      "cls": "elem-row",
+      "attrs": {},
+      "parent": "b205"
+    },
+    "nmw9bf9bthvml": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf9btt611"
+    },
+    "nmw9bf9bu37e4": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf9btt611"
+    },
+    "nmw9bf9bubn5w": {
+      "tag": "div",
+      "cls": "elem",
+      "attrs": {},
+      "parent": "nmw9bf9btt611"
     },
     "nmw9bho6dtsi8": {
       "tag": "div",
@@ -2555,71 +2783,113 @@
       "attrs": {},
       "parent": "nmwoa2stfm0va"
     },
-    "nmwoa8i1q23jq": {
+    "nmwoaccepjx64": {
+      "tag": "div",
+      "cls": "img-grid ds-carousel",
+      "attrs": {},
+      "parent": "b34"
+    },
+    "nmwoaccepkhp2": {
+      "tag": "div",
+      "cls": "ds-carousel-slide",
+      "attrs": {},
+      "parent": "nmwoaccepjx64"
+    },
+    "nmwoacceqadyr": {
       "tag": "div",
       "cls": "ds-cols",
       "attrs": {},
-      "parent": "b205"
+      "parent": "nmwoaccepkhp2"
     },
-    "nmwoa8i1qpv8w": {
+    "nmwoacceqzpya": {
       "tag": "div",
       "cls": "ds-box",
       "attrs": {},
-      "parent": "nmwoa8i1q23jq"
+      "parent": "nmwoacceqadyr"
     },
-    "nmwoa8i1ra75q": {
+    "nmwoacceqjqno": {
+      "tag": "h3",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmwoacceqzpya"
+    },
+    "nmwoacceqkssy": {
       "tag": "p",
       "cls": "",
       "attrs": {},
-      "parent": "nmwoa8i1qpv8w"
+      "parent": "nmwoacceqzpya"
     },
-    "nmwoa8i1r0f6j": {
+    "nmwoae6tndisd": {
       "tag": "div",
-      "cls": "ds-box",
+      "cls": "ds-box ds-bgimg",
       "attrs": {},
-      "parent": "nmwoa8i1q23jq"
+      "parent": "nmwoacceqadyr"
     },
-    "nmwoa8i1r4nak": {
+    "nmwoae6ts7msf": {
+      "tag": "h3",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmwoae6tndisd"
+    },
+    "nmwoae6ts5qvy": {
       "tag": "p",
       "cls": "",
       "attrs": {},
-      "parent": "nmwoa8i1r0f6j"
+      "parent": "nmwoae6tndisd"
     },
-    "nmwoa8i1rv3qz": {
+    "nmwoaeaexf00g": {
       "tag": "div",
-      "cls": "ds-box",
+      "cls": "ds-box ds-bgimg",
       "attrs": {},
-      "parent": "nmwoa8i1q23jq"
+      "parent": "nmwoacceqadyr"
     },
-    "nmwoa8i1ryg56": {
+    "nmwoaeaf1jodc": {
+      "tag": "h3",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmwoaeaexf00g"
+    },
+    "nmwoaeaf216k4": {
       "tag": "p",
       "cls": "",
       "attrs": {},
-      "parent": "nmwoa8i1rv3qz"
+      "parent": "nmwoaeaexf00g"
     },
-    "nmwoa8sjuhbua": {
+    "nmwoaeozpphar": {
       "tag": "div",
-      "cls": "ds-gallery",
+      "cls": "ds-box ds-bgimg",
       "attrs": {},
-      "parent": "b205"
+      "parent": "nmwoacceqadyr"
     },
-    "nmwoa8sju8sxx": {
-      "tag": "div",
-      "cls": "img-slot ds-gallery-slot",
+    "nmwoaeozvook5": {
+      "tag": "h3",
+      "cls": "",
       "attrs": {},
-      "parent": "nmwoa8sjuhbua"
+      "parent": "nmwoaeozpphar"
     },
-    "nmwoa8sjujwfj": {
-      "tag": "div",
-      "cls": "img-slot ds-gallery-slot",
+    "nmwoaeozvq1lp": {
+      "tag": "p",
+      "cls": "",
       "attrs": {},
-      "parent": "nmwoa8sjuhbua"
+      "parent": "nmwoaeozpphar"
     },
-    "nmwoa8sju06r8": {
+    "nmwoaeq4si1xi": {
       "tag": "div",
-      "cls": "img-slot ds-gallery-slot",
+      "cls": "ds-box ds-bgimg",
       "attrs": {},
-      "parent": "nmwoa8sjuhbua"
+      "parent": "nmwoacceqadyr"
+    },
+    "nmwoaeq4vg36h": {
+      "tag": "h3",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmwoaeq4si1xi"
+    },
+    "nmwoaeq4wdkc8": {
+      "tag": "p",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmwoaeq4si1xi"
     }
   },
   "pages": {},
