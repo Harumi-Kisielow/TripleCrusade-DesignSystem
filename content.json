@@ -301,9 +301,10 @@
     "b40": {
       "bgimg": {
         "path": "imgs/home/arte-apresentacao-1ezh.png",
-        "dim": 0.84,
+        "dim": 0.46,
         "size": "cover",
-        "x": 61
+        "x": 100,
+        "art": false
       },
       "animation": {
         "duration": 500,
@@ -417,7 +418,7 @@
       },
       "s": {},
       "frame": {
-        "z": 1.05,
+        "z": 1.75,
         "x": 50,
         "y": 50
       },
@@ -436,6 +437,12 @@
         "duration": 500,
         "delay": 0,
         "effect": "rise"
+      },
+      "s": {},
+      "frame": {
+        "z": 1.4,
+        "x": 50,
+        "y": 50
       }
     },
     "b190": {
@@ -1908,7 +1915,8 @@
       "s": {
         "width": "100%",
         "height": "403px"
-      }
+      },
+      "hide": 1
     },
     "b9": {},
     "b167": {
@@ -1916,7 +1924,9 @@
     },
     "b189": {
       "hide": 1
-    }
+    },
+    "b8": {},
+    "b7": {}
   },
   "order": {
     "b478": [
