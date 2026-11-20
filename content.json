@@ -2124,34 +2124,6 @@
         "height": "47px"
       }
     },
-    "nmwobbo85nv4f": {
-      "s": {
-        "width": "404px",
-        "height": "332px"
-      },
-      "bgimg": {
-        "path": "imgs/home/arte-apresentacao-1ezh.png",
-        "dim": 0,
-        "size": "cover"
-      }
-    },
-    "nmwobbo85gddx": {
-      "t": {
-        "v": "COMPONENTES"
-      },
-      "s": {
-        "width": "50.2%"
-      }
-    },
-    "nmwobbo86olwr": {
-      "t": {
-        "v": "Clique para editar este texto."
-      },
-      "s": {
-        "width": "43.4%",
-        "height": "49px"
-      }
-    },
     "nmwp7ywcmpn4j": {
       "t": {
         "v": "SAIBA MAIS"
@@ -2173,17 +2145,17 @@
     "nmwp7zxlkvgzs": {
       "t": {
         "v": "SAIBA MAIS"
-      }
+      },
+      "href": "#interacoes"
     },
     "nmwp800k48m4u": {
       "t": {
         "v": "SAIBA MAIS"
-      }
+      },
+      "href": "#componentes"
     },
-    "nmwp80dvxiox1": {
-      "t": {
-        "v": "SAIBA MAIS"
-      }
+    "b13": {
+      "hide": 1
     }
   },
   "order": {
@@ -2475,8 +2447,7 @@
       "nmwoae6tndisd",
       "nmwoaeaexf00g",
       "nmwoaeozpphar",
-      "nmwoaeq4si1xi",
-      "nmwobbo85nv4f"
+      "nmwoaeq4si1xi"
     ],
     "nmwoacceqzpya": [
       "nmwoacceqjqno",
@@ -2513,11 +2484,6 @@
       "nmwoaeq4vg36h",
       "nmwoaeq4wdkc8",
       "nmwp800k48m4u"
-    ],
-    "nmwobbo85nv4f": [
-      "nmwobbo85gddx",
-      "nmwobbo86olwr",
-      "nmwp80dvxiox1"
     ]
   },
   "add": {
@@ -2977,24 +2943,6 @@
       "attrs": {},
       "parent": "nmwoaeq4si1xi"
     },
-    "nmwobbo85nv4f": {
-      "tag": "div",
-      "cls": "ds-box ds-bgimg",
-      "attrs": {},
-      "parent": "nmwoacceqadyr"
-    },
-    "nmwobbo85gddx": {
-      "tag": "h3",
-      "cls": "",
-      "attrs": {},
-      "parent": "nmwobbo85nv4f"
-    },
-    "nmwobbo86olwr": {
-      "tag": "p",
-      "cls": "",
-      "attrs": {},
-      "parent": "nmwobbo85nv4f"
-    },
     "nmwp7ywcmpn4j": {
       "tag": "a",
       "cls": "btn btn-primary",
@@ -3034,14 +2982,6 @@
         "href": "#"
       },
       "parent": "nmwoaeozpphar"
-    },
-    "nmwp80dvxiox1": {
-      "tag": "a",
-      "cls": "btn btn-primary",
-      "attrs": {
-        "href": "#"
-      },
-      "parent": "nmwoacceqzpya"
     }
   },
   "pages": {},
