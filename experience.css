@@ -558,6 +558,11 @@ body.tc-page-mode .tc-carousel.tc-carousel--paused {
   scroll-snap-type: none;
 }
 body.tc-page-mode .tc-carousel > * { flex: 0 0 min(82%, 720px); scroll-snap-align: start; }
+body.tc-page-mode .ds-carousel.tc-carousel > .ds-carousel-slide {
+  flex: 0 0 var(--ds-carousel-slide-width, 100%);
+  width: var(--ds-carousel-slide-width, 100%);
+  max-width: none;
+}
 body.tc-page-mode .tc-carousel .img-slot { min-height: 240px; }
 body.tc-page-mode .tc-carousel .img-slot.has-img { min-height: 0; overflow: hidden; }
 body.tc-page-mode .tc-carousel .img-slot.has-img > .slot-img { width: 100%; max-width: none; max-height: 540px; object-fit: contain; }

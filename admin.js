@@ -36,7 +36,7 @@
     "--cols", "--gap", "--tc-slide-card-width", "--tc-slide-columns", "--tc-slide-gap",
     "--tc-slide-image-column", "--tc-slide-copy-column", "--tc-slide-image-width",
     "--tc-slide-image-max-height", "--tc-slide-copy-width", "--tc-scene-columns",
-    "--tc-scene-gap", "--tc-scene-image-left", "--tc-scene-image-width",
+    "--tc-scene-gap", "--tc-scene-image-left", "--tc-scene-image-width", "--ds-carousel-slide-width",
     "--tc-scene-copy-column", "object-position"]);
   const NOTEXT_TAGS = new Set(["BUTTON", "IMG", "INPUT", "SELECT", "TEXTAREA", "HR", "BR", "TABLE", "TBODY", "TR", "UL", "OL", "AUDIO"]);
   const FONTS = [["Padrão", "var(--font-ui)"], ["Título (serifada)", "var(--font-display)"], ["Código", "monospace"]];
@@ -45,7 +45,7 @@
   const FITS = ["cover", "contain", "fill"];
   const STYLE_LAYOUT_PROPS = new Set(["position", "left", "top", "width", "height", "min-width", "max-width", "min-height", "max-height", "z-index", "transform", "margin", "margin-top", "margin-right", "margin-bottom", "margin-left",
     "--tc-slide-card-width", "--tc-slide-columns", "--tc-slide-gap", "--tc-slide-image-column", "--tc-slide-copy-column", "--tc-slide-image-width", "--tc-slide-image-max-height", "--tc-slide-copy-width",
-    "--tc-scene-columns", "--tc-scene-gap", "--tc-scene-image-left", "--tc-scene-image-width", "--tc-scene-copy-column"]);
+    "--tc-scene-columns", "--tc-scene-gap", "--tc-scene-image-left", "--tc-scene-image-width", "--tc-scene-copy-column", "--ds-carousel-slide-width"]);
 
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
@@ -1988,6 +1988,22 @@
         });
         s.appendChild(row("Pausar navegação e interação", paused));
         s.appendChild(mk("p", "adm-small", "Quando ativado, setas, seletores e teclado não mudam o slide. O slide atual continua visível."));
+      }, true));
+    }
+    if (e.matches(".ds-carousel")) {
+      box.appendChild(buildSection("Largura dos slides", s => {
+        const input = mk("input");
+        input.type = "range"; input.min = 50; input.max = 100; input.step = 5;
+        const width = Number.parseFloat(e.style.getPropertyValue("--ds-carousel-slide-width"));
+        input.value = Number.isFinite(width) ? width : 100;
+        const value = mk("em", "", input.value + "%");
+        const wrap = mk("span", "adm-rn"); wrap.append(input, value);
+        input.addEventListener("input", () => {
+          value.textContent = input.value + "%";
+          setS(e, "--ds-carousel-slide-width", input.value + "%");
+        });
+        s.appendChild(row("Largura do slide", wrap));
+        s.appendChild(mk("p", "adm-small", "Em 100%, cada slide ocupa toda a largura do carrossel. Use as setas para navegar entre eles."));
       }, true));
     }
     if (!isProtected(e)) {
