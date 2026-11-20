@@ -1295,8 +1295,8 @@
         "background-color": "rgb(85, 115, 20)"
       },
       "sw": {
-        "label": "Verde musgo",
-        "hex": "#557314"
+        "hex": "#731728",
+        "label": "Capete"
       }
     },
     "nmw9lqeq6pqyc": {
@@ -1305,8 +1305,8 @@
         "background-color": "rgb(113, 115, 63)"
       },
       "sw": {
-        "label": "Oliva",
-        "hex": "#71733F"
+        "hex": "#0F0426",
+        "label": "Meia-noite"
       }
     },
     "nmw9lqeq6cjfs": {
@@ -1315,8 +1315,8 @@
         "background-color": "rgb(166, 150, 141)"
       },
       "sw": {
-        "label": "Cinza-bege",
-        "hex": "#A6968D"
+        "hex": "#F2AE2E",
+        "label": "Dourado"
       }
     },
     "nmw9lqeq8e2ab": {
@@ -1325,8 +1325,8 @@
         "background-color": "rgb(101, 91, 88)"
       },
       "sw": {
-        "label": "Cinza-terra",
-        "hex": "#655B58"
+        "hex": "#F20505",
+        "label": "Cassinus"
       }
     },
     "nmw9lqeq93qzu": {
@@ -1339,24 +1339,14 @@
         "hex": "#0D0D0D"
       }
     },
-    "nmw9lqjwcxmrc": {
-      "t": {
-        "v": "Coloração monocromática com alguns pontos de contraste. HEX do GDD."
-      }
-    },
     "nmw9lqovrr032": {
       "t": {
-        "v": "Paleta do mundo (Ruínas, 1ª fase)"
+        "v": "Paleta do mundo (Cassinus, 2ª fase)"
       }
     },
     "nmw9lqruknc11": {
       "t": {
-        "v": "Paleta do mundo (Ruínas, 1ª fase)"
-      }
-    },
-    "nmw9lqutsgnm2": {
-      "t": {
-        "v": "Coloração monocromática com alguns pontos de contraste. HEX do GDD."
+        "v": "Paleta do mundo (Torre, 3ª fase)"
       }
     },
     "nmw9lr0b3lhm0": {
@@ -1372,8 +1362,8 @@
         "background-color": "rgb(85, 115, 20)"
       },
       "sw": {
-        "label": "Verde musgo",
-        "hex": "#557314"
+        "hex": "#F23D5E",
+        "label": "Rosaria"
       }
     },
     "nmw9lr0b4jjow": {
@@ -1382,8 +1372,8 @@
         "background-color": "rgb(113, 115, 63)"
       },
       "sw": {
-        "label": "Oliva",
-        "hex": "#71733F"
+        "hex": "#F22E76",
+        "label": "Pink"
       }
     },
     "nmw9lr0b5eaom": {
@@ -1392,8 +1382,8 @@
         "background-color": "rgb(166, 150, 141)"
       },
       "sw": {
-        "label": "Cinza-bege",
-        "hex": "#A6968D"
+        "hex": "#3B1D59",
+        "label": "Alvorada"
       }
     },
     "nmw9lr0b7ku38": {
@@ -1402,8 +1392,8 @@
         "background-color": "rgb(101, 91, 88)"
       },
       "sw": {
-        "label": "Cinza-terra",
-        "hex": "#655B58"
+        "hex": "#F23D3D",
+        "label": "Vemelhidão"
       }
     },
     "nmw9lr0b82gzy": {
@@ -2157,6 +2147,9 @@
       "s": {
         "text-align": "center"
       }
+    },
+    "b126": {
+      "hide": 1
     }
   },
   "order": {
@@ -2233,11 +2226,9 @@
       "b126",
       "b127",
       "nmw9lqovrr032",
-      "nmw9lqjwcxmrc",
       "nmw9lqeq4ucf7",
       "b133",
       "nmw9lqruknc11",
-      "nmw9lqutsgnm2",
       "nmw9lr0b3lhm0",
       "b134",
       "b135",
@@ -2679,12 +2670,6 @@
       "attrs": {},
       "parent": "nmw9lqeq4ucf7"
     },
-    "nmw9lqjwcxmrc": {
-      "tag": "p",
-      "cls": "",
-      "attrs": {},
-      "parent": "b101"
-    },
     "nmw9lqovrr032": {
       "tag": "h3",
       "cls": "",
@@ -2693,12 +2678,6 @@
     },
     "nmw9lqruknc11": {
       "tag": "h3",
-      "cls": "",
-      "attrs": {},
-      "parent": "b101"
-    },
-    "nmw9lqutsgnm2": {
-      "tag": "p",
       "cls": "",
       "attrs": {},
       "parent": "b101"
