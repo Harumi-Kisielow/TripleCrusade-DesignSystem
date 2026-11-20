@@ -2002,7 +2002,7 @@
     },
     "nmwoacceqkssy": {
       "t": {
-        "v": "Clique para editar este texto."
+        "v": "As ideias principais do jogo, para garantir que tudo o que for criado tenha a mesma vibe."
       },
       "s": {
         "width": "43.4%"
@@ -2032,7 +2032,7 @@
     },
     "nmwoae6ts5qvy": {
       "t": {
-        "v": "Clique para editar este texto."
+        "v": "A identidade visual reflete um mundo em ruínas."
       },
       "s": {
         "width": "43.4%"
@@ -2063,7 +2063,7 @@
     },
     "nmwoaeaf216k4": {
       "t": {
-        "v": "Clique para editar este texto."
+        "v": "Diretrizes de Criação de personagens."
       },
       "s": {
         "width": "43.4%"
@@ -2075,9 +2075,10 @@
         "width": "404px"
       },
       "bgimg": {
-        "path": "imgs/home/arte-apresentacao-1ezh.png",
-        "dim": 0,
-        "size": "cover"
+        "path": "imgs/home/acs-1cad.png",
+        "dim": 0.45,
+        "size": "cover",
+        "x": 100
       }
     },
     "nmwoaeozvook5": {
@@ -2090,7 +2091,7 @@
     },
     "nmwoaeozvq1lp": {
       "t": {
-        "v": "Clique para editar este texto."
+        "v": "Como traduzimos a interação com o mundo em jogabilidade."
       },
       "s": {
         "width": "43.4%"
@@ -2102,9 +2103,10 @@
         "height": "332px"
       },
       "bgimg": {
-        "path": "imgs/home/arte-apresentacao-1ezh.png",
-        "dim": 0,
-        "size": "cover"
+        "path": "imgs/home/asemas-afdo.png",
+        "dim": 0.42,
+        "size": "cover",
+        "x": 0
       }
     },
     "nmwoaeq4vg36h": {
@@ -2117,7 +2119,7 @@
     },
     "nmwoaeq4wdkc8": {
       "t": {
-        "v": "Clique para editar este texto."
+        "v": "Elementos de interface do jogo."
       },
       "s": {
         "width": "43.4%",
@@ -2156,6 +2158,12 @@
     },
     "b13": {
       "hide": 1
+    },
+    "b207": {
+      "t": {
+        "h": "13cprsf",
+        "v": "Elementos de interface do jogo."
+      }
     }
   },
   "order": {
