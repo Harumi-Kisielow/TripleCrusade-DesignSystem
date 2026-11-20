@@ -1052,33 +1052,6 @@
         "h": "97elx5"
       }
     },
-    "nmw9bb9kttord": {
-      "t": {
-        "v": "Veneno: dano percentual por turno (até 45%). Não mata."
-      },
-      "s": {
-        "width": "13.9%",
-        "height": "149px"
-      }
-    },
-    "nmw9bb9ktmpmz": {
-      "t": {
-        "v": "Cegueira: reduz muito a chance de acerto."
-      },
-      "s": {
-        "width": "13.9%",
-        "height": "149px"
-      }
-    },
-    "nmw9bb9kttvtg": {
-      "t": {
-        "v": "Sangramento: dano percentual menor que o veneno e reduz STR e DEF. Não mata."
-      },
-      "s": {
-        "width": "13.9%",
-        "height": "149px"
-      }
-    },
     "nmw9bc619k970": {
       "s": {
         "width": "99.9%",
@@ -1151,54 +1124,6 @@
     "nmw9bf3b85jtw": {
       "t": {
         "v": "Escuridão"
-      }
-    },
-    "nmw9bf9bthvml": {
-      "s": {
-        "background-color": "rgb(176, 175, 157)",
-        "aspect-ratio": "1",
-        "width": "14%",
-        "border-radius": "17px"
-      },
-      "img": {
-        "path": "imgs/componentes/veneno-1vn1.png"
-      },
-      "frame": {
-        "z": 1.4,
-        "x": 50,
-        "y": 50
-      }
-    },
-    "nmw9bf9bu37e4": {
-      "s": {
-        "background-color": "rgb(176, 175, 157)",
-        "aspect-ratio": "1",
-        "width": "14%",
-        "border-radius": "17px"
-      },
-      "img": {
-        "path": "imgs/componentes/blinf-1vlt.png"
-      },
-      "frame": {
-        "z": 1.4,
-        "x": 50,
-        "y": 50
-      }
-    },
-    "nmw9bf9bubn5w": {
-      "s": {
-        "background-color": "rgb(176, 175, 157)",
-        "aspect-ratio": "1",
-        "width": "14%",
-        "border-radius": "17px"
-      },
-      "img": {
-        "path": "imgs/componentes/sangramento-1vn4.png"
-      },
-      "frame": {
-        "z": 1.4,
-        "x": 50,
-        "y": 50
       }
     },
     "nmw9bho6dtsi8": {
@@ -1789,13 +1714,6 @@
         "effect": "slide"
       }
     },
-    "nmw9bf9btt611": {
-      "animation": {
-        "duration": 500,
-        "delay": 0,
-        "effect": "zoom"
-      }
-    },
     "nmw9bb9kt6zzy": {
       "animation": {
         "duration": 500,
@@ -1953,6 +1871,80 @@
       },
       "img": {
         "path": "imgs/componentes/harry-ncfk.png"
+      }
+    },
+    "nmwoa8i1q23jq": {
+      "s": {
+        "--cols": "33.3fr 33.3fr 33.3fr",
+        "height": "131px"
+      }
+    },
+    "nmwoa8i1ra75q": {
+      "t": {
+        "v": "Veneno<br>dano percentual por turno (até 45%). Não mata."
+      },
+      "s": {
+        "text-align": "center"
+      }
+    },
+    "nmwoa8i1r0f6j": {},
+    "nmwoa8i1r4nak": {
+      "t": {
+        "v": "Sangramento<br>dano percentual menor que o veneno e reduz STR e DEF. Não mata."
+      },
+      "s": {
+        "text-align": "center"
+      }
+    },
+    "nmwoa8i1rv3qz": {},
+    "nmwoa8i1ryg56": {
+      "t": {
+        "v": "CEGUEIRA<br><br>reduz muito a chance de acerto."
+      },
+      "s": {
+        "margin-left": "auto",
+        "margin-right": "auto",
+        "text-align": "center"
+      }
+    },
+    "nmwoa8sjuhbua": {},
+    "nmwoa8sju8sxx": {
+      "t": {
+        "v": "Imagem 1"
+      },
+      "s": {
+        "min-height": "160px"
+      },
+      "img": {
+        "path": "imgs/componentes/veneno-1vn1.png"
+      }
+    },
+    "nmwoa8sjujwfj": {
+      "t": {
+        "v": "Imagem 2"
+      },
+      "s": {
+        "min-height": "160px"
+      },
+      "img": {
+        "path": "imgs/componentes/sangramento-1vn4.png"
+      }
+    },
+    "nmwoa8sju06r8": {
+      "t": {
+        "v": "Imagem 3"
+      },
+      "s": {
+        "min-height": "160px"
+      },
+      "img": {
+        "path": "imgs/componentes/blinf-1vlt.png"
+      }
+    },
+    "nmwoa8i1qpv8w": {
+      "s": {
+        "margin-left": "auto",
+        "margin-right": "auto"
       }
     }
   },
@@ -2123,9 +2115,10 @@
       "b284",
       "b289",
       "b290",
-      "nmw9bf9btt611",
+      "nmwoa8sjuhbua",
       "nmw9bho6dtsi8",
       "nmw9bb9kt6zzy",
+      "nmwoa8i1q23jq",
       "b291",
       "b295",
       "b296",
@@ -2145,11 +2138,6 @@
       "nmw9bf3b89l62",
       "nmw9bf3b8ie0h",
       "nmw9bf3b85jtw"
-    ],
-    "nmw9bf9btt611": [
-      "nmw9bf9bthvml",
-      "nmw9bf9bu37e4",
-      "nmw9bf9bubn5w"
     ],
     "b490": [
       "b491",
@@ -2239,6 +2227,25 @@
       "nmwoa2stg9mdc",
       "nmwoa2stgyefj",
       "nmwoa2stgx17m"
+    ],
+    "nmwoa8i1qpv8w": [
+      "nmwoa8i1ra75q"
+    ],
+    "nmwoa8i1q23jq": [
+      "nmwoa8i1qpv8w",
+      "nmwoa8i1r0f6j",
+      "nmwoa8i1rv3qz"
+    ],
+    "nmwoa8i1r0f6j": [
+      "nmwoa8i1r4nak"
+    ],
+    "nmwoa8i1rv3qz": [
+      "nmwoa8i1ryg56"
+    ],
+    "nmwoa8sjuhbua": [
+      "nmwoa8sju8sxx",
+      "nmwoa8sjujwfj",
+      "nmwoa8sju06r8"
     ]
   },
   "add": {
@@ -2320,24 +2327,6 @@
       "attrs": {},
       "parent": "b205"
     },
-    "nmw9bb9kttord": {
-      "tag": "div",
-      "cls": "elem",
-      "attrs": {},
-      "parent": "nmw9bb9kt6zzy"
-    },
-    "nmw9bb9ktmpmz": {
-      "tag": "div",
-      "cls": "elem",
-      "attrs": {},
-      "parent": "nmw9bb9kt6zzy"
-    },
-    "nmw9bb9kttvtg": {
-      "tag": "div",
-      "cls": "elem",
-      "attrs": {},
-      "parent": "nmw9bb9kt6zzy"
-    },
     "nmw9bc619k970": {
       "tag": "div",
       "cls": "ds-space",
@@ -2379,30 +2368,6 @@
       "cls": "elem",
       "attrs": {},
       "parent": "nmw9bf3b8dn99"
-    },
-    "nmw9bf9btt611": {
-      "tag": "div",
-      "cls": "elem-row",
-      "attrs": {},
-      "parent": "b205"
-    },
-    "nmw9bf9bthvml": {
-      "tag": "div",
-      "cls": "elem",
-      "attrs": {},
-      "parent": "nmw9bf9btt611"
-    },
-    "nmw9bf9bu37e4": {
-      "tag": "div",
-      "cls": "elem",
-      "attrs": {},
-      "parent": "nmw9bf9btt611"
-    },
-    "nmw9bf9bubn5w": {
-      "tag": "div",
-      "cls": "elem",
-      "attrs": {},
-      "parent": "nmw9bf9btt611"
     },
     "nmw9bho6dtsi8": {
       "tag": "div",
@@ -2589,6 +2554,72 @@
       "cls": "img-slot ds-gallery-slot",
       "attrs": {},
       "parent": "nmwoa2stfm0va"
+    },
+    "nmwoa8i1q23jq": {
+      "tag": "div",
+      "cls": "ds-cols",
+      "attrs": {},
+      "parent": "b205"
+    },
+    "nmwoa8i1qpv8w": {
+      "tag": "div",
+      "cls": "ds-box",
+      "attrs": {},
+      "parent": "nmwoa8i1q23jq"
+    },
+    "nmwoa8i1ra75q": {
+      "tag": "p",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmwoa8i1qpv8w"
+    },
+    "nmwoa8i1r0f6j": {
+      "tag": "div",
+      "cls": "ds-box",
+      "attrs": {},
+      "parent": "nmwoa8i1q23jq"
+    },
+    "nmwoa8i1r4nak": {
+      "tag": "p",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmwoa8i1r0f6j"
+    },
+    "nmwoa8i1rv3qz": {
+      "tag": "div",
+      "cls": "ds-box",
+      "attrs": {},
+      "parent": "nmwoa8i1q23jq"
+    },
+    "nmwoa8i1ryg56": {
+      "tag": "p",
+      "cls": "",
+      "attrs": {},
+      "parent": "nmwoa8i1rv3qz"
+    },
+    "nmwoa8sjuhbua": {
+      "tag": "div",
+      "cls": "ds-gallery",
+      "attrs": {},
+      "parent": "b205"
+    },
+    "nmwoa8sju8sxx": {
+      "tag": "div",
+      "cls": "img-slot ds-gallery-slot",
+      "attrs": {},
+      "parent": "nmwoa8sjuhbua"
+    },
+    "nmwoa8sjujwfj": {
+      "tag": "div",
+      "cls": "img-slot ds-gallery-slot",
+      "attrs": {},
+      "parent": "nmwoa8sjuhbua"
+    },
+    "nmwoa8sju06r8": {
+      "tag": "div",
+      "cls": "img-slot ds-gallery-slot",
+      "attrs": {},
+      "parent": "nmwoa8sjuhbua"
     }
   },
   "pages": {},
