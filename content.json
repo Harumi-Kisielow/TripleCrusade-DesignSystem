@@ -1980,11 +1980,15 @@
     "nmwoacceqzpya": {
       "bgimg": {
         "path": "imgs/home/arte-apresentacao-1ezh.png",
-        "dim": 0,
+        "dim": 0.61,
         "size": "cover"
       },
       "s": {
-        "height": "215px"
+        "height": "332px",
+        "width": "404px"
+      },
+      "hover": {
+        "effect": "lift"
       }
     },
     "nmwoacceqjqno": {
@@ -2005,12 +2009,16 @@
     },
     "nmwoae6tndisd": {
       "s": {
-        "height": "215px"
+        "height": "332px",
+        "width": "404px"
       },
       "bgimg": {
-        "path": "imgs/home/arte-apresentacao-1ezh.png",
-        "dim": 0,
+        "path": "imgs/home/artes-apresentacao-1x6t.png",
+        "dim": 0.45,
         "size": "cover"
+      },
+      "hover": {
+        "effect": "lift"
       }
     },
     "nmwoae6ts7msf": {
@@ -2031,12 +2039,17 @@
     },
     "nmwoaeaexf00g": {
       "s": {
-        "height": "215px"
+        "height": "332px",
+        "width": "404px"
       },
       "bgimg": {
-        "path": "imgs/home/arte-apresentacao-1ezh.png",
-        "dim": 0,
-        "size": "cover"
+        "path": "imgs/home/aml-tlmd.png",
+        "dim": 0.42,
+        "size": "cover",
+        "x": 100
+      },
+      "hover": {
+        "effect": "lift"
       }
     },
     "nmwoaeaf1jodc": {
@@ -2057,8 +2070,8 @@
     },
     "nmwoaeozpphar": {
       "s": {
-        "height": "215px",
-        "width": "100%"
+        "height": "332px",
+        "width": "404px"
       },
       "bgimg": {
         "path": "imgs/home/arte-apresentacao-1ezh.png",
@@ -2084,8 +2097,8 @@
     },
     "nmwoaeq4si1xi": {
       "s": {
-        "height": "215px",
-        "width": "100%"
+        "width": "404px",
+        "height": "332px"
       },
       "bgimg": {
         "path": "imgs/home/arte-apresentacao-1ezh.png",
