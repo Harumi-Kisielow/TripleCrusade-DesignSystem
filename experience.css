@@ -379,6 +379,7 @@ body.tc-page-mode #home .tc-home-card-arrow {
   color: var(--gold);
   font-size: 1.1rem;
 }
+body.tc-page-mode #home .tc-home-card-arrow:disabled { opacity: .36; cursor: default; }
 body.tc-page-mode #home .tc-home-card-tab {
   flex: 0 0 auto;
   padding: .45rem .65rem;
@@ -387,7 +388,7 @@ body.tc-page-mode #home .tc-home-card-tab {
   text-transform: uppercase;
 }
 body.tc-page-mode #home .tc-home-card-tab[aria-pressed="true"],
-body.tc-page-mode #home .tc-home-card-arrow:hover,
+body.tc-page-mode #home .tc-home-card-arrow:hover:not(:disabled),
 body.tc-page-mode #home .tc-home-card-tab:hover {
   color: #111;
   background: var(--gold);

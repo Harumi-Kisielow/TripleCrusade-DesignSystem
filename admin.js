@@ -790,7 +790,7 @@
       const btnLike = !prev.path && e.matches("button,[role=button],.stone-btn,.btn,.card,.gate-card,a");
       o.bgimg = Object.assign({}, prev, { path, dim: prev.dim || 0, size: prev.size || (btnLike ? "stretch" : "cover") });
       if (prev.art || btnLike) o.bgimg.art = true;
-      setBgImg(e, o.bgimg); syncSharedStyle(e); buildProps(); markDirty();
+      setBgImg(e, o.bgimg); syncSharedStyle(e); buildProps(); markDirty(); refreshSiteFeatures();
     });
   }
 
@@ -851,6 +851,8 @@
     if (!t || t.tagName === "MAIN") { select(null); return; }
     if (ev.shiftKey && sel && t !== sel) { ev.preventDefault(); ev.stopImmediatePropagation(); toggleLink(t); return; }
     select(t); if (curTab !== "item" && curTab !== "add") showTab("item");
+    if (t.closest("a[href]")) ev.preventDefault();
+    if (t.closest("a[href],[data-go]")) ev.stopPropagation();
   }, true);
   document.addEventListener("click", ev => {
     if (!editing || !siteInteractionsPaused || ev.target.closest(".adm-panel,.adm-modal,.adm-backdrop,.adm-bar,.adm-handles")) return;
@@ -2236,7 +2238,7 @@
       if (!isAtomic(e)) {
         const r = mk("div", "adm-row");
         r.appendChild(btn("📷 " + (o.bgimg ? "Trocar fundo" : "Escolher fundo"), "", () => chooseBgFor(e)));
-        if (o.bgimg) r.appendChild(btn("Remover", "", () => { delete op(id).bgimg; cleanOp(id); setBgImg(e, null); buildProps(); markDirty(); }, "danger"));
+        if (o.bgimg) r.appendChild(btn("Remover", "", () => { delete op(id).bgimg; cleanOp(id); setBgImg(e, null); buildProps(); markDirty(); refreshSiteFeatures(); }, "danger"));
         st.appendChild(r);
         if (o.bgimg) {
           const dim = mk("input"); dim.type = "range"; dim.min = 0; dim.max = 90; dim.value = Math.round((o.bgimg.dim || 0) * 100);

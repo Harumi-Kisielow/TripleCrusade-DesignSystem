@@ -423,20 +423,17 @@
     select(0);
   }
 
+  const homeCardBackgrounds = new WeakMap();
   function buildHomeCardsCarousel() {
     const track = document.querySelector("#home .cards[data-b='b39']");
     if (!track) return;
     const slides = Array.from(track.children).filter(item => item.matches(".card, .gate-card") && !item.classList.contains("ds-hidden"));
-    if (!slides.length) {
-      const controls = track.querySelector(":scope > .tc-home-card-controls");
-      if (controls) controls.hidden = true;
-      return;
-    }
-    slides.forEach(slide => slide.classList.add("tc-home-card-slide"));
-    const originalBackgrounds = new Map(slides.map(item => [
-      item,
-      item.style.backgroundImage || getComputedStyle(item).backgroundImage
-    ]));
+    slides.forEach(slide => {
+      if (!homeCardBackgrounds.has(slide)) {
+        homeCardBackgrounds.set(slide, slide.style.backgroundImage || getComputedStyle(slide).backgroundImage);
+      }
+      slide.classList.add("tc-home-card-slide");
+    });
     track.classList.add("tc-home-cards-carousel");
     track.setAttribute("role", "region");
     track.setAttribute("aria-label", "Seções do guia");
@@ -462,7 +459,7 @@
       next.setAttribute("aria-label", "Próxima seção");
       next.textContent = "→";
       controls.append(previous, tabs, next);
-      track.insertBefore(controls, slides[0]);
+      track.insertBefore(controls, slides[0] || null);
     }
     controls.hidden = slides.length < 2;
 
@@ -471,56 +468,70 @@
     const tabs = controls.querySelector(".tc-home-card-tabs");
     if (!previous || !next || !tabs) return;
     if (!controls.dataset.ready) {
-      slides.forEach((slide, index) => {
-        const title = slide.querySelector("h2, h3");
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "tc-home-card-tab";
-        button.textContent = title ? title.textContent.trim() : "Seção";
-        button.addEventListener("click", () => select(index));
-        tabs.appendChild(button);
-      });
-      previous.addEventListener("click", () => select(active - 1));
-      next.addEventListener("click", () => select(active + 1));
+      previous.addEventListener("click", () => track.tcHomeSelect && track.tcHomeSelect(track.tcHomeIndex - 1));
+      next.addEventListener("click", () => track.tcHomeSelect && track.tcHomeSelect(track.tcHomeIndex + 1));
       track.addEventListener("keydown", event => {
         if (event.target.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
         if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
           event.preventDefault();
-          select(active + (event.key === "ArrowRight" ? 1 : -1));
+          track.tcHomeSelect && track.tcHomeSelect(track.tcHomeIndex + (event.key === "ArrowRight" ? 1 : -1));
         }
       });
       controls.dataset.ready = "true";
     }
 
     slides.forEach(slide => {
-      const art = slide.style.backgroundImage || originalBackgrounds.get(slide);
+      const art = slide.querySelector(":scope > .ds-bg-layer") ? "none" : homeCardBackgrounds.get(slide);
       if (art && art !== "none") slide.style.setProperty("--tc-home-card-art", art);
+      else slide.style.setProperty("--tc-home-card-art", "none");
       const size = slide.style.backgroundSize || getComputedStyle(slide).backgroundSize;
       const position = slide.style.backgroundPosition || getComputedStyle(slide).backgroundPosition;
       slide.style.setProperty("--tc-home-card-art-size", size || "cover");
       slide.style.setProperty("--tc-home-card-art-position", position || "center");
     });
 
-    let active = Number(track.dataset.tcHomeIndex) || 0;
+    tabs.replaceChildren();
+    slides.forEach((slide, index) => {
+      const title = slide.querySelector("h2, h3");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "tc-home-card-tab";
+      button.textContent = title ? title.textContent.trim() : "Seção";
+      button.addEventListener("click", () => track.tcHomeSelect && track.tcHomeSelect(index));
+      tabs.appendChild(button);
+    });
+
+    let active = slides.indexOf(track.tcHomeActiveSlide);
+    if (active < 0) active = Math.max(0, Math.min(Number(track.dataset.tcHomeIndex) || 0, slides.length - 1));
     let changeTimer = 0;
     function select(index) {
-      const selectedIndex = (index + slides.length) % slides.length;
+      if (!slides.length) {
+        track.tcHomeActiveSlide = null;
+        track.dataset.tcHomeIndex = "0";
+        previous.disabled = true;
+        next.disabled = true;
+        return;
+      }
+      const selectedIndex = Math.max(0, Math.min(slides.length - 1, index));
       const changed = selectedIndex !== active || !slides[selectedIndex].classList.contains("is-active");
       active = selectedIndex;
+      track.tcHomeActiveSlide = slides[active];
       track.dataset.tcHomeIndex = String(active);
       slides.forEach((slide, i) => {
         const selected = i === active;
         slide.classList.toggle("is-active", selected);
         slide.classList.toggle("tc-revealed", selected);
         slide.setAttribute("aria-hidden", String(!selected));
-        tabs.children[i].setAttribute("aria-pressed", String(selected));
+        if (tabs.children[i]) tabs.children[i].setAttribute("aria-pressed", String(selected));
       });
+      previous.disabled = active === 0;
+      next.disabled = active === slides.length - 1;
       if (!changed) return;
       track.classList.add("is-changing");
       window.clearTimeout(changeTimer);
       changeTimer = window.setTimeout(() => requestAnimationFrame(() => track.classList.remove("is-changing")), reducedMotion() ? 0 : 120);
     }
-    active = Math.min(active, slides.length - 1);
+    track.tcHomeSelect = select;
     select(active);
   }
 
@@ -923,12 +934,14 @@
     return false;
   }
   document.addEventListener("click", e => {
+    if (document.body.classList.contains("editing")) return;
     const a = e.target.closest("a[href]");
     if (a && special(a.getAttribute("href"))) { e.preventDefault(); return; }
     const g = e.target.closest("[data-go]");
     if (g) { if (!special(g.dataset.go)) location.hash = g.dataset.go; }
   });
   document.addEventListener("keydown", e => {
+    if (document.body.classList.contains("editing")) return;
     if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-go][role=button]")) {
       e.preventDefault(); if (!special(e.target.dataset.go)) location.hash = e.target.dataset.go;
     }
