@@ -557,6 +557,7 @@ body.tc-page-mode .tc-carousel.tc-carousel--paused {
   overflow-x: hidden;
   scroll-snap-type: none;
 }
+body.tc-page-mode .ds-carousel.tc-carousel { scroll-snap-type: none; }
 body.tc-page-mode .tc-carousel > * { flex: 0 0 min(82%, 720px); scroll-snap-align: start; }
 body.tc-page-mode .ds-carousel.tc-carousel > .ds-carousel-slide {
   flex: 0 0 var(--ds-carousel-slide-width, 100%);
